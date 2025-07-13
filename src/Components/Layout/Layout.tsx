@@ -18,7 +18,7 @@ const Layout: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
       </head>
       <LayoutContainer>
             <Header>
-                <video src='https://pvmolqp98bhv9my7.public.blob.vercel-storage.com/osogovo-run-21-sec.mp4' autoPlay loop muted playsInline>
+                <video src='https://pvmolqp98bhv9my7.public.blob.vercel-storage.com/osogovo-run-21-sec.mp4' autoPlay loop muted playsInline controls>
                     Your browser does not support the video tag.
                 </video>
                 <Logo href="/" />
