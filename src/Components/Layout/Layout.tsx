@@ -1,6 +1,43 @@
-import React from "react"
+import React, { useRef, useEffect } from "react"
 import { Footer, Header, LayoutContainer, Logo } from "./styles"
 import Button from "../Button/Button";
+
+interface VideoProps {
+    src: MediaStream | string;
+    isMuted: boolean;
+}
+
+function Video({ src, isMuted }: VideoProps) {
+    const refVideo = useRef<HTMLVideoElement | null>(null);
+
+    useEffect(() => {
+        if (!refVideo.current) {
+            return;
+        }
+
+        if (isMuted) {
+            //open bug since 2017 that you cannot set muted in video element https://github.com/facebook/react/issues/10389
+            refVideo.current.defaultMuted = true;
+            refVideo.current.muted = true;
+        }
+
+        if (typeof src === "string") {
+            refVideo.current.srcObject = null;
+            refVideo.current.src = src;
+        } else {
+            refVideo.current.srcObject = src;
+        }
+    }, [src]);
+
+    return (
+            <video
+                ref={refVideo}
+                autoPlay
+                playsInline //FIX iOS black screen
+            />
+    );
+}
+
 
 const Layout: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
 
@@ -18,9 +55,7 @@ const Layout: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
       </head>
       <LayoutContainer>
             <Header>
-                <video src='https://pvmolqp98bhv9my7.public.blob.vercel-storage.com/osogovo-run-21-sec.mp4' autoPlay loop muted playsInline controls>
-                    Your browser does not support the video tag.
-                </video>
+                <Video src='https://pvmolqp98bhv9my7.public.blob.vercel-storage.com/osogovo-run-21-sec.mp4' isMuted={true} />
                 <Logo href="/" />
                 <Button highlight={true} onClick={() => {
                     window.location.href = '/register'
