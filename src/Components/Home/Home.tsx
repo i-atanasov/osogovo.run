@@ -1,6 +1,5 @@
 import React from "react"
 import { useNavigate } from "react-router-dom";
-
 import { HomeContainer } from "./styles";
 import ProductField from "./ProductField";
 import CourseField from "../CourseField/CourseField";
