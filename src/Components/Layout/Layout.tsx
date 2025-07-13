@@ -33,6 +33,7 @@ function Video({ src, isMuted }: VideoProps) {
             <video
                 ref={refVideo}
                 autoPlay
+                loop
                 playsInline //FIX iOS black screen
             />
     );
