@@ -8,23 +8,28 @@ export const HomeContainer = styled.div`
     justify-content: center;
     align-items: center;
     .route-svg {
-        animation: 2s fadeIn;
-            animation-fill-mode: forwards;
+        
+    }
+`;
+
+export const AnimationWrapper = styled.div<{ inView: boolean }>`
+    animation: ${props => props.inView ? '2s fadeIn' : 'none'};
+    animation-fill-mode: forwards;
+    visibility: hidden;
+}
+    @keyframes fadeIn {
+        99% {
             visibility: hidden;
         }
-        @keyframes fadeIn {
-            99% {
-                visibility: hidden;
-            }
-            100% {
-                visibility: visible;
-            }
+        100% {
+            visibility: visible;
+        }
     }
 `;
 
 export const ProductFieldWrapper = styled.div`
     width: 100%;
-`
+`;
 
 export const ProductFieldContainer = styled.div`
     display: flex;
@@ -48,16 +53,16 @@ export const ProductFieldContainer = styled.div`
     > h1 {
         position: absolute;
         font-size: 20px;
-        top: 10px;
+        bottom: 40%;
+        right: 0;
         padding: 0 5vw 0;
         @media (min-width: 768px) {
             padding: 0 5vw 0;
 
         }
-        text-align: left;
+        text-align: right;
         margin: 0 auto;
         @media (min-width: 768px) {
-            top: 80px;
             font-size: 40px;
             margin: 0 auto 0 0;
         }
@@ -211,7 +216,7 @@ export const ProductFieldContainer = styled.div`
     }
 `
 
-export const AnimatedSign = styled.span<{ delay?: string, top?: string, left?: string, color?: string }>`
+export const AnimatedSign = styled.span<{ delay?: string, top?: string, left?: string, color?: string, inView?: boolean }>`
     position: absolute;
     top: ${props => props.top || '50%'};
     left: ${props => props.left || '50%'};
@@ -233,7 +238,7 @@ export const AnimatedSign = styled.span<{ delay?: string, top?: string, left?: s
     span {
         text-wrap: nowrap;
     }
-    animation: fadeIn ${props => props.delay || '4s'} forwards;
+    animation: ${props => props.inView ? 'fadeIn' : 'none'} ${props => props.delay || '4s'} forwards;
     @keyframes fadeIn {
         99% {
             visibility: hidden;
@@ -267,3 +272,7 @@ export const ProductBoxContainer = styled.div`
 export const CourseWrapper = styled.div`
     display: flex;
 `
+
+export const InfoSign = styled.h1<{ inView: boolean }>`
+    display: ${props => props.inView ? 'block' : 'none'};
+`;

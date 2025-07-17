@@ -30,12 +30,12 @@ function Video({ src, isMuted }: VideoProps) {
     }, [src]);
 
     return (
-            <video
-                ref={refVideo}
-                autoPlay
-                loop
-                playsInline //FIX iOS black screen
-            />
+        <video
+            ref={refVideo}
+            autoPlay
+            loop
+            playsInline //FIX iOS black screen
+        />
     );
 }
 
@@ -43,7 +43,7 @@ function Video({ src, isMuted }: VideoProps) {
 const Layout: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
 
   return (
-    <>
+    <html lang="bg">
       <head>
         <title>Osogovo run</title>
         <meta name="description" content="Welcome to Osogovo run" />
@@ -51,7 +51,7 @@ const Layout: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
             name='viewport'
             content='width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0, user-scalable=yes'
         />
-        <link rel="icon" sizes="192x192" href='https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/Ruen_IMG_4742.jpg/500px-Ruen_IMG_4742.jpg' />
+        <link rel="icon" sizes="192x192" href='https://pvmolqp98bhv9my7.public.blob.vercel-storage.com/osogovo-run-logo.svg' />
         <link rel="stylesheet" href="/styles.css" />
       </head>
       <LayoutContainer>
@@ -65,7 +65,7 @@ const Layout: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
             <main>{children}</main>
             <Footer>Copyright © 2025 Osogovo Run</Footer>
         </LayoutContainer>
-    </>
+    </html>
   );
 };
 
