@@ -39,11 +39,11 @@ const ProductField = () => {
             }
             if (!elevationTimer) {
                 elevationTimer = setInterval(() => {
-                    elevation += 1; 
+                    elevation += 2; 
                     if (elevationRef.current && (elevation <= totalElevation)) {
                         elevationRef.current.textContent = `${Math.floor(elevation)}m D+`;
                     }
-                }, 7000/(totalElevation-100));
+                }, 8);
             }
             if (remainingDistance < 26) {
                 frameRef.current =
