@@ -32,7 +32,7 @@ const ProductField = () => {
             if (!distanceTimer) {
                 distanceTimer = setInterval(() => {
                     distance += 1;
-                    if (distanceRef.current) {
+                    if (distanceRef.current && (distance <= totalDistance)) {
                         distanceRef.current.textContent = `${Math.floor(distance)}km`;
                     }
                 }, 7000/totalDistance);
