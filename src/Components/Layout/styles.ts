@@ -71,6 +71,25 @@ export const Logo = styled.a`
     transition: filter 0.3s ease-in-out, transform 0.3s ease-in-out;
 `;
 
+export const Date = styled.div`
+    position: absolute;
+    font-family: 'Oswald', sans-serif;
+    font-size: 64px;
+    bottom: 60px;
+    left: 20px;
+    font-weight: bold;
+    color: #FFF;
+    text-align: left;
+    line-height: 72px;
+    text-transform: uppercase;
+    -webkit-text-fill-color: transparent;
+    -webkit-text-stroke: 3px;
+    @media (min-width: 1200px) {
+        font-size: 128px;
+        line-height: 136px;
+    }
+`
+
 export const Footer = styled.footer`
     background-color: ${colors.OsogovoBlack};
     color: white;

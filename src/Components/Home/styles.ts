@@ -50,26 +50,6 @@ export const ProductFieldContainer = styled.div`
             transform: translateY(20%);
         }
     }
-    > h1 {
-        position: absolute;
-        font-size: 20px;
-        bottom: 40%;
-        right: 0;
-        padding: 0 5vw 0;
-        @media (min-width: 768px) {
-            padding: 0 5vw 0;
-
-        }
-        text-align: right;
-        margin: 0 auto;
-        @media (min-width: 768px) {
-            font-size: 40px;
-            margin: 0 auto 0 0;
-        }
-        @media (min-width: 1200px) {
-            font-size: 80px;
-        }
-    }
 
     @-webkit-keyframes animate-svg-stroke-1 {
         0% {
@@ -274,5 +254,26 @@ export const CourseWrapper = styled.div`
 `
 
 export const InfoSign = styled.h1<{ inView: boolean }>`
-    display: ${props => props.inView ? 'block' : 'none'};
+    visibility: ${props => props.inView ? 'visible' : 'hidden'};
+    opacity: ${props => props.inView ? '1' : '0'};
+    transition: opacity 0.8s ease-in-out;
+    transition-delay: 0.4s;
+    position: absolute;
+    font-size: 20px;
+    bottom: 40%;
+    right: 0;
+    padding: 0 5vw 0;
+    @media (min-width: 768px) {
+        padding: 0 5vw 0;
+
+    }
+    text-align: right;
+    margin: 0 auto;
+    @media (min-width: 768px) {
+        font-size: 40px;
+        margin: 0 auto 0 0;
+    }
+    @media (min-width: 1200px) {
+        font-size: 80px;
+    }
 `;
