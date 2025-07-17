@@ -43,7 +43,7 @@ const ProductField = () => {
                     if (elevationRef.current && (elevation <= totalElevation)) {
                         elevationRef.current.textContent = `${Math.floor(elevation)}m D+`;
                     }
-                }, 7000/totalElevation);
+                }, 7000/(totalElevation-100));
             }
             if (remainingDistance < 26) {
                 frameRef.current =
