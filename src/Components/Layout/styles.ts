@@ -74,13 +74,13 @@ export const Logo = styled.a`
 export const Date = styled.div`
     position: absolute;
     font-family: 'Oswald', sans-serif;
-    font-size: 64px;
+    font-size: 48px;
     bottom: 60px;
     left: 20px;
     font-weight: bold;
     color: #FFF;
     text-align: left;
-    line-height: 72px;
+    line-height: 56px;
     text-transform: uppercase;
     -webkit-text-fill-color: transparent;
     -webkit-text-stroke: 3px;

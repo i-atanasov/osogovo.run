@@ -52,7 +52,7 @@ const Layout: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
         }
         window.screen.width > 800 ? 
             videoElement.src = "https://pvmolqp98bhv9my7.public.blob.vercel-storage.com/osogovo-run-21-sec.mp4" : 
-            videoElement.src = "https://pvmolqp98bhv9my7.public.blob.vercel-storage.com/osogovo-run-21-sec-mobile.mov";
+            videoElement.src = "https://pvmolqp98bhv9my7.public.blob.vercel-storage.com/osogovo-run-21-sec-mobile.mp4";
 
         //# load URL (for playback)
         videoElement.load();
