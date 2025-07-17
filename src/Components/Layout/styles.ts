@@ -83,10 +83,14 @@ export const Date = styled.div`
     line-height: 56px;
     text-transform: uppercase;
     -webkit-text-fill-color: transparent;
-    -webkit-text-stroke: 3px;
+    text-fill-color: transparent;
+    -webkit-text-stroke: 2px;
+    text-stroke: 2px;
     @media (min-width: 1200px) {
         font-size: 128px;
         line-height: 136px;
+        -webkit-text-stroke: 3px;
+        text-stroke: 3px;
     }
 `
 
