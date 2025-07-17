@@ -45,7 +45,7 @@ const ProductField = () => {
                     }
                 }, 8);
             }
-            if (remainingDistance < 26) {
+            if (remainingDistance < 26 || elevation < totalElevation) {
                 frameRef.current =
                     requestAnimationFrame(tick);
             } else {
