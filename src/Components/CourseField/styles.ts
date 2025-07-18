@@ -38,6 +38,7 @@ export const CourseDescription = styled.div`
     }
     p {
         margin: 0 auto 40px;
+        font-family: 'Oswald-Light', sans-serif;
     }
     @media (min-width: 768px) {
     }

@@ -17,8 +17,7 @@ export const ButtonWrapper = styled.button<{ highlight?: boolean }>`
     border: 1px solid transparent;
     border-radius: 40px;
     text-transform: uppercase;
-    font-family: 'Oswald', sans-serif;
-    font-weight: 900;
+    font-family: 'Oswald-Bold', sans-serif;
     cursor: pointer;
     line-height: 14px;
     font-size: 20px;

@@ -1,0 +1,21 @@
+@font-face {
+    font-family: 'Oswald-Bold';
+    src: url('https://pvmolqp98bhv9my7.public.blob.vercel-storage.com/fonts/Oswald-Bold.ttf') format('ttf');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Oswald-Regular';
+    src: url('https://pvmolqp98bhv9my7.public.blob.vercel-storage.com/fonts/Oswald-Regular.ttf') format('ttf');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Oswald-Light';
+    src: url('https://pvmolqp98bhv9my7.public.blob.vercel-storage.com/fonts/Oswald-Light.ttf') format('ttf');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
