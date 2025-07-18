@@ -80,8 +80,8 @@ const ProductField = () => {
         <ProductFieldWrapper>
             <ProductFieldContainer  >
                 <InfoSign inView={inView} className="product-field"><span ref={distanceRef}>0 km</span><br/> <span ref={elevationRef}>0 m D+</span></InfoSign>
-                <AnimatedSign inView={inView} delay="4s" top="25%" left="33%">Студен<br/> Кладенец <span>1340 м</span></AnimatedSign>
-                <AnimatedSign inView={inView} delay="5s" top="20%" left="50%" color="white">хижа<br/> Осогово <span>1640 м</span></AnimatedSign>
+                <AnimatedSign inView={inView} delay="4s" top="25%" left="32.5%">Студен<br/> Кладенец <span>1340 м</span></AnimatedSign>
+                <AnimatedSign inView={inView} delay="5s" top="21%" left="49.5%" color="white">хижа<br/> Осогово <span>1640 м</span></AnimatedSign>
                 <AnimatedSign inView={inView} delay="6s" top="19%" left="70%">Бег Бунар <br/><span>1842 м</span></AnimatedSign>
                 <AnimatedSign inView={inView} delay="7s" top="10%" left="93%" color="white">Руен <br/> <span>2251 м</span></AnimatedSign>
                 <AnimationWrapper ref={ref} inView={inView} className="route-svg" dangerouslySetInnerHTML={{ __html: fullRoute }} />

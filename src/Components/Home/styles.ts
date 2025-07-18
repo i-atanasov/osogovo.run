@@ -209,14 +209,20 @@ export const AnimatedSign = styled.span<{ delay?: string, top?: string, left?: s
     font-size: 10px;
     max-width: 45px;
     visibility: hidden;
+    font-family: 'Oswald', sans-serif;
+    font-weight: 500;
     @media (min-width: 768px) {
         font-size: 12px;
+        max-width: 60px;
     }
     @media (min-width: 1200px) {
         font-size: 16px;
     }
     span {
         text-wrap: nowrap;
+        font-family: 'Oswald', sans-serif;
+        font-weight: 300;
+        font-size: 10px;
     }
     animation: ${props => props.inView ? 'fadeIn' : 'none'} ${props => props.delay || '4s'} forwards;
     @keyframes fadeIn {
