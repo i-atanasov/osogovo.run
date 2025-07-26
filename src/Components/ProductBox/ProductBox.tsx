@@ -25,9 +25,8 @@ const ProductBox = (product: ProductBoxProps) => {
     const navigate = useNavigate();
     return (
         <ProductBoxWrapper>
-            <ImageWrapper>
+            <ImageWrapper href={`/register?product=${product.distance}`}>
                 <img src={product.image} alt={product.name} />
-                <DistanceSign>{product.distance}k</DistanceSign>
             </ImageWrapper>
             <TextWrapper>
                 <p dangerouslySetInnerHTML={{ __html: product.startingPoint }}></p>

@@ -45,18 +45,15 @@ export const ProductBoxWrapper = styled.div`
     }
 `
 
-export const ImageWrapper = styled.div`
+export const ImageWrapper = styled.a`
     position: relative;
     overflow: hidden;
+    cursor: pointer;
     width: 100%;
-    height: 230px;
     > img {
         object-fit: cover;
-        scale: 1.2;
         height: 100%;
         width: 100%;
-        position: relative;
-        filter: brightness(0.6);
     }
     &:hover {
         scale: 1.1;

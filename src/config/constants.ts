@@ -1,18 +1,17 @@
-import { url } from "inspector"
 import { ProductBoxProps } from "../Components/ProductBox/ProductBox"
 
 export const products: ProductBoxProps[] = [
     {
-        distance: 13,
+        distance: 14,
         elevation: '<b>Положителна денивелация:</b> 1100 м',
         name: 'Осогово рън',
         startingPoint: '<b>Старт:</b> пл. Велбъжд, гр. Кюстендил',
         final: '<b>Финал:</b> х. Осогово',
         startingTime: '<b>Стартово време:</b> 10:00',
-        totalDistance: '<b>Обща дистанция:</b> 13 км',
+        totalDistance: '<b>Обща дистанция:</b> 14 км',
         cutOffTime: '<b>Контролно време:</b> 12:30',
         description: 'Осогово рън е състезание по планинско бягане, което се провежда в Осоговската планина. Състезанието предлага различни дистанции и маршрути, които преминават през живописни пейзажи и предизвикателни терени.',
-        image: 'https://ranica.bg/img2/11028/a928013a37.jpg',
+        image: 'https://pvmolqp98bhv9my7.public.blob.vercel-storage.com/OSOGOVO-RUN-14k.png',
         gpx: '/gpx/osogovo-run.gpx',
         price: 30,
         latePrice: 40,
@@ -29,7 +28,7 @@ export const products: ProductBoxProps[] = [
         totalDistance: '<b>Обща дистанция:</b> 26 км',
         cutOffTime: '<b>Контролно време:</b> 14:30',
         description: 'Руен рън е предизвикателство за опитни бегачи, които искат да се изправят пред дълги дистанции и трудни условия в Осоговската планина. Състезанието предлага уникален опит и възможност за преодоляване на собствените граници.',
-        image: 'https://ranica.bg/img2/26362/ad50c59c74.jpg',
+        image: 'https://pvmolqp98bhv9my7.public.blob.vercel-storage.com/OSOGOVO-RUN-26k.png',
         gpx: '/gpx/osogovo-ultramarathon.gpx',
         price: 40,
         latePrice: 50,
