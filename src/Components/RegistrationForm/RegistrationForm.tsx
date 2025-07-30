@@ -16,7 +16,7 @@ interface FormValues {
 
 const RegistrationForm = () => (
   <FormWrapper>
-    <h1>Очаквайте в края на юли!</h1>
+    <h1>Очаквайте през август!</h1>
     <Formik
       initialValues={{ email: '', password: '' }}
       validate={ values => {

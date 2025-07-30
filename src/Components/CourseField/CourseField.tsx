@@ -28,7 +28,7 @@ export const CourseField: React.FC = () => {
             <MapWrapper>   
                 <iframe src="https://www.google.com/maps/d/embed?mid=1O6PSW30-PqjukzHPEQ76V_90Y0mZ48k&ehbc=2E312F"></iframe>
             </MapWrapper>
-            <img src='https://pvmolqp98bhv9my7.public.blob.vercel-storage.com/courseProfile.svg' alt="Course Profile" className="course-profile" />
+            <img src='https://pvmolqp98bhv9my7.public.blob.vercel-storage.com/Profile_Race_OR.png' alt="Course Profile" className="course-profile" />
         </CourseFieldWrapper>
     )
 }

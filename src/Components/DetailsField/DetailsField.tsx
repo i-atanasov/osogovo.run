@@ -37,7 +37,7 @@ const DetailsField = () => {
                     <h2>Контакти</h2>
                     <ContactsWrapper>
                         <Socials>
-                            <IconText><PhoneIcon/><p>+359 886 452 703</p></IconText>
+                            <IconText><PhoneIcon/><p>Очаквайте</p></IconText>
                             <IconText><EmailIcon/><p>info@osogovo.run</p></IconText>
                         </Socials>
                         <Socials>
