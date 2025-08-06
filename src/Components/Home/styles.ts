@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { colors } from "../../config/constants";
 
 export const HomeContainer = styled.div`
     background-color: #f0f0f0;
@@ -6,17 +7,12 @@ export const HomeContainer = styled.div`
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: center;
-    .route-svg {
-        
-    }
 `;
 
 export const AnimationWrapper = styled.div<{ inView: boolean }>`
     animation: ${props => props.inView ? '2s fadeIn' : 'none'};
     animation-fill-mode: forwards;
     visibility: hidden;
-}
     @keyframes fadeIn {
         99% {
             visibility: hidden;
@@ -26,6 +22,14 @@ export const AnimationWrapper = styled.div<{ inView: boolean }>`
         }
     }
 `;
+
+export const Footer = styled.footer`
+    background-color: ${colors.OsogovoBlack};
+    color: white;
+    text-align: center;
+    padding: 20px;
+    padding: 0 80px 40px;
+`
 
 export const ProductFieldWrapper = styled.div`
     width: 100%;

@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { colors } from '../../config/constants';
 
-export const ButtonWrapper = styled.button<{ highlight?: boolean }>`
+export const ButtonWrapper = styled.button<{ highlight?: boolean, disabled?: boolean }>`
     ${props => props.highlight && `
         position: absolute;
         display: none;
@@ -32,6 +32,10 @@ export const ButtonWrapper = styled.button<{ highlight?: boolean }>`
     }
     &:visited {
         filter: grayscale(1);
+    }
+    &:disabled {
+        background-color: grey;
+        cursor: not-allowed;
     }
     transition: all 0.3s ease-in-out;
 `;
