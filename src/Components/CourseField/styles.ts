@@ -7,9 +7,8 @@ export const CourseFieldWrapper = styled.div`
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: center;
-    padding-bottom: 40px;
     img.course-profile {
-        width: 80%;
+        width: 100%;
         max-width: 1260px;
     }
 `;
@@ -76,6 +75,7 @@ export const FeeDescription = styled(CourseDescription)`
             color: white;
             font-size: 24px;
             padding: 10px 5px 0 0;
+        }
     }
 `
 
@@ -94,4 +94,11 @@ export const MapWrapper = styled.div`
             max-height: 480px;
         }
     }
+`
+
+export const RegisterAction = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 40px;
 `

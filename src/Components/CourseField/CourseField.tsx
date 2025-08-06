@@ -1,8 +1,11 @@
 import React from "react"
-import { CourseDescription, CourseFieldWrapper, CourseDescriptionWrapper, FeeDescription, MapWrapper } from "./styles"
+import { CourseDescription, CourseFieldWrapper, CourseDescriptionWrapper, FeeDescription, MapWrapper, RegisterAction } from "./styles"
 import { CourseDescription as CourseDescriptionData, products } from "../../config/constants"
+import Button from "../Button/Button"
+import { useNavigate } from "react-router-dom"
 
 export const CourseField: React.FC = () => {
+    const navigate = useNavigate();
     return (
         <CourseFieldWrapper>
             <CourseDescriptionWrapper>
@@ -28,7 +31,12 @@ export const CourseField: React.FC = () => {
             <MapWrapper>   
                 <iframe src="https://www.google.com/maps/d/embed?mid=1O6PSW30-PqjukzHPEQ76V_90Y0mZ48k&ehbc=2E312F"></iframe>
             </MapWrapper>
-            <img src='https://pvmolqp98bhv9my7.public.blob.vercel-storage.com/Profile_Race_OR.png' alt="Course Profile" className="course-profile" />
+            <RegisterAction>
+                <img src='https://pvmolqp98bhv9my7.public.blob.vercel-storage.com/Profile_Race_OR.png' alt="Course Profile" className="course-profile" />
+                <Button label="Регистрирай се" onClick={() => {
+                    navigate("/register");
+                }} />
+            </RegisterAction>
         </CourseFieldWrapper>
     )
 }
