@@ -60,7 +60,6 @@ const RegistrationForm = () => {
                                 data: values
                             })
                             .then(response => {
-                                console.log('Form submitted successfully:', response.data);
                                 setSubmitting(false);
                                 resetServerError();
                                 // Optionally, redirect or show a success message
