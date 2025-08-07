@@ -192,13 +192,16 @@ export const FormFields = styled.div`
 `
 
 export const FormResult = styled.div`
-    background-color: ${colors.RuenOrange};
+    background-color: white;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     padding: 20px;
     min-height: 400px;
+    > h2, p {
+        margin: 20px 0;
+        color: ${colors.OsogovoBlack};
+    }
 `
 
 export const Price = styled.div`
@@ -208,4 +211,16 @@ export const Price = styled.div`
     font-weight: 500;
     margin: 20px 0;
     text-align: left;
+`
+
+export const IBANWrapper = styled.div`
+    color: ${colors.OsogovoBlack};
+    font-size: 16px;
+    font-family: 'Oswald', sans-serif;
+    font-weight: 400;
+    margin: 20px 0;
+    text-align: left;
+    p {
+        margin: 5px 0;
+    }
 `
