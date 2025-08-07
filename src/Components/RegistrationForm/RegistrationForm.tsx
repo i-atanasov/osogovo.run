@@ -1,6 +1,6 @@
 import React from 'react';
 import { Field, Form, Formik } from 'formik';
-import { FormFields, FormSection, RegistrationFormWrapper, ImageBackground, FormWrapper, FormResult, Price } from './styles';
+import { FormFields, FormSection, RegistrationFormWrapper, ImageBackground, FormWrapper, FormResult, Price, IBANWrapper } from './styles';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { validateForm } from './validation';
 import { HeaderComponent } from '../Header/Header';
@@ -26,6 +26,7 @@ const RegistrationForm = () => {
     const [searchParams] = useSearchParams();
     const [serverError, setServerError] = React.useState<string | null>(null);
     const [distance, setDistance] = React.useState<Distance>(Number(searchParams.get('product')) as Distance || 26);
+    const [email, setEmail] = React.useState<string>('');
     const price = products.find(product => product.distance === distance)?.price || 0;
     const success = searchParams.get('success') === 'true';
     const navigate = useNavigate();
@@ -42,6 +43,25 @@ const RegistrationForm = () => {
     const apiUrl = process.env.REACT_APP_REGISTRATION_API_URL;
     const resetServerError = () => {
         setServerError('')
+    }
+
+    interface PaymentDetailsProps {
+        price: number;
+        email: string;
+    }
+
+    const PaymentDetails: React.FC<PaymentDetailsProps> = ({ price, email }) => {
+        return (
+            <>
+                <Price>Плащане на стартова такса: {price} лв.</Price>
+                <IBANWrapper>
+                    <p>IBAN: BG29 IABG 7490 1002 0275 01 </p>
+                    <p>BIC: IABGSF</p>
+                    <p>Получател: Сдружение "Спортен клуб по ориентиране и бягане Осогово"</p>
+                    <p>Основание за плащане: <b>{email}</b> (Вашият имейл) </p>
+                </IBANWrapper>
+            </>
+        );
     }
 
   return (
@@ -63,8 +83,8 @@ const RegistrationForm = () => {
                                 },
                             })
                             .then(response => {
-                                console.log('Registration successful:', response.data);
                                 setSubmitting(false);
+                                setEmail(values.email);
                                 resetServerError();
                                 navigate('/register?success=true');
                             })
@@ -84,13 +104,13 @@ const RegistrationForm = () => {
                     }}
                 >
                     {({
-                        values,
                         errors,
                         touched,
                         dirty,
-                        handleChange,
                         handleSubmit,
                         isSubmitting,
+                        values,
+                        handleChange
                     }) => {
                         return (
                         <Form onChange={resetServerError}>
@@ -103,7 +123,10 @@ const RegistrationForm = () => {
                                         name="distance" 
                                         id="distance" 
                                         value={distance} 
-                                        onChange={(e: { target: { value: number; }; }) => {setDistance(Number(e.target.value) as Distance)}} 
+                                        onChange={(e: { target: { value: number; }; }) => {
+                                            setDistance(Number(e.target.value) as Distance)
+                                            values.distance = Number(e.target.value) as Distance;
+                                        }} 
                                     >
                                         <option value={14}>х.Осогово - 14км</option>
                                         <option value={26}>вр.Руен - 26км</option>
@@ -167,18 +190,19 @@ const RegistrationForm = () => {
                             )}
                             {errors && Object.keys(errors).length > 0 && (
                                 <div className="error">
-                                    Моля, попълнете всички задължителни полета. При проблем моля свържетe се с info@osogovo.run
+                                    Моля, попълнете всички задължителни полета. При проблем, моля свържетe се с info@osogovo.run
                                 </div>
                             )}
-                            <Price>Плащане на стартова такса: {price} лв.</Price>
+                            <PaymentDetails price={price} email={values.email} />
                         </Form>
                     );
                 }}
                 </Formik> :
                 <FormResult>
                     <h2>Благодарим Ви за регистрацията!</h2>
-                    <div>Очакваме Ви на старта на състезанието!</div>
-                    <Logo left='50%' top='-200px'/>
+                    <p>Очакваме Ви на старта на състезанието!</p>
+                    <PaymentDetails price={price} email={email} />
+                    <Logo left='50%' top='-100px'/>
                 </FormResult>}
             </FormWrapper> 
   </RegistrationFormWrapper>
