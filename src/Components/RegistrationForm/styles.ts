@@ -1,8 +1,9 @@
 import styled from "styled-components"
 import { colors } from "../../config/constants"
 import { ButtonWrapper } from "../Button/styles"
+import { Header } from "../Header/styles"
 
-export const RegistrationFormWrapper = styled.div`
+export const RegistrationFormWrapper = styled.div<{ distance?: number }>`
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -16,6 +17,9 @@ export const RegistrationFormWrapper = styled.div`
         max-width: 1200px;
         gap: 10px;
         padding: 20px;
+    }
+    ${Header} > img {
+        //to do
     }
 `
 

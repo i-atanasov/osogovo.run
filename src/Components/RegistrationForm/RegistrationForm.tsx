@@ -65,7 +65,7 @@ const RegistrationForm = () => {
     }
 
   return (
-    <RegistrationFormWrapper>
+    <RegistrationFormWrapper distance={distance}>
         <HeaderComponent hideDate image="https://pvmolqp98bhv9my7.public.blob.vercel-storage.com/Profile.svg" />
         <ImageBackground image="https://pvmolqp98bhv9my7.public.blob.vercel-storage.com/registration-bg.png" />
             <FormWrapper success={success}>
@@ -202,7 +202,6 @@ const RegistrationForm = () => {
                     <h2>Благодарим Ви за регистрацията!</h2>
                     <p>Очакваме Ви на старта на състезанието!</p>
                     <PaymentDetails price={price} email={email} />
-                    <Logo left='50%' top='-100px'/>
                 </FormResult>}
             </FormWrapper> 
   </RegistrationFormWrapper>
