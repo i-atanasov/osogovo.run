@@ -123,7 +123,10 @@ const RegistrationForm = () => {
                                         name="distance" 
                                         id="distance" 
                                         value={distance} 
-                                        onChange={(e: { target: { value: number; }; }) => {setDistance(Number(e.target.value) as Distance)}} 
+                                        onChange={(e: { target: { value: number; }; }) => {
+                                            setDistance(Number(e.target.value) as Distance)
+                                            values.distance = Number(e.target.value) as Distance;
+                                        }} 
                                     >
                                         <option value={14}>х.Осогово - 14км</option>
                                         <option value={26}>вр.Руен - 26км</option>
