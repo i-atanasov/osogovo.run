@@ -187,7 +187,7 @@ const RegistrationForm = () => {
                             )}
                             {errors && Object.keys(errors).length > 0 && (
                                 <div className="error">
-                                    Моля, попълнете всички задължителни полета. При проблем моля свържетe се с info@osogovo.run
+                                    Моля, попълнете всички задължителни полета. При проблем, моля свържетe се с info@osogovo.run
                                 </div>
                             )}
                             <PaymentDetails price={price} email={values.email} />
