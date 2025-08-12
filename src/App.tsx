@@ -1,5 +1,5 @@
 import Layout from './Components/Layout/Layout';
-import { Analytics } from "@vercel/analytics/next"
+import { Analytics } from "@vercel/analytics/react";
 import Router from './Components/Router/Router';
 import './App.css';
 
