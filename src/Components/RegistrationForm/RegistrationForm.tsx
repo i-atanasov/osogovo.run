@@ -6,7 +6,6 @@ import { validateForm } from './validation';
 import { HeaderComponent } from '../Header/Header';
 import Button from '../Button/Button';
 import axios from 'axios';
-import { Logo } from '../Header/styles';
 import { products } from '../../config/constants';
 
 type Distance = 14 | 26;
@@ -64,6 +63,24 @@ const RegistrationForm = () => {
         );
     }
 
+    const sendEmail = (email: string, name: string, distance: Distance) => {
+        if (typeof apiUrl === 'string' && apiUrl.length > 0) {
+            axios.post(`http://localhost:4000/send-email`, {
+                name,
+                email,
+                distance
+            })
+            .then(response => {
+                console.log('Email sent successfully:', response.data);
+            })
+            .catch(error => {
+                console.error('Error sending email:', error);
+            });
+        } else {
+            console.error('Email API URL is not defined.');
+        }
+    };
+
   return (
     <RegistrationFormWrapper distance={distance}>
         <HeaderComponent hideDate image="https://pvmolqp98bhv9my7.public.blob.vercel-storage.com/Profile.svg" />
@@ -75,7 +92,7 @@ const RegistrationForm = () => {
                     validate={ validateForm }
                     onSubmit={(values, { setSubmitting }) => {
                         if (typeof apiUrl === 'string' && apiUrl.length > 0) {
-                            const res = axios.post(apiUrl, {
+                            const res = axios.post(`${apiUrl}/register`, {
                                 data: values,
                                 headers: {
                                     'Content-Type': 'application/json',
@@ -85,13 +102,16 @@ const RegistrationForm = () => {
                             .then(response => {
                                 setSubmitting(false);
                                 setEmail(values.email);
+                                sendEmail(values.email, values.name, distance);
                                 resetServerError();
                                 navigate('/register?success=true');
                             })
                             .catch(error => {
                                 if (error?.response?.status === 409) {
+                                    console.error('Email already registered:', error, email);
                                     setServerError('Имейлът вече е регистриран. Моля, използвайте друг имейл адрес или се свържете с нас на info@osogovo.run');
                                 } else {
+                                    console.error('Registration error:', error, email);
                                     setServerError('Възникна грешка при регистрацията. Моля, опитайте отново по-късно или се свържете с нас на info@osogovo.run.');
                                 }
                             });
