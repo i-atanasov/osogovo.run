@@ -65,7 +65,7 @@ const RegistrationForm = () => {
 
     const sendEmail = (email: string, name: string, distance: Distance) => {
         if (typeof apiUrl === 'string' && apiUrl.length > 0) {
-            axios.post(`http://localhost:4000/send-email`, {
+            axios.post(`${apiUrl}/send-email`, {
                 name,
                 email,
                 distance
