@@ -26,6 +26,7 @@
     "yup": "^1.6.1"
   },
   "devDependencies": {
+    "@react-email/preview-server": "^4.2.8",
     "@types/cors": "^2.8.19"
   },
   "scripts": {
