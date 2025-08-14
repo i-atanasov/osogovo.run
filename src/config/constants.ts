@@ -80,7 +80,7 @@ export const sponsors = [
     {
         name: 'Roobar',
         logo: 'https://pvmolqp98bhv9my7.public.blob.vercel-storage.com/roobar.svg',
-        url:  'https://www.roobar.bg/'
+        url:  'https://smartorganic.com/roobar/'
     },
     {
         name: 'IDCSoft',
