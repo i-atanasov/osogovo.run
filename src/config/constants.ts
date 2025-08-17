@@ -32,8 +32,8 @@ export const products: ProductBoxProps[] = [
         gpx: '/gpx/osogovo-ultramarathon.gpx',
         price: 40,
         latePrice: 50,
-        priceLabel: '<b>Такса:</b> 40 лв (до 22 септември)',
-        latePriceLabel: '<b>Такса:</b> 50 лв (след 22 септември)',
+        priceLabel: '<b>Такса:</b> 40 лв (до 15 септември)',
+        latePriceLabel: '<b>Такса:</b> 50 лв (след 15 септември)',
     },
 ]
 
