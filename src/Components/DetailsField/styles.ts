@@ -198,4 +198,11 @@ export const Socials = styled.div`
 export const IconText = styled.div`
     display: flex;
     align-items: center;
+    a {
+        color: white;
+        text-decoration: none;
+        &:hover {
+            text-decoration: underline;
+        }
+    }
 `

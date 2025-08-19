@@ -37,12 +37,12 @@ const DetailsField = () => {
                     <h2>Контакти</h2>
                     <ContactsWrapper>
                         <Socials>
-                            <IconText><PhoneIcon/><p>Очаквайте</p></IconText>
-                            <IconText><EmailIcon/><p>info@osogovo.run</p></IconText>
+                            <IconText><PhoneIcon/><a href={`tel:${details.raceDirPhone}`}>{details.raceDirPhone}</a></IconText>
+                            <IconText><EmailIcon/><a href={`mailto:${details.raceDirEmail}`}>{details.raceDirEmail}</a></IconText>
                         </Socials>
                         <Socials>
                             <p>Последвай ни в социалните ни мрежи:</p>
-                            <IconText><a href="https://www.facebook.com/OsogovoRun" target="_blank" rel="noopener noreferrer"><FacebookIcon/></a><a href="https://www.instagram.com/osogovo.run/" target="_blank" rel="noopener noreferrer"><InstaIcon/></a></IconText>
+                            <IconText><a href="https://www.facebook.com/OsogovoRun" target="_blank" rel="noopener noreferrer"><FacebookIcon/></a><a href="https://www.instagram.com/explore/search/keyword/?q=%23osogovotrails" target="_blank" rel="noopener noreferrer"><InstaIcon/></a></IconText>
                         </Socials>
                     </ContactsWrapper>  
                 </ContactsContainer>
