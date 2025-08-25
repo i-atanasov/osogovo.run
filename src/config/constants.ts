@@ -80,6 +80,11 @@ export const sponsors = [
         url:  'https://www.kustendil.bg/'
     },
     {
+        name: 'ТД Осогово',
+        logo: 'https://www.td-osogovo.org/images/yootheme/logo.png',
+        url:  'https://www.td-osogovo.org/'
+    },
+    {
         name: 'Roobar',
         logo: 'https://pvmolqp98bhv9my7.public.blob.vercel-storage.com/roobar.svg',
         url:  'https://smartorganic.com/roobar/'
@@ -100,24 +105,9 @@ export const sponsors = [
         url:  'https://www.kustendil.bg/'
     },
     {
-        name: 'Roobar',
-        logo: 'https://pvmolqp98bhv9my7.public.blob.vercel-storage.com/roobar.svg',
-        url:  'https://www.roobar.bg/'
-    },
-    {
-        name: 'IDCSoft',
-        logo: 'https://pvmolqp98bhv9my7.public.blob.vercel-storage.com/icdsoft.svg',
-        url:  'https://www.icdsoft.com/'
-    },
-    {
-        name: 'GO RUN',
-        logo: 'https://pvmolqp98bhv9my7.public.blob.vercel-storage.com/go-run.png',
-        url:  'https://gorun-shop.com/'
-    },
-    {
-        name: 'Община Кюстендил',
-        logo: 'https://pvmolqp98bhv9my7.public.blob.vercel-storage.com/kn-logo.png',
-        url:  'https://www.kustendil.bg/'
+        name: 'ТД Осогово',
+        logo: 'https://www.td-osogovo.org/images/yootheme/logo.png',
+        url:  'https://www.td-osogovo.org/'
     },
     {
         name: 'Roobar',
@@ -140,6 +130,11 @@ export const sponsors = [
         url:  'https://www.kustendil.bg/'
     },
     {
+        name: 'ТД Осогово',
+        logo: 'https://www.td-osogovo.org/images/yootheme/logo.png',
+        url:  'https://www.td-osogovo.org/'
+    },
+    {
         name: 'Roobar',
         logo: 'https://pvmolqp98bhv9my7.public.blob.vercel-storage.com/roobar.svg',
         url:  'https://www.roobar.bg/'
@@ -159,6 +154,36 @@ export const sponsors = [
         logo: 'https://pvmolqp98bhv9my7.public.blob.vercel-storage.com/kn-logo.png',
         url:  'https://www.kustendil.bg/'
     },
+    {
+        name: 'ТД Осогово',
+        logo: 'https://www.td-osogovo.org/images/yootheme/logo.png',
+        url:  'https://www.td-osogovo.org/'
+    },
+    {
+        name: 'Roobar',
+        logo: 'https://pvmolqp98bhv9my7.public.blob.vercel-storage.com/roobar.svg',
+        url:  'https://www.roobar.bg/'
+    },
+    {
+        name: 'IDCSoft',
+        logo: 'https://pvmolqp98bhv9my7.public.blob.vercel-storage.com/icdsoft.svg',
+        url:  'https://www.icdsoft.com/'
+    },
+    {
+        name: 'GO RUN',
+        logo: 'https://pvmolqp98bhv9my7.public.blob.vercel-storage.com/go-run.png',
+        url:  'https://gorun-shop.com/'
+    },
+    {
+        name: 'Община Кюстендил',
+        logo: 'https://pvmolqp98bhv9my7.public.blob.vercel-storage.com/kn-logo.png',
+        url:  'https://www.kustendil.bg/'
+    },  
+    {
+        name: 'ТД Осогово',
+        logo: 'https://www.td-osogovo.org/images/yootheme/logo.png',
+        url:  'https://www.td-osogovo.org/'
+    },  
     {
         name: 'Roobar',
         logo: 'https://pvmolqp98bhv9my7.public.blob.vercel-storage.com/roobar.svg',

@@ -11,7 +11,7 @@ import { HeaderComponent } from "../Header/Header";
 const Home: React.FC = () => {
     return (
         <HomeContainer >
-            <HeaderComponent video='https://pvmolqp98bhv9my7.public.blob.vercel-storage.com/osogovo-run-21-sec-low.mp4' />
+            <HeaderComponent video='http://www.osogovo.run/osogovo-run%20-%20SD%20480p.mov' />
             <ProductField/>
             <CourseField/>
             <ImagesField/>
