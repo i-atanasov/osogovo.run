@@ -98,7 +98,7 @@ const ProductField = () => {
                     alt="Route"
                 />
             </ProductFieldContainer>
-            <ProductBoxContainer>
+            <ProductBoxContainer>   
                 {products.map((product, index) => (
                     <ProductBox
                         key={index}

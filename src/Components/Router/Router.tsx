@@ -2,6 +2,7 @@ import React from "react"
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import RegistrationForm from "../RegistrationForm/RegistrationForm";
 import Home from "../Home/Home";
+import { Participants } from "../Participants/Participants";
 
 const Router: React.FC = () => {
     return (
@@ -16,6 +17,10 @@ const Router: React.FC = () => {
                 <Route
                     path="/register"
                     element={<RegistrationForm />}
+                />
+                <Route
+                    path="/participants"
+                    element={<Participants />}
                 />
             </Routes>
         </BrowserRouter>

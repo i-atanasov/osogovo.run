@@ -36,11 +36,12 @@ const ProductBox = (product: ProductBoxProps) => {
                 <p dangerouslySetInnerHTML={{ __html: product.elevation }}></p>
                 <p dangerouslySetInnerHTML={{ __html: product.cutOffTime }}></p>
                 <p className="highlight" dangerouslySetInnerHTML={{ __html: product.priceLabel }}></p>
+                <a href="/participants">Виж регистрираните участници</a>
             </TextWrapper>
             <Button label="Регистрирай се" onClick={() => {
                 navigate(`/register?product=${product.distance}`);
             }} />
-            <a className="gpx-path" href={product.gpx} onClick={e => e.preventDefault()} download>{product.distance}k GPX</a>
+            <a className="gpx-path" href={product.gpx} download>{product.distance}k GPX</a>
         </ProductBoxWrapper>
     );
 };

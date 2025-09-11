@@ -28,7 +28,7 @@ export const ProductBoxWrapper = styled.div`
         color: black;
         text-decoration: none;
         &:after {
-            content: 'Очаквайте скоро';
+            content: 'Кликни за сваляне';
             position: absolute;
             width: 130%;
             height: 25px;
@@ -81,6 +81,15 @@ export const TextWrapper = styled.div`
     p {
         margin: 0;
         line-height: 35px;
+    }
+    a {
+        text-decoration: none;
+        color: ${colors.RuenOrange};
+        &:hover {
+            text-decoration: underline;
+            filter: brightness(0.6);
+            transition: all 0.3s ease-in-out;
+        }
     }
     p.highlight {
         color: ${colors.RuenOrange};

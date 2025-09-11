@@ -37,8 +37,18 @@ export const FormWrapper = styled.div<{ success?: boolean }>`
     @media (min-width: 1200px) {
         top: 700px;
     }
-    > h1 {
+    > h1, a {
         color: ${colors.RuenOrange};
+    }
+    a {
+        cursor: pointer;
+        padding: 20px 0;
+        text-decoration: none;
+        &:hover {
+            text-decoration: underline;
+            filter: brightness(0.6);
+            transition: all 0.3s ease-in-out;
+        }
     }
     p {
         font-family: 'Oswald-Light', sans-serif;

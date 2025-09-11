@@ -86,6 +86,7 @@ const RegistrationForm = () => {
         <HeaderComponent hideDate image="https://pvmolqp98bhv9my7.public.blob.vercel-storage.com/Profile.svg" />
         <ImageBackground image="https://pvmolqp98bhv9my7.public.blob.vercel-storage.com/registration-bg.png" />
             <FormWrapper success={success}>
+                <a href="/participants">Виж регистрираните участници</a>
                 {!success && <h1>Регистрация</h1>}
                 {!success ? <Formik
                     initialValues={ initialValues }
