@@ -15,8 +15,8 @@ export const products: ProductBoxProps[] = [
         gpx: 'https://pvmolqp98bhv9my7.public.blob.vercel-storage.com/Osogovo_Run_14K_2025.gpx',
         price: 30,
         latePrice: 40,
-        priceLabel: '<b>Такса:</b> 30 лв (до 15 септември)',
-        latePriceLabel: '<b>Такса:</b> 40 лв (след 15 септември)',
+        priceLabel: '<b>Такса:</b> 30 лв (до 17 септември)',
+        latePriceLabel: '<b>Такса:</b> 40 лв (след 17 септември)',
     },
     {
         distance: 26,
@@ -32,8 +32,8 @@ export const products: ProductBoxProps[] = [
         gpx: 'https://pvmolqp98bhv9my7.public.blob.vercel-storage.com/Osogovo_Run_2025.gpx',
         price: 40,
         latePrice: 50,
-        priceLabel: '<b>Такса:</b> 40 лв (до 15 септември)',
-        latePriceLabel: '<b>Такса:</b> 50 лв (след 15 септември)',
+        priceLabel: '<b>Такса:</b> 40 лв (до 17 септември)',
+        latePriceLabel: '<b>Такса:</b> 50 лв (след 17 септември)',
     },
 ]
 
