@@ -178,7 +178,7 @@ const RegistrationForm = () => {
                                     <Field className='year-option' as="select" id="birth" name="birth" required placeholder="Година на раждане" >
                                         <option value="" hidden></option>
                                         {Array.from({ length: 100 }, (_, i) => {
-                                            const year = new Date().getFullYear() - i - 16; // 16 is the minimum age
+                                            const year = new Date().getFullYear() - i - 15; // 15 is the minimum age
                                             return <option key={year} value={year}>{year}</option>;
                                         })}
                                     </Field>
