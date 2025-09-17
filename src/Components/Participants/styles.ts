@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { colors } from "../../config/constants";
 
 export const ParticipantsWrapper = styled.div`
     min-height: 100vh;
@@ -22,4 +23,12 @@ export const ParticipantsWrapper = styled.div`
 
 export const Paid = styled.td<{ paid: boolean }>`
     color: ${props => props.paid ? "green" : ""};
+`
+
+export const TableRow = styled.tr<{ highlighted: boolean }>`
+    background-color: ${props => props.highlighted ? colors.RuenOrange : "transparent"};
+    color: ${props => props.highlighted ? "white" : colors.OsogovoBlack};
+    &:hover {
+        background-color: ${colors.RuenOrange}; 
+    }
 `
