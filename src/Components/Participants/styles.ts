@@ -30,5 +30,7 @@ export const TableRow = styled.tr<{ highlighted: boolean }>`
     color: ${props => props.highlighted ? "white" : colors.OsogovoBlack};
     &:hover {
         background-color: ${colors.RuenOrange}; 
+        color: white;
+        cursor: pointer;
     }
 `
