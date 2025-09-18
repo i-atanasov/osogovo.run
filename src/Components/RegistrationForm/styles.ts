@@ -146,9 +146,6 @@ export const FormWrapper = styled.div<{ success?: boolean }>`
         font-family: 'Oswald', sans-serif;
         font-weight: normal;
         max-width: 300px;
-        // @media (min-width: 768px) {
-        //     margin-top: -30px;
-        // }
     }
     .server {
         margin: 0;

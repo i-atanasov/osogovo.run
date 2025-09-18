@@ -26,7 +26,7 @@ const RegistrationForm = () => {
     const [serverError, setServerError] = React.useState<string | null>(null);
     const [distance, setDistance] = React.useState<Distance>(Number(searchParams.get('product')) as Distance || 26);
     const [email, setEmail] = React.useState<string>('');
-    const price = products.find(product => product.distance === distance)?.price || 0;
+    const price = products.find(product => product.distance === distance)?.latePrice || 0;
     const success = searchParams.get('success') === 'true';
     const navigate = useNavigate();
     const initialValues: FormValues = {

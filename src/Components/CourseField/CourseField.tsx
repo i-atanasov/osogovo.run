@@ -19,7 +19,7 @@ export const CourseField: React.FC = () => {
                             {products.map((product, index) => (
                                 <tr key={index}>
                                     <th>{product.distance} км</th>
-                                    <td><span>{product.price} лв</span> до  септември</td>
+                                    {/* <td><span>{product.price} лв</span> до  септември</td> */}
                                     {product.latePrice && (
                                         <td><span>{product.latePrice} лв</span> след 17 септември</td>
                                     )}

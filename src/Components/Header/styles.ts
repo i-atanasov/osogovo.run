@@ -26,18 +26,13 @@ export const Header = styled.header<{ video?: string; image?: string }>`
         }
     }
     img {
-        width: 100%;
         height: 300px;
         object-fit: cover;
-        // padding: 120px 0 40px;
         @media (min-width: 768px) {
             height: 400px;
-            // padding: 100px 0 40px;
         }
         @media (min-width: 1200px) {
-            width: 100%;
             height: 500px;
-            // padding: 120px 40px;
         }
     }
     ${props => props.video && `
