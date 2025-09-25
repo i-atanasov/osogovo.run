@@ -55,7 +55,7 @@ export const FormWrapper = styled.div<{ success?: boolean }>`
         font-size: 15px;
         color: #30332F;
         line-height: normal;
-        margin: 0 0 20px 50px;
+        // margin: 0 0 20px 50px;
     }
     label {
         color: #666666;

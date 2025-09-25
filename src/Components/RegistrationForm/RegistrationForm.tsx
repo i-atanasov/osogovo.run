@@ -87,7 +87,8 @@ const RegistrationForm = () => {
         <ImageBackground image="https://pvmolqp98bhv9my7.public.blob.vercel-storage.com/registration-bg.png" />
             <FormWrapper success={success}>
                 <a href="/participants">Виж регистрираните участници</a>
-                {!success && <h1>Регистрация</h1>}
+                {!success && <h1>Регистрацията е затворена</h1>}
+                {!success && <p>Записване е възможно в деня на състезанието, между 7:45 и 8:45, до изчерпване на свободните номера</p>}
                 {!success ? <Formik
                     initialValues={ initialValues }
                     validate={ validateForm }
@@ -135,7 +136,7 @@ const RegistrationForm = () => {
                     }) => {
                         return (
                         <Form onChange={resetServerError}>
-                            <FormFields>
+                            {/* <FormFields>
                                 <FormSection>
                                     <label htmlFor="distance">Дистанция</label>
                                     <Field 
@@ -203,7 +204,7 @@ const RegistrationForm = () => {
                                 label="Регистрация"
                                 disabled={!dirty || isSubmitting || Object.keys(errors).length > 0}
                                 onClick={handleSubmit}
-                            />
+                            /> */}
                             {serverError && (
                                 <div className="server error">
                                     {serverError}
@@ -214,7 +215,7 @@ const RegistrationForm = () => {
                                     Моля, попълнете всички задължителни полета. При проблем, моля свържетe се с info@osogovo.run
                                 </div>
                             )}
-                            <PaymentDetails price={price} email={values.email} />
+                            {/* <PaymentDetails price={price} email={values.email} /> */}
                         </Form>
                     );
                 }}
