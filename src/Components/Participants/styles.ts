@@ -19,6 +19,9 @@ export const ParticipantsWrapper = styled.div`
             text-align: left;
         }
     }
+    @media (min-width: 768px) {
+        max-width: 600px;
+    }
 `
 
 export const Paid = styled.td<{ paid: boolean }>`

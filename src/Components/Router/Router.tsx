@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import RegistrationForm from "../RegistrationForm/RegistrationForm";
 import Home from "../Home/Home";
 import { Participants } from "../Participants/Participants";
+import RaceDay from "../RaceDay/RaceDay";
 
 const Router: React.FC = () => {
     return (
@@ -21,6 +22,10 @@ const Router: React.FC = () => {
                 <Route
                     path="/participants"
                     element={<Participants />}
+                />
+                <Route
+                    path="/race-day"
+                    element={<RaceDay />}
                 />
             </Routes>
         </BrowserRouter>
