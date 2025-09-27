@@ -16,7 +16,7 @@ type Participant = {
 
 export const Participants: React.FC = () => {
     const [participants, setParticipants] = React.useState<Participant[]>([]);
-    const [highlightedParticipant, setHighlightedParticipant] = React.useState<string | null>(null);
+    const [highlightedParticipant, setHighlightedParticipant] = React.useState<number | null>(null);
     const apiUrl = process.env.REACT_APP_REGISTRATION_API_URL;
 
     useEffect(() => {
@@ -44,7 +44,7 @@ export const Participants: React.FC = () => {
         return category;
     }
 
-    const renderTable = (categoryFilter?: string) => {
+    const renderTable = (categoryFilter?: string, distanceFilter?: string) => {
         return (
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                 <thead>
@@ -61,8 +61,9 @@ export const Participants: React.FC = () => {
                     {participants.map(participant => {
                         const category = getCategory(participant);
                         return (
-                            (categoryFilter && category !== categoryFilter) ? null :    
-                            <TableRow key={participant.startNumber} onClick={() => setHighlightedParticipant(participant.name)} highlighted={highlightedParticipant === participant.name}>
+                            (categoryFilter && !category.includes(categoryFilter)) ? null : 
+                            (distanceFilter && participant.distance !== distanceFilter) ? null :
+                            <TableRow key={participant.startNumber} onClick={() => setHighlightedParticipant(participant.startNumber)} highlighted={highlightedParticipant === participant.startNumber}>
                                 <td>{ participant.startNumber }</td>
                                 <td>{ participant.name }</td>
                                 <td>{ category }</td>
@@ -81,19 +82,30 @@ export const Participants: React.FC = () => {
         <HomeContainer>
             <HeaderComponent video='http://www.osogovo.run/media/osogovo-run-21-sec-low.mp4' />
             <ParticipantsWrapper>
-                <h1>Списък с участници - обща категория</h1>
-                <p>Моля, позволете малко време за отчитане на банковите преводи.</p>
-                {renderTable()}
-                <h1>Списък с участници - категория Жени</h1>
-                {renderTable('Ж')}
-                <h1>Списък с участници - категория Жени 40</h1>
-                {renderTable('Ж40')}
-                <h1>Списък с участници - категория Мъже 40</h1>
-                {renderTable('М40')}    
-                <h1>Списък с участници - категория Мъже 20</h1>
-                {renderTable('М20')}
-                <h1>Списък с участници - категория Жени 20</h1>
-                {renderTable('Ж20')}
+                <h1>Списък с участници - обща категория - 26 км</h1>
+                {renderTable(undefined, "26")}
+                <h1>Списък с участници - обща категория - 14 км</h1>
+                {renderTable(undefined, "14")}
+                <h1>Списък с участници - категория Жени - 26 км</h1>
+                {renderTable('Ж', "26")}
+                <h1>Списък с участници - категория Жени - 14 км</h1>
+                {renderTable('Ж', "14")}
+                <h1>Списък с участници - категория Жени 40 - 26 км</h1>
+                {renderTable('Ж40', "26")}
+                <h1>Списък с участници - категория Жени 40 - 14 км</h1>
+                {renderTable('Ж40', "14")}
+                <h1>Списък с участници - категория Мъже 40 - 26 км</h1>
+                {renderTable('М40', "26")}    
+                <h1>Списък с участници - категория Мъже 40 - 14 км</h1>
+                {renderTable('М40', "14")}
+                <h1>Списък с участници - категория Мъже 20 - 26 км</h1>
+                {renderTable('М20', "26")}
+                <h1>Списък с участници - категория Мъже 20 - 14 км</h1>
+                {renderTable('М20', "14")}
+                <h1>Списък с участници - категория Жени 20 - 26 км</h1>
+                {renderTable('Ж20', "26")}
+                <h1>Списък с участници - категория Жени 20 - 14 км</h1>
+                {renderTable('Ж20', "14")}
                 <p>Дистанция 26 км: {participants.filter(p => p.distance === "26").length} души</p>
                 <p>Дистанция 14 км: {participants.filter(p => p.distance === "14").length} души</p>
             </ParticipantsWrapper>
