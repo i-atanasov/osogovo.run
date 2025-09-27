@@ -25,6 +25,8 @@ const Home: React.FC = () => {
                     <Button label='Инструкции за състезателния ден' onClick={() => navigate('/race-day')} />
                     <p>Класиране на живо, следете тук:</p>
                     <Button label='Класиране на живо' onClick={() => navigate('/results')} />
+                    <p>Разпределение по категории:</p>
+                    <Button label='Разпределение по категории' onClick={() => navigate('/participants')} />
                 </PopUp>}
             <ProductField/>
             <CourseField/>

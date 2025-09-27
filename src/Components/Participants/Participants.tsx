@@ -81,7 +81,7 @@ export const Participants: React.FC = () => {
         <HomeContainer>
             <HeaderComponent video='http://www.osogovo.run/media/osogovo-run-21-sec-low.mp4' />
             <ParticipantsWrapper>
-                <h1>Списък с участници</h1>
+                <h1>Списък с участници - обща категория</h1>
                 <p>Моля, позволете малко време за отчитане на банковите преводи.</p>
                 {renderTable()}
                 <h1>Списък с участници - категория Жени</h1>
