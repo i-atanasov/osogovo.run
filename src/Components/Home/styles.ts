@@ -298,4 +298,5 @@ export const Dimmer = styled.div<{ show: boolean }>`
     height: 100%;
     background-color: rgba(0, 0, 0, 0.5);
     z-index: 99;
+    cursor: pointer;
 `
