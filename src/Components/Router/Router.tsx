@@ -4,6 +4,7 @@ import RegistrationForm from "../RegistrationForm/RegistrationForm";
 import Home from "../Home/Home";
 import { Participants } from "../Participants/Participants";
 import RaceDay from "../RaceDay/RaceDay";
+import { IframeResults } from "../IframeResults/IframeResults";
 
 const Router: React.FC = () => {
     return (
@@ -26,6 +27,10 @@ const Router: React.FC = () => {
                 <Route
                     path="/race-day"
                     element={<RaceDay />}
+                />
+                <Route
+                    path="/results"
+                    element={<IframeResults />}
                 />
             </Routes>
         </BrowserRouter>

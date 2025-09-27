@@ -288,3 +288,14 @@ export const InfoSign = styled.h1<{ inView: boolean }>`
         font-size: 80px;
     }
 `;
+
+export const Dimmer = styled.div<{ show: boolean }>`
+    display: ${props => props.show ? 'block' : 'none'};
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 99;
+`

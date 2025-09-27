@@ -11,6 +11,7 @@ type Participant = {
     distance: string;
     gender: string;
     team?: string;
+    startNumber: number;
 };
 
 export const Participants: React.FC = () => {
@@ -22,11 +23,59 @@ export const Participants: React.FC = () => {
         const fetchParticipants = async () => {
             const response = await axios.get(`${apiUrl}/participants`);
             const data = response.data;
-            data.sort((a: Participant, b: Participant) => a.distance.localeCompare(b.distance) || a.name.localeCompare(b.name));
+            data.sort((a: Participant, b: Participant) => a.startNumber - b.startNumber);
             setParticipants(data);
         };
         fetchParticipants();
     }, []);
+
+    const getCategory = (participant: Participant) => {
+        const birthYear = parseInt(participant.birth, 10);
+        const currentYear = new Date().getFullYear();
+        const age = currentYear - birthYear;
+        let category = "";
+        if (age < 21) {
+            category = participant.gender === "male" ? "М20" : "Ж20";
+        } else if (age > 39) {
+            category = participant.gender === "male" ? "М40" : "Ж40";
+        } else {
+            category = participant.gender === "male" ? "М" : "Ж";
+        }
+        return category;
+    }
+
+    const renderTable = (categoryFilter?: string) => {
+        return (
+            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <thead>
+                    <tr>
+                        <th>Номер</th>
+                        <th>Име</th>
+                        <th>Категория</th>
+                        <th>Дистанция</th>
+                        <th>Отбор</th>
+                        <th>Статус</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {participants.map(participant => {
+                        const category = getCategory(participant);
+                        return (
+                            (categoryFilter && category !== categoryFilter) ? null :    
+                            <TableRow key={participant.startNumber} onClick={() => setHighlightedParticipant(participant.name)} highlighted={highlightedParticipant === participant.name}>
+                                <td>{ participant.startNumber }</td>
+                                <td>{ participant.name }</td>
+                                <td>{ category }</td>
+                                <td>{ participant.distance }</td>
+                                <td>{ participant.team }</td>
+                                <Paid paid={participant.paid}>{ participant.paid ? "Регистриран" : "Очаква плащане" }</Paid>
+                            </TableRow>
+                        );
+                    })}
+                </tbody>
+            </table>
+        )
+    }
 
     return (
         <HomeContainer>
@@ -34,43 +83,17 @@ export const Participants: React.FC = () => {
             <ParticipantsWrapper>
                 <h1>Списък с участници</h1>
                 <p>Моля, позволете малко време за отчитане на банковите преводи.</p>
-                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                    <thead>
-                        <tr>
-                            <th>Име</th>
-                            <th>Категория</th>
-                            <th>Дистанция</th>
-                            <th>Отбор</th>
-                            <th>Статус</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {participants.map(participant => {
-                            const birthYear = parseInt(participant.birth, 10);
-                            const currentYear = new Date().getFullYear();
-                            const age = currentYear - birthYear;
-                            let category = "";
-                            if (age < 21) {
-                                category = participant.gender === "male" ? "М20" : "Ж20";
-                            } else if (age > 39) {
-                                category = participant.gender === "male" ? "М40" : "Ж40";
-                            } else if (age > 59) {
-                                category = participant.gender === "male" ? "М60" : "Ж60";
-                            } else {
-                                category = participant.gender === "male" ? "М" : "Ж";
-                            }
-                            return (
-                                <TableRow key={participant.name} onClick={() => setHighlightedParticipant(participant.name)} highlighted={highlightedParticipant === participant.name}>
-                                    <td>{ participant.name }</td>
-                                    <td>{ category }</td>
-                                    <td>{ participant.distance }</td>
-                                    <td>{ participant.team }</td>
-                                    <Paid paid={participant.paid}>{ participant.paid ? "Регистриран" : "Очаква плащане" }</Paid>
-                                </TableRow>
-                            );
-                            })}
-                    </tbody>
-                </table>
+                {renderTable()}
+                <h1>Списък с участници - категория Жени</h1>
+                {renderTable('Ж')}
+                <h1>Списък с участници - категория Жени 40</h1>
+                {renderTable('Ж40')}
+                <h1>Списък с участници - категория Мъже 40</h1>
+                {renderTable('М40')}    
+                <h1>Списък с участници - категория Мъже 20</h1>
+                {renderTable('М20')}
+                <h1>Списък с участници - категория Жени 20</h1>
+                {renderTable('Ж20')}
                 <p>Дистанция 26 км: {participants.filter(p => p.distance === "26").length} души</p>
                 <p>Дистанция 14 км: {participants.filter(p => p.distance === "14").length} души</p>
             </ParticipantsWrapper>

@@ -14,12 +14,12 @@ export const ButtonWrapper = styled.button<{ highlight?: boolean, disabled?: boo
     padding: 20px 30px;
     background-color: ${colors.RuenOrange};
     color: white;
+    line-height: 100%;
     border: 1px solid transparent;
     border-radius: 40px;
     text-transform: uppercase;
     font-family: 'Oswald-Bold', sans-serif;
     cursor: pointer;
-    line-height: 14px;
     font-size: 20px;
     width: fit-content;
     &:hover {
