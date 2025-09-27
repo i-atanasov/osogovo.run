@@ -21,6 +21,10 @@ export const ParticipantsWrapper = styled.div`
     }
     @media (min-width: 768px) {
         max-width: 600px;
+    }   
+    a {
+        text-decoration: none;
+        color: ${colors.RuenOrange};
     }
 `
 

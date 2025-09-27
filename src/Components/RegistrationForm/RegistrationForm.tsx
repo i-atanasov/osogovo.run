@@ -86,7 +86,8 @@ const RegistrationForm = () => {
         <HeaderComponent hideDate image="https://pvmolqp98bhv9my7.public.blob.vercel-storage.com/Profile.svg" />
         <ImageBackground image="https://pvmolqp98bhv9my7.public.blob.vercel-storage.com/registration-bg.png" />
             <FormWrapper success={success}>
-                <a href="/participants">Виж регистрираните участници</a>
+                <a href="/participants">Виж регистрираните участници</a><br /><br />
+                <a href="/results">Виж резултатите</a>
                 {!success && <h1>Регистрацията е затворена</h1>}
                 {!success && <p>Записване е възможно в деня на състезанието, между 7:45 и 8:45, до изчерпване на свободните номера</p>}
                 {!success ? <Formik

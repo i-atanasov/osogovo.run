@@ -81,7 +81,10 @@ export const Participants: React.FC = () => {
     return (
         <HomeContainer>
             <HeaderComponent video='http://www.osogovo.run/media/osogovo-run-21-sec-low.mp4' />
+
             <ParticipantsWrapper>
+                <a href="/results">Виж резултатите</a><br /><br />
+                <a href="/race-day">Виж инструкции за състезателния ден</a>
                 <h1>Списък с участници - обща категория / 14 км</h1>
                 {renderTable(undefined, "14")}
                 <h1>Списък с участници - обща категория / 26 км</h1>
