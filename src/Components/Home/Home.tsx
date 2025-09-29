@@ -21,12 +21,10 @@ const Home: React.FC = () => {
             {showPopUp && <Dimmer show={showPopUp} onClick={() => setShowPopUp(false)} />}
             {showPopUp && 
                 <PopUp showPopUp={showPopUp} closePopUp={setShowPopUp}>
-                    <p>Инструкции за стартовия ден, вижте тук:</p>
-                    <Button label='Инструкции за състезателния ден' onClick={() => navigate('/race-day')} />
-                    <p>Класиране на живо, следете тук:</p>
+                    <p>Класиране вижте тук:</p>
                     <Button label='Класиране на живо' onClick={() => navigate('/results')} />
-                    <p>Разпределение по категории:</p>
-                    <Button label='Разпределение по категории' onClick={() => navigate('/participants')} />
+                    <p>За снимки посетете нашата фейсбук страница:</p>
+                    <Button label='Фейсбук страница' onClick={() => window.open('https://www.facebook.com/osogovorun', '_blank')} />
                 </PopUp>}
             <ProductField/>
             <CourseField/>
