@@ -11,7 +11,7 @@ type Participant = {
     distance: string;
     gender: string;
     team?: string;
-    startNumber: number;
+    bib: number;
 };
 
 export const Participants: React.FC = () => {
@@ -23,7 +23,7 @@ export const Participants: React.FC = () => {
         const fetchParticipants = async () => {
             const response = await axios.get(`${apiUrl}/participants`);
             const data = response.data;
-            data.sort((a: Participant, b: Participant) => a.startNumber - b.startNumber);
+            data.sort((a: Participant, b: Participant) => a.bib - b.bib);
             setParticipants(data);
         };
         fetchParticipants();
@@ -63,8 +63,8 @@ export const Participants: React.FC = () => {
                         return (
                             (categoryFilter && !category.includes(categoryFilter)) ? null : 
                             (distanceFilter && participant.distance !== distanceFilter) ? null :
-                            <TableRow key={participant.startNumber} onClick={() => setHighlightedParticipant(participant.startNumber)} highlighted={highlightedParticipant === participant.startNumber}>
-                                <td>{ participant.startNumber }</td>
+                            <TableRow key={participant.bib} onClick={() => setHighlightedParticipant(participant.bib)} highlighted={highlightedParticipant === participant.bib}>
+                                <td>{ participant.bib }</td>
                                 <td>{ participant.name }</td>
                                 <td>{ category }</td>
                                 <td>{ participant.distance }</td>
