@@ -22,7 +22,7 @@ const Home: React.FC = () => {
             {showPopUp && 
                 <PopUp showPopUp={showPopUp} closePopUp={setShowPopUp}>
                     <p>Класиране вижте тук:</p>
-                    <Button label='Класиране на живо' onClick={() => navigate('/results')} />
+                    <Button label='Класиране' onClick={() => navigate('/participants')} />
                     <p>За снимки посетете нашата фейсбук страница:</p>
                     <Button label='Фейсбук страница' onClick={() => window.open('https://www.facebook.com/osogovorun', '_blank')} />
                 </PopUp>}

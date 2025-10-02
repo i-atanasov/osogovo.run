@@ -45,12 +45,13 @@ export const Participants: React.FC = () => {
         }
         return category;
     }
-
     const renderTable = (categoryFilter?: string, distanceFilter?: string) => {
+        let position = 1;
         return (
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                 <thead>
                     <tr>
+                        <th>Позиция</th>
                         <th>Номер</th>
                         <th>Име</th>
                         <th>Категория</th>
@@ -68,13 +69,15 @@ export const Participants: React.FC = () => {
                         const ruenA = a.ruen ?? "";
                         const ruenB = b.ruen ?? "";
                         return ruenA.localeCompare(ruenB);
-                    }).map(participant => {
+                    }).map((participant) => {
                         const category = getCategory(participant);
                         const final = participant.distance === '14' ? 'osogovo' : 'ruen'
+
                         return (
                             (categoryFilter && !category.includes(categoryFilter)) ? null : 
                             (distanceFilter && participant.distance !== distanceFilter) ? null :
                             <TableRow key={participant.bib} onClick={() => setHighlightedParticipant(participant.bib)} highlighted={highlightedParticipant === participant.bib}>
+                                <td>{ position++ }</td>
                                 <td>{ participant.bib }</td>
                                 <td>{ participant.name }</td>
                                 <td>{ category }</td>
