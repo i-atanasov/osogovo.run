@@ -12,6 +12,8 @@ type Participant = {
     gender: string;
     team?: string;
     bib: number;
+    osogovo?: string
+    ruen?: string
 };
 
 export const Participants: React.FC = () => {
@@ -54,12 +56,21 @@ export const Participants: React.FC = () => {
                         <th>Категория</th>
                         <th>Дистанция</th>
                         <th>Отбор</th>
-                        <th>Статус</th>
+                        <th>Финал</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {participants.map(participant => {
+                    {participants.sort((a, b) => {
+                        const osogovoA = a.osogovo ?? "";
+                        const osogovoB = b.osogovo ?? "";
+                        const osogovoCompare = osogovoA.localeCompare(osogovoB);
+                        if (osogovoCompare !== 0) return osogovoCompare;
+                        const ruenA = a.ruen ?? "";
+                        const ruenB = b.ruen ?? "";
+                        return ruenA.localeCompare(ruenB);
+                    }).map(participant => {
                         const category = getCategory(participant);
+                        const final = participant.distance === '14' ? 'osogovo' : 'ruen'
                         return (
                             (categoryFilter && !category.includes(categoryFilter)) ? null : 
                             (distanceFilter && participant.distance !== distanceFilter) ? null :
@@ -69,7 +80,7 @@ export const Participants: React.FC = () => {
                                 <td>{ category }</td>
                                 <td>{ participant.distance }</td>
                                 <td>{ participant.team }</td>
-                                <Paid paid={participant.paid}>{ participant.paid ? "Регистриран" : "Очаква плащане" }</Paid>
+                                <td> { participant[final] } </td>
                             </TableRow>
                         );
                     })}
