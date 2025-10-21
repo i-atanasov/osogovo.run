@@ -5,6 +5,7 @@ import Home from "../Home/Home";
 import { Participants } from "../Participants/Participants";
 import RaceDay from "../RaceDay/RaceDay";
 import { IframeResults } from "../IframeResults/IframeResults";
+import { IframeFeedback } from "../FeedbackPage/FeedbackPage";
 
 const Router: React.FC = () => {
     return (
@@ -31,6 +32,10 @@ const Router: React.FC = () => {
                 <Route
                     path="/results"
                     element={<IframeResults />}
+                />
+                <Route
+                    path="/feedback"
+                    element={<IframeFeedback />}
                 />
             </Routes>
         </BrowserRouter>

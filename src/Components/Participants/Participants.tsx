@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import axios from "axios";
 import { HomeContainer } from "../Home/styles";
 import { HeaderComponent } from "../Header/Header";
-import { Paid, ParticipantsWrapper, TableRow } from "./styles";
+import { ParticipantsWrapper, TableRow } from "./styles";
 
 type Participant = {
     name: string;
@@ -83,7 +83,7 @@ export const Participants: React.FC = () => {
                                 <td>{ category }</td>
                                 <td>{ participant.distance }</td>
                                 <td>{ participant.team }</td>
-                                <td> { participant[final] } </td>
+                                <td>{ participant[final] }</td>
                             </TableRow>
                         );
                     })}
