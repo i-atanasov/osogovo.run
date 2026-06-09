@@ -30,7 +30,7 @@ export const HeaderComponent: React.FC<{ hideDate?: boolean, video?: string; ima
 
     return (
         <video
-            poster="https://pvmolqp98bhv9my7.public.blob.vercel-storage.com/10.jpg"
+            poster="https://pvmolqp98bhv9my7.public.blob.vercel-storage.com/home_26_02.jpg"
             ref={refVideo}
             autoPlay
             loop
