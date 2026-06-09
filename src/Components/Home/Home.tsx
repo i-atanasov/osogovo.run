@@ -21,10 +21,8 @@ const Home: React.FC = () => {
             {showPopUp && <Dimmer show={showPopUp} onClick={() => setShowPopUp(false)} />}
             {showPopUp && 
                 <PopUp showPopUp={showPopUp} closePopUp={setShowPopUp}>
-                    <p>Класиране вижте тук:</p>
-                    <Button label='Класиране' onClick={() => navigate('/participants')} />
-                    <p>За снимки посетете нашата фейсбук страница:</p>
-                    <Button label='Фейсбук страница' onClick={() => window.open('https://www.facebook.com/osogovorun', '_blank')} />
+                    <p>Новата дата за Осогово Рън е 27 септември 2026!</p>
+                    <p>Регистрацията ще бъде отворена скоро.</p>
                 </PopUp>}
             <ProductField/>
             <CourseField/>

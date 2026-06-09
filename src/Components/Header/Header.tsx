@@ -48,7 +48,7 @@ export const HeaderComponent: React.FC<{ hideDate?: boolean, video?: string; ima
             <Button highlight={true} onClick={() => {
                 window.location.href = '/register'
             }} label="Регистрирай се" />
-            {!hideDate && <Date>28<br/> септември</Date>}
+            {!hideDate && <Date>27<br/> септември</Date>}
         </Header>
     );
 }
