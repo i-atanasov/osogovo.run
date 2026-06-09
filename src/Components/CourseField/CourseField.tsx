@@ -19,9 +19,9 @@ export const CourseField: React.FC = () => {
                             {products.map((product, index) => (
                                 <tr key={index}>
                                     <th>{product.distance} км</th>
-                                    {/* <td><span>{product.price} лв</span> до  септември</td> */}
+                                    {/* <td><span>{product.price} eur</span> до  септември</td> */}
                                     {product.latePrice && (
-                                        <td><span>{product.latePrice} лв</span> след 17 септември</td>
+                                        <td><span>{product.latePrice} eur</span> след 17 септември</td>
                                     )}
                                 </tr>
                             ))}
@@ -33,7 +33,7 @@ export const CourseField: React.FC = () => {
             </MapWrapper>
             <RegisterAction>
                 <img src='https://pvmolqp98bhv9my7.public.blob.vercel-storage.com/Profile_Race_OR.png' alt="Course Profile" className="course-profile" />
-                <Button label="Регистрирай се" onClick={() => {
+                <Button disabled label="Регистрирай се" onClick={() => {
                     navigate("/register");
                 }} />
             </RegisterAction>

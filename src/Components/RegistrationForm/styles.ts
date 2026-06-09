@@ -90,6 +90,9 @@ export const FormWrapper = styled.div<{ success?: boolean }>`
     }
     .checkbox-label {
         position: relative;
+        > p {
+            margin: 0 0 0 40px;
+        }
         input {
             position: absolute;
             opacity: 0;

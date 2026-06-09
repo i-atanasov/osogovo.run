@@ -45,7 +45,7 @@ export const HeaderComponent: React.FC<{ hideDate?: boolean, video?: string; ima
             {image && <img src={image} alt="Header Image" />}
             {children}
             <Logo href="/" />
-            <Button highlight={true} onClick={() => {
+            <Button disabled highlight={true} onClick={() => {
                 window.location.href = '/register'
             }} label="Регистрирай се" />
             {!hideDate && <Date>27<br/> септември</Date>}
