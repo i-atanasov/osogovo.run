@@ -55,7 +55,6 @@ export const FormWrapper = styled.div<{ success?: boolean }>`
         font-size: 15px;
         color: #30332F;
         line-height: normal;
-        // margin: 0 0 20px 50px;
     }
     label {
         color: #666666;
@@ -149,21 +148,21 @@ export const FormWrapper = styled.div<{ success?: boolean }>`
         font-family: 'Oswald', sans-serif;
         font-weight: normal;
         max-width: 300px;
+        margin-bottom: 15px;
+    }
     }
     .server {
-        margin: 0;
-            transform: translateY(-100%);
-        @media (min-width: 768px) {
-        }
+        margin: 15px 0;
+        padding: 12px;
+        background-color: #ffe6e6;
+        border-radius: 4px;
+        border-left: 4px solid ${colors.RuenOrange};
     }
     > form {
         position: relative;
     }
     ${ButtonWrapper} {
         margin: 20px 0;
-        @media (min-width: 768px) {
-            transform: translateY(-100%);
-        }
     }
 `
 
@@ -202,7 +201,6 @@ export const FormFields = styled.div`
     justify-content: space-between;
     @media (min-width: 768px) {
         gap: 40px;
-        padding-bottom: 40px;
     }
 `
 

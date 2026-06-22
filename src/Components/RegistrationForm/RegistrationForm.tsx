@@ -256,10 +256,6 @@ const RegistrationForm = () => {
                                     <Price>Текуща обща сума: {total} eur.</Price>
                                 </FormSection>
                             </FormFields>
-                            <Button
-                                label={isSubmitting ? 'Пренасочване...' : 'Продължи към плащане'}
-                                onClick={handleSubmit}
-                            />
                             {serverError && (
                                 <div className="server error">
                                     {serverError}
@@ -271,6 +267,10 @@ const RegistrationForm = () => {
                                 </div>
                             )}
                             <PaymentDetails basePrice={price} tShirtPrice={tShirtPrice} withTShirt={values.withTShirt} />
+                            <Button
+                                label={isSubmitting ? 'Пренасочване...' : 'Продължи към плащане'}
+                                onClick={handleSubmit}
+                            />
                         </Form>
                     );
                 }}
