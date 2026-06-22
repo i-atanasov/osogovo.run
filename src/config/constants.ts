@@ -15,8 +15,9 @@ export const products: ProductBoxProps[] = [
         gpx: 'https://pvmolqp98bhv9my7.public.blob.vercel-storage.com/Osogovo_Run_14K_2025.gpx',
         price: 20,
         latePrice: 25,
-        priceLabel: '<b>Такса:</b> 20 eur (до 17 септември)',
-        latePriceLabel: '<b>Такса:</b> 25 eur',
+        priceLabel: '<b>Такса:</b> €20 (до 17 септември)',
+        latePriceLabel: '<b>Такса:</b> €25',
+        tShirtPrice: 25,
     },
     {
         distance: 26,
@@ -32,8 +33,9 @@ export const products: ProductBoxProps[] = [
         gpx: 'https://pvmolqp98bhv9my7.public.blob.vercel-storage.com/Osogovo_Run_2025.gpx',
         price: 25,
         latePrice: 30,
-        priceLabel: '<b>Такса:</b> 25 eur (до 17 септември)',
-        latePriceLabel: '<b>Такса:</b> 30 eur',
+        priceLabel: '<b>Такса:</b> €25 (до 17 септември)',
+        latePriceLabel: '<b>Такса:</b> €30',
+        tShirtPrice: 25,
     },
 ]
 
@@ -46,6 +48,12 @@ export const colors = {
     RuenOrange: `#ef5223`,
     OsogovoBlack: `#30332F`
 }
+
+export const tShirtImages = {
+    front: 'https://pvmolqp98bhv9my7.public.blob.vercel-storage.com/Osogovo_Tshirt_Mockup.jpg',
+    // front: 'https://pvmolqp98bhv9my7.public.blob.vercel-storage.com/tshirt-front.png',
+    // back: 'https://pvmolqp98bhv9my7.public.blob.vercel-storage.com/tshirt-back.png',
+};
 
 export const details = {
     conditionsTitle: 'Условия за участие',

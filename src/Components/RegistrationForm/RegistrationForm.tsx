@@ -1,12 +1,12 @@
 import React from 'react';
 import { Field, Form, Formik, FormikHelpers } from 'formik';
-import { FormFields, FormSection, RegistrationFormWrapper, ImageBackground, FormWrapper, FormResult, Price, IBANWrapper } from './styles';
+import { FormFields, FormSection, RegistrationFormWrapper, ImageBackground, FormWrapper, Price, IBANWrapper, TShirtCardButton, TShirtSelector, TShirtSizes, TShirtSizeButton } from './styles';
 import { useSearchParams } from 'react-router-dom';
 import { validateForm } from './validation';
 import { HeaderComponent } from '../Header/Header';
 import Button from '../Button/Button';
 import axios from 'axios';
-import { products } from '../../config/constants';
+import { products, tShirtImages } from '../../config/constants';
 
 type Distance = 14 | 26;
 
@@ -18,6 +18,8 @@ export interface FormValues {
     termsAndConditions: boolean;
     birth: string;
     team?: string;
+    withTShirt: boolean;
+    tShirtSize: '' | 'S' | 'M' | 'L' | 'XL';
     paid: boolean;
 }
 
@@ -25,7 +27,9 @@ const RegistrationForm = () => {
     const [searchParams] = useSearchParams();
     const [serverError, setServerError] = React.useState<string | null>(null);
     const [distance, setDistance] = React.useState<Distance>(Number(searchParams.get('product')) as Distance || 26);
-    const price = products.find(product => product.distance === distance)?.price || 0;
+    const selectedProduct = products.find(product => product.distance === distance);
+    const price = selectedProduct?.price || 0;
+    const tShirtPrice = selectedProduct?.tShirtPrice || 0;
     const initialValues: FormValues = {
         email: '',
         name: '',
@@ -34,21 +38,39 @@ const RegistrationForm = () => {
         termsAndConditions: false,
         birth: '',
         team: '',
+        withTShirt: false,
+        tShirtSize: '',
         paid: false
     };
     const apiUrl = process.env.REACT_APP_REGISTRATION_API_URL;
+    const fallbackTShirtImage = 'https://pvmolqp98bhv9my7.public.blob.vercel-storage.com/product-box-image.png';
     const resetServerError = () => {
         setServerError(null);
     }
 
+    const handleImageFallback = (event: React.SyntheticEvent<HTMLImageElement>) => {
+        const image = event.currentTarget;
+        if (image.src !== fallbackTShirtImage) {
+            image.src = fallbackTShirtImage;
+        }
+    };
+
     interface PaymentDetailsProps {
-        price: number;
+        basePrice: number;
+        tShirtPrice: number;
+        withTShirt: boolean;
     }
 
-    const PaymentDetails: React.FC<PaymentDetailsProps> = ({ price }) => {
+    const PaymentDetails: React.FC<PaymentDetailsProps> = ({ basePrice, tShirtPrice, withTShirt }) => {
+        const total = withTShirt ? basePrice + tShirtPrice : basePrice;
+
         return (
             <>
-                <Price>Плащане на стартова такса: {price} eur.</Price>
+                <Price>Плащане на стартова такса: {basePrice} eur.</Price>
+                {withTShirt && (
+                    <Price>Тениска: {tShirtPrice} eur.</Price>
+                )}
+                <Price>Общо: {total} eur.</Price>
                 <IBANWrapper>
                     <p>След валидиране на данните ще бъдете пренасочени към защитената платежна страница на Stripe.</p>
                     <p>Регистрацията се потвърждава след успешно плащане и сървърна проверка на транзакцията.</p>
@@ -117,6 +139,8 @@ const RegistrationForm = () => {
                         values,
                         setFieldValue,
                     }) => {
+                        const total = values.withTShirt ? price + tShirtPrice : price;
+
                         return (
                         <Form onChange={resetServerError}>
                             <FormFields>
@@ -150,8 +174,6 @@ const RegistrationForm = () => {
                                         minLength={4}
                                     />
                                     {errors.email && touched.email && <div className="error">{errors.email}</div>}
-                                </FormSection>
-                                <FormSection>
                                     <label htmlFor="gender">Пол</label>
                                     <Field as="select" name="gender" id="gender">
                                         <option value="" hidden></option>
@@ -184,6 +206,55 @@ const RegistrationForm = () => {
                                         <div className="error">{errors.termsAndConditions}</div>
                                     )}
                                 </FormSection>
+                                <FormSection>
+                                    <label>Добави тениска (по желание)</label>
+                                    <TShirtSelector>
+                                        <TShirtCardButton
+                                            type="button"
+                                            onClick={() => {
+                                                const nextSelected = !values.withTShirt;
+                                                setFieldValue('withTShirt', nextSelected);
+                                                if (!nextSelected) {
+                                                    setFieldValue('tShirtSize', '');
+                                                }
+                                            }}
+                                            selected={values.withTShirt}
+                                            grayscale={!values.withTShirt}
+                                        >
+                                            <img src={tShirtImages.front} alt="Официална тениска" onError={handleImageFallback} />
+                                            <span className="hover-cta">{values.withTShirt ? 'Премахни тениска' : 'Добави тениска'}</span>
+                                            <span className="caption">
+                                                {values.withTShirt
+                                                    ? `Тениската е добавена (+${tShirtPrice} eur) - натиснете за премахване`
+                                                    : `Добави тениска (+${tShirtPrice} eur)`}
+                                            </span>
+                                        </TShirtCardButton>
+                                    </TShirtSelector>
+                                    <Field type="hidden" name="withTShirt" />
+                                    <Field type="hidden" name="tShirtSize" />
+
+                                    {values.withTShirt && (
+                                        <>
+                                            <label>Избери размер</label>
+                                            <TShirtSizes>
+                                                {(['S', 'M', 'L', 'XL'] as const).map((size) => (
+                                                    <TShirtSizeButton
+                                                        key={size}
+                                                        type="button"
+                                                        selected={values.tShirtSize === size}
+                                                        onClick={() => setFieldValue('tShirtSize', size)}
+                                                    >
+                                                        {size}
+                                                    </TShirtSizeButton>
+                                                ))}
+                                            </TShirtSizes>
+                                            {errors.tShirtSize && touched.withTShirt && (
+                                                <div className="error">{errors.tShirtSize}</div>
+                                            )}
+                                        </>
+                                    )}
+                                    <Price>Текуща обща сума: {total} eur.</Price>
+                                </FormSection>
                             </FormFields>
                             <Button
                                 label={isSubmitting ? 'Пренасочване...' : 'Продължи към плащане'}
@@ -199,7 +270,7 @@ const RegistrationForm = () => {
                                     Моля, попълнете всички задължителни полета. При проблем, моля свържетe се с info@osogovo.run
                                 </div>
                             )}
-                            <PaymentDetails price={price} />
+                            <PaymentDetails basePrice={price} tShirtPrice={tShirtPrice} withTShirt={values.withTShirt} />
                         </Form>
                     );
                 }}

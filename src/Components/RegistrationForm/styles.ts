@@ -202,6 +202,7 @@ export const FormFields = styled.div`
     justify-content: space-between;
     @media (min-width: 768px) {
         gap: 40px;
+        padding-bottom: 40px;
     }
 `
 
@@ -248,5 +249,94 @@ export const IBANWrapper = styled.div`
     text-align: left;
     p {
         margin: 5px 0;
+    }
+`
+
+export const TShirtSelector = styled.div`
+    display: grid;
+    gap: 16px;
+    grid-template-columns: 1fr;
+`
+
+export const TShirtCardButton = styled.button<{ selected?: boolean; grayscale?: boolean }>`
+    border: ${props => props.selected ? `2px solid ${colors.RuenOrange}` : '2px solid transparent'};
+    border-radius: 12px;
+    background: transparent;
+    display: block;
+    position: relative;
+    width: 100%;
+    padding: 10px;
+    cursor: pointer;
+    text-align: left;
+    color: ${colors.OsogovoBlack};
+    transition: border-color 0.2s ease;
+
+
+
+    .hover-cta {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 3;
+        padding: 10px 14px;
+        border-radius: 999px;
+        background: rgba(48, 51, 47, 0.85);
+        color: #fff;
+        font-family: 'Oswald', sans-serif;
+        font-size: 16px;
+        letter-spacing: 0.3px;
+        opacity: 0;
+        transition: opacity 0.2s ease;
+        pointer-events: none;
+    }
+
+    &:hover .hover-cta {
+        opacity: 1;
+    }
+
+    img {
+        display: block;
+        width: 100%;
+        aspect-ratio: 1 / 1;
+        min-height: 220px;
+        object-fit: cover;
+        border-radius: 10px;
+        overflow: hidden;
+        background: #f8f8f8;
+        border: 1px solid #e7e7e7;
+        filter: ${props => props.grayscale ? 'grayscale(1)' : 'none'};
+    }
+
+    .caption {
+        display: block;
+        margin-top: 10px;
+        font-family: 'Oswald', sans-serif;
+        font-size: 16px;
+        color: ${colors.OsogovoBlack};
+    }
+`
+
+export const TShirtSizes = styled.div`
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
+`
+
+export const TShirtSizeButton = styled.button<{ selected?: boolean }>`
+    min-width: 54px;
+    padding: 8px 12px;
+    border-radius: 999px;
+    border: 1px solid ${props => props.selected ? colors.RuenOrange : '#cfcfcf'};
+    background: ${props => props.selected ? colors.RuenOrange : '#fff'};
+    color: ${props => props.selected ? '#fff' : colors.OsogovoBlack};
+    font-family: 'Oswald', sans-serif;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+        border-color: ${colors.RuenOrange};
     }
 `
