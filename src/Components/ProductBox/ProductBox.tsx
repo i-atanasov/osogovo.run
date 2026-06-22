@@ -35,7 +35,7 @@ const ProductBox = (product: ProductBoxProps) => {
                 <p dangerouslySetInnerHTML={{ __html: product.totalDistance }}></p>
                 <p dangerouslySetInnerHTML={{ __html: product.elevation }}></p>
                 <p dangerouslySetInnerHTML={{ __html: product.cutOffTime }}></p>
-                <p className="highlight" dangerouslySetInnerHTML={{ __html: product.latePriceLabel || '' }}></p>
+                <p className="highlight" dangerouslySetInnerHTML={{ __html: product.priceLabel || '' }}></p>
                 {/* <a href="/participants">Виж регистрираните участници</a> */}
                 {/* <a href="/results">Виж резултатите</a> */}
             </TextWrapper>

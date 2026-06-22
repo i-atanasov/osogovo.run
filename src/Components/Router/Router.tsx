@@ -1,6 +1,8 @@
 import React from "react"
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import RegistrationForm from "../RegistrationForm/RegistrationForm";
+import PaymentSuccessPage from "../RegistrationForm/PaymentSuccessPage";
+import PaymentCancelPage from "../RegistrationForm/PaymentCancelPage";
 import Home from "../Home/Home";
 import { Participants } from "../Participants/Participants";
 import RaceDay from "../RaceDay/RaceDay";
@@ -20,6 +22,14 @@ const Router: React.FC = () => {
                 <Route
                     path="/register"
                     element={<RegistrationForm />}
+                />
+                <Route
+                    path="/register/success"
+                    element={<PaymentSuccessPage />}
+                />
+                <Route
+                    path="/register/cancel"
+                    element={<PaymentCancelPage />}
                 />
                 <Route
                     path="/participants"

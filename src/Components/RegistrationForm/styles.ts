@@ -218,6 +218,18 @@ export const FormResult = styled.div`
     }
 `
 
+export const PaymentActions = styled.div`
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-top: 24px;
+
+    ${ButtonWrapper} {
+        margin: 0;
+        transform: none;
+    }
+`
+
 export const Price = styled.div`
     color: ${colors.RuenOrange};
     font-size: 24px;
