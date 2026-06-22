@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import axios from "axios";
 import { HomeContainer } from "../Home/styles";
 import { HeaderComponent } from "../Header/Header";
-import { ParticipantsWrapper, TableRow } from "./styles";
+import { Paid, ParticipantsWrapper, TableRow } from "./styles";
 
 type Participant = {
     name: string;
@@ -19,6 +19,7 @@ type Participant = {
 export const Participants: React.FC = () => {
     const [participants, setParticipants] = React.useState<Participant[]>([]);
     const [highlightedParticipant, setHighlightedParticipant] = React.useState<number | null>(null);
+    const [loading, setLoading] = React.useState(true);
     const apiUrl = process.env.REACT_APP_REGISTRATION_API_URL;
 
     useEffect(() => {
@@ -27,6 +28,7 @@ export const Participants: React.FC = () => {
             const data = response.data;
             data.sort((a: Participant, b: Participant) => a.bib - b.bib);
             setParticipants(data);
+            setLoading(false);
         };
         fetchParticipants();
     }, []);
@@ -45,21 +47,24 @@ export const Participants: React.FC = () => {
         }
         return category;
     }
-    const renderTable = (categoryFilter?: string, distanceFilter?: string) => {
+    const renderTable = (categoryFilter?: string, distanceFilter?: string, showResult?: string) => {
         let position = 1;
         return (
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                 <thead>
                     <tr>
                         <th>Позиция</th>
-                        <th>Номер</th>
+                        {/* <th>Номер</th> */}
                         <th>Име</th>
                         <th>Категория</th>
                         <th>Дистанция</th>
                         <th>Отбор</th>
-                        <th>Финал</th>
+                        {showResult ? 
+                            <th>Финал</th> : 
+                            <th>Статус</th>}
                     </tr>
                 </thead>
+                {loading && <p>Зареждане...</p>}
                 <tbody>
                     {participants.sort((a, b) => {
                         const osogovoA = a.osogovo ?? "";
@@ -71,19 +76,20 @@ export const Participants: React.FC = () => {
                         return ruenA.localeCompare(ruenB);
                     }).map((participant) => {
                         const category = getCategory(participant);
-                        const final = participant.distance === '14' ? 'osogovo' : 'ruen'
+                        const final = participant.distance === '14' ? 'osogovo' : 'ruen';
 
                         return (
                             (categoryFilter && !category.includes(categoryFilter)) ? null : 
                             (distanceFilter && participant.distance !== distanceFilter) ? null :
-                            <TableRow key={participant.bib} onClick={() => setHighlightedParticipant(participant.bib)} highlighted={highlightedParticipant === participant.bib}>
+                            (showResult && participant[final] !== showResult) ? null :
+                            <TableRow key={position} highlighted={false} >
                                 <td>{ position++ }</td>
-                                <td>{ participant.bib }</td>
+                                {/* <td>{ participant.bib }</td> */}
                                 <td>{ participant.name }</td>
                                 <td>{ category }</td>
                                 <td>{ participant.distance }</td>
                                 <td>{ participant.team }</td>
-                                <td>{ participant[final] }</td>
+                                {showResult ? <td>{ participant[final] }</td> : <Paid paid={participant.paid} >{ participant.paid ? 'Платено' : 'Очаква плащане' }</Paid>}
                             </TableRow>
                         );
                     })}
@@ -103,7 +109,7 @@ export const Participants: React.FC = () => {
                 {renderTable(undefined, "14")}
                 <h1>Списък с участници - обща категория / 26 км</h1>
                 {renderTable(undefined, "26")}
-                <h1>Списък с участници - категория Жени / 14 км</h1>
+                {/* <h1>Списък с участници - категория Жени / 14 км</h1>
                 {renderTable('Ж', "14")}
                 <h1>Списък с участници - категория Жени / 26 км</h1>
                 {renderTable('Ж', "26")}
@@ -122,7 +128,7 @@ export const Participants: React.FC = () => {
                 <h1>Списък с участници - категория Жени до 20 / 14 км</h1>
                 {renderTable('Ж20', "14")}
                 <h1>Списък с участници - категория Жени до 20 / 26 км</h1>
-                {renderTable('Ж20', "26")}
+                {renderTable('Ж20', "26")} */}
                 <p>Дистанция 26 км: {participants.filter(p => p.distance === "26").length} души</p>
                 <p>Дистанция 14 км: {participants.filter(p => p.distance === "14").length} души</p>
             </ParticipantsWrapper>

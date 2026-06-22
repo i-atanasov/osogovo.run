@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { HeaderComponent } from '../Header/Header';
 import { FormResult, FormWrapper, ImageBackground, RegistrationFormWrapper } from './styles';
+import Button from '../Button/Button';
 
 const RetryPaymentPage = () => {
     const [searchParams] = useSearchParams();
@@ -60,7 +61,7 @@ const RetryPaymentPage = () => {
                         <>
                             <h2>Възникна проблем</h2>
                             <p>{error}</p>
-                            <button onClick={() => navigate('/register')}>Към регистрацията</button>
+                            <Button onClick={() => navigate('/participants')} label="Към регистрираните" />
                         </>
                     )}
                 </FormResult>
