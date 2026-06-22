@@ -12,6 +12,8 @@ const PaymentCancelPage = () => {
     const sessionId = searchParams.get('session_id');
     const apiUrl = process.env.REACT_APP_REGISTRATION_API_URL;
     const [message, setMessage] = React.useState('Регистрацията е запазена като изчакваща, но не е потвърдена. Можете да стартирате плащането отново, когато сте готови.');
+    const [retrying, setRetrying] = React.useState(false);
+    const [retryError, setRetryError] = React.useState<string | null>(null);
 
     React.useEffect(() => {
         let isCancelled = false;
@@ -43,6 +45,38 @@ const PaymentCancelPage = () => {
         };
     }, [apiUrl, sessionId]);
 
+    const retryPayment = async () => {
+        if (!apiUrl || !sessionId) {
+            navigate(product ? `/register?product=${product}` : '/register');
+            return;
+        }
+
+        setRetrying(true);
+        setRetryError(null);
+
+        try {
+            const response = await axios.post(`${apiUrl}/create-checkout-session`, {
+                data: {
+                    session_id: sessionId,
+                },
+            });
+
+            const checkoutUrl = response.data?.checkoutUrl;
+            if (typeof checkoutUrl !== 'string' || checkoutUrl.length === 0) {
+                throw new Error('Missing checkout redirect URL');
+            }
+
+            window.location.assign(checkoutUrl);
+        } catch (error) {
+            if (axios.isAxiosError(error) && typeof error.response?.data?.error === 'string') {
+                setRetryError(error.response.data.error);
+            } else {
+                setRetryError('Възникна грешка при повторно стартиране на плащането. Моля, опитайте отново.');
+            }
+            setRetrying(false);
+        }
+    };
+
     return (
         <RegistrationFormWrapper>
             <HeaderComponent hideDate image="https://pvmolqp98bhv9my7.public.blob.vercel-storage.com/Profile.svg" />
@@ -51,11 +85,14 @@ const PaymentCancelPage = () => {
                 <FormResult>
                     <h2>Плащането не беше завършено</h2>
                     <p>{message}</p>
+                    {retryError && <p>{retryError}</p>}
                     <PaymentActions>
                         <Button
-                            label="Опитай отново"
-                            onClick={() => navigate(product ? `/register?product=${product}` : '/register')}
+                            label={retrying ? 'Пренасочване...' : 'Опитайте отново'}
+                            onClick={retryPayment}
+                            disabled={retrying}
                         />
+                           
                         <Button label="Начална страница" onClick={() => navigate('/')} />
                     </PaymentActions>
                 </FormResult>
