@@ -7,16 +7,9 @@ const parsePrice = (envVar: string | undefined, defaultValue: number): number =>
 };
 
 const PRICING = {
-    14: {
-        price: parsePrice(process.env.REACT_APP_PRICE_14, 20),
-        latePrice: parsePrice(process.env.REACT_APP_LATE_PRICE_14, 25),
-    },
-    26: {
-        price: parsePrice(process.env.REACT_APP_PRICE_26, 25),
-        latePrice: parsePrice(process.env.REACT_APP_LATE_PRICE_26, 30),
-    },
+    14: parsePrice(process.env.REACT_APP_PRICE_14, 20),
+    26: parsePrice(process.env.REACT_APP_PRICE_26, 25),
     tShirt: parsePrice(process.env.REACT_APP_TSHIRT_PRICE, 25),
-    testProduct: parsePrice(process.env.REACT_APP_TEST_PRODUCT_PRICE, 1),
 };
 
 export const products: ProductBoxProps[] = [
@@ -32,10 +25,8 @@ export const products: ProductBoxProps[] = [
         description: 'Осогово рън е състезание по планинско бягане, което се провежда в Осоговската планина. Състезанието предлага различни дистанции и маршрути, които преминават през живописни пейзажи и предизвикателни терени.',
         image: 'https://pvmolqp98bhv9my7.public.blob.vercel-storage.com/OSOGOVO-RUN-14k.png',
         gpx: 'https://pvmolqp98bhv9my7.public.blob.vercel-storage.com/Osogovo_Run_14K_2025.gpx',
-        price: PRICING[14].price,
-        latePrice: PRICING[14].latePrice,
-        priceLabel: `<b>Такса:</b> €${PRICING[14].price} (до 17 септември)`,
-        latePriceLabel: `<b>Такса:</b> €${PRICING[14].latePrice}`,
+        price: PRICING[14],
+        priceLabel: `<b>Такса:</b> €${PRICING[14]}`,
         tShirtPrice: PRICING.tShirt,
         testProductPrice: 1,
     },
@@ -51,10 +42,8 @@ export const products: ProductBoxProps[] = [
         description: 'Руен рън е предизвикателство за опитни бегачи, които искат да се изправят пред дълги дистанции и трудни условия в Осоговската планина. Състезанието предлага уникален опит и възможност за преодоляване на собствените граници.',
         image: 'https://pvmolqp98bhv9my7.public.blob.vercel-storage.com/OSOGOVO-RUN-26k.png',
         gpx: 'https://pvmolqp98bhv9my7.public.blob.vercel-storage.com/Osogovo_Run_2025.gpx',
-        price: PRICING[26].price,
-        latePrice: PRICING[26].latePrice,
-        priceLabel: `<b>Такса:</b> €${PRICING[26].price} (до 17 септември)`,
-        latePriceLabel: `<b>Такса:</b> €${PRICING[26].latePrice}`,
+        price: PRICING[26],
+        priceLabel: `<b>Такса:</b> €${PRICING[26]}`,
         tShirtPrice: PRICING.tShirt,
         testProductPrice: 1,
     },
