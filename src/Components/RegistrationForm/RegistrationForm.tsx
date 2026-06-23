@@ -224,7 +224,7 @@ const RegistrationForm = () => {
                                     )}
                                 </FormSection>
                                 <FormSection>
-                                    <label>Добави тениска (по желание)</label>
+                                    <label>Добави официална тениска за бягане Osogovo Run (по желание)</label>
                                     <TShirtSelector>
                                         <TShirtCardButton
                                             type="button"
@@ -239,7 +239,7 @@ const RegistrationForm = () => {
                                             grayscale={!values.withTShirt}
                                         >
                                             <img src={tShirtImages.front} alt="Официална тениска" onError={handleImageFallback} />
-                                            <span className="hover-cta">{values.withTShirt ? 'Премахни тениска' : 'Добави тениска'}</span>
+                                            <span className="cta">{values.withTShirt ? 'Премахни тениска' : 'Добави тениска'}</span>
                                             <span className="caption">
                                                 {values.withTShirt
                                                     ? `Тениската е добавена (+${tShirtPrice} eur) - натиснете за премахване`
@@ -285,7 +285,7 @@ const RegistrationForm = () => {
                             )}
                             <PaymentDetails basePrice={price} tShirtPrice={tShirtPrice} withTShirt={values.withTShirt} />
                             <Button
-                                label={isSubmitting ? 'Пренасочване...' : 'Продължи към плащане'}
+                                label={isSubmitting ? 'Пренасочване...' : `Плати ${total} eur.`}
                                 onClick={handleSubmit}
                             />
                         </Form>

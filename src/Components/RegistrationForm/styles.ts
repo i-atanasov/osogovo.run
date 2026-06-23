@@ -269,9 +269,7 @@ export const TShirtCardButton = styled.button<{ selected?: boolean; grayscale?: 
     color: ${colors.OsogovoBlack};
     transition: border-color 0.2s ease;
 
-
-
-    .hover-cta {
+    .cta {
         position: absolute;
         left: 50%;
         top: 50%;
@@ -284,13 +282,8 @@ export const TShirtCardButton = styled.button<{ selected?: boolean; grayscale?: 
         font-family: 'Oswald', sans-serif;
         font-size: 16px;
         letter-spacing: 0.3px;
-        opacity: 0;
-        transition: opacity 0.2s ease;
-        pointer-events: none;
-    }
-
-    &:hover .hover-cta {
         opacity: 1;
+        pointer-events: none;
     }
 
     img {
@@ -304,6 +297,9 @@ export const TShirtCardButton = styled.button<{ selected?: boolean; grayscale?: 
         background: #f8f8f8;
         border: 1px solid #e7e7e7;
         filter: ${props => props.grayscale ? 'grayscale(1)' : 'none'};
+        &:hover {
+            filter: none;
+        }
     }
 
     .caption {
