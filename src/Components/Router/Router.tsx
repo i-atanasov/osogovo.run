@@ -7,7 +7,7 @@ import RetryPaymentPage from "../RegistrationForm/RetryPaymentPage";
 import Home from "../Home/Home";
 import { Participants } from "../Participants/Participants";
 import RaceDay from "../RaceDay/RaceDay";
-import { IframeResults } from "../IframeResults/IframeResults";
+import Results from "../Results/Results";
 import { IframeFeedback } from "../FeedbackPage/FeedbackPage";
 
 const Router: React.FC = () => {
@@ -46,7 +46,7 @@ const Router: React.FC = () => {
                 />
                 <Route
                     path="/results"
-                    element={<IframeResults />}
+                    element={<Results />}
                 />
                 <Route
                     path="/feedback"

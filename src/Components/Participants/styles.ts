@@ -15,8 +15,12 @@ export const ParticipantsWrapper = styled.div`
     }
     > table {
         width: 100%;
+        table-layout: fixed;
         th {
             text-align: left;
+        }
+        .small {
+            width: 100px;
         }
     }
     @media (min-width: 768px) {

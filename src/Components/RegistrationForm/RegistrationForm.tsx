@@ -124,7 +124,7 @@ const RegistrationForm = () => {
         <ImageBackground image="https://pvmolqp98bhv9my7.public.blob.vercel-storage.com/registration-bg.png" />
             <FormWrapper>
                 <a href="/participants">Виж регистрираните участници</a><br /><br />
-                <a href="/results">Виж резултатите</a>
+                <a href="/results?year=2025">Виж резултатите за 2025 г.</a><br /><br />
                 <Formik
                     initialValues={ initialValues }
                     validate={ validateForm }

@@ -18,7 +18,7 @@ type Participant = {
 
 export const Participants: React.FC = () => {
     const [participants, setParticipants] = React.useState<Participant[]>([]);
-    const [highlightedParticipant, setHighlightedParticipant] = React.useState<number | null>(null);
+    // const [highlightedParticipant, setHighlightedParticipant] = React.useState<number | null>(null);
     const [loading, setLoading] = React.useState(true);
     const apiUrl = process.env.REACT_APP_REGISTRATION_API_URL;
 
@@ -47,14 +47,13 @@ export const Participants: React.FC = () => {
         }
         return category;
     }
+
     const renderTable = (categoryFilter?: string, distanceFilter?: string, showResult?: string) => {
-        let position = 1;
+        let position = 0;
         return (
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                 <thead>
                     <tr>
-                        <th>Позиция</th>
-                        {/* <th>Номер</th> */}
                         <th>Име</th>
                         <th>Категория</th>
                         <th>Дистанция</th>
@@ -77,15 +76,13 @@ export const Participants: React.FC = () => {
                     }).map((participant) => {
                         const category = getCategory(participant);
                         const final = participant.distance === '14' ? 'osogovo' : 'ruen';
-
+                        position++; // Increment position for each participant
                         return (
                             (categoryFilter && !category.includes(categoryFilter)) ? null : 
                             (distanceFilter && participant.distance !== distanceFilter) ? null :
                             (showResult && participant[final] !== showResult) ? null :
                             <TableRow key={position} highlighted={false} >
-                                <td>{ position++ }</td>
-                                {/* <td>{ participant.bib }</td> */}
-                                <td>{ participant.name }</td>
+                                <td>{position}. { participant.name }</td>
                                 <td>{ category }</td>
                                 <td>{ participant.distance }</td>
                                 <td>{ participant.team }</td>
@@ -101,10 +98,9 @@ export const Participants: React.FC = () => {
     return (
         <HomeContainer>
             <HeaderComponent video='http://www.osogovo.run/media/osogovo-run-21-sec-low.mp4' />
-
             <ParticipantsWrapper>
-                <a href="/results">Виж резултатите</a><br /><br />
-                <a href="/race-day">Виж инструкции за състезателния ден</a>
+                Виж резултатите: <a href="/results?year=2025">2025 г.</a><br /><br />
+                {/* <a href="/race-day">Виж инструкции за състезателния ден</a> */}
                 <h1>Списък с участници - обща категория / 14 км</h1>
                 {renderTable(undefined, "14")}
                 <h1>Списък с участници - обща категория / 26 км</h1>
