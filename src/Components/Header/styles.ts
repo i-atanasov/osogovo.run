@@ -8,12 +8,14 @@ export const Header = styled.header<{ video?: string; image?: string }>`
     height: 300px;
     position: relative;
     z-index: 1;
-    @media (min-width: 768px) {
-        height: 400px;
-    }
-    @media (min-width: 1200px) {
-        height: 500px;
-    }
+    ${props => (props.video || props.image) && `
+        @media (min-width: 768px) {
+            height: 400px;
+        }
+        @media (min-width: 1200px) {
+            height: 500px;
+        }
+    `}
     video {
         width: 100%;
         height: 300px;

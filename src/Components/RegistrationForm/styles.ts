@@ -82,6 +82,7 @@ export const FormWrapper = styled.div<{ success?: boolean }>`
         }
         &:focus {
             border-color: ${colors.RuenOrange};
+            outline: none;
         }
     }
     input {
@@ -174,14 +175,8 @@ export const ImageBackground = styled.div<{ image?: string }>`
     width: 100%;
     height: 100%;
     position: absolute;
-    top: 100px;
+    top: -100px;
     left: 0;
-    @media (min-width: 768px) {
-        top: 150px;
-    }
-    @media (min-width: 1200px) {
-        top: 300px;
-    }
 `
 
 export const FormSection = styled.div`
