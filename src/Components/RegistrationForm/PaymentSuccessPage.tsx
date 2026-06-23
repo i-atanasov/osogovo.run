@@ -14,7 +14,7 @@ const PaymentSuccessPage = () => {
     const [participantName, setParticipantName] = React.useState<string>('');
     const apiUrl = process.env.REACT_APP_REGISTRATION_API_URL;
     const sessionId = searchParams.get('session_id');
-    console.log("PaymentSuccessPage loaded with session_id:", sessionId);
+
     React.useEffect(() => {
         let isCancelled = false;
 
@@ -30,7 +30,6 @@ const PaymentSuccessPage = () => {
                         session_id: sessionId,
                     },
                 });
-                console.log("Registration status response:", response.data);
 
                 if (isCancelled) {
                     return;

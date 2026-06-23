@@ -20,6 +20,7 @@ export interface ProductBoxProps {
     latePriceLabel?: string;
     latePrice?: number;
     tShirtPrice?: number;
+    testProductPrice?: number;
 }
 
 const ProductBox = (product: ProductBoxProps) => {  

@@ -18,6 +18,7 @@ export const products: ProductBoxProps[] = [
         priceLabel: '<b>Такса:</b> €20 (до 17 септември)',
         latePriceLabel: '<b>Такса:</b> €25',
         tShirtPrice: 25,
+        testProductPrice: 1,
     },
     {
         distance: 26,
@@ -36,6 +37,7 @@ export const products: ProductBoxProps[] = [
         priceLabel: '<b>Такса:</b> €25 (до 17 септември)',
         latePriceLabel: '<b>Такса:</b> €30',
         tShirtPrice: 25,
+        testProductPrice: 1,
     },
 ]
 

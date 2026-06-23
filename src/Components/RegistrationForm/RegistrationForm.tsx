@@ -27,8 +27,13 @@ const RegistrationForm = () => {
     const [searchParams] = useSearchParams();
     const [serverError, setServerError] = React.useState<string | null>(null);
     const [distance, setDistance] = React.useState<Distance>(Number(searchParams.get('product')) as Distance || 26);
+    const isTestMode = (searchParams.get('test') || '').toLowerCase().trim() === 'true';
+    const observePointCode = searchParams.get('observePoint') || '';
     const selectedProduct = products.find(product => product.distance === distance);
-    const price = selectedProduct?.price || 0;
+    const price = isTestMode
+        ? (selectedProduct?.testProductPrice || selectedProduct?.price || 0)
+        : (selectedProduct?.price || 0);
+
     const tShirtPrice = selectedProduct?.tShirtPrice || 0;
     const initialValues: FormValues = {
         email: '',
@@ -91,8 +96,17 @@ const RegistrationForm = () => {
         }
 
         try {
+            const payload: Record<string, unknown> = {
+                ...values,
+            };
+
+            if (isTestMode) {
+                payload.test = 'true';
+                payload.observePointCode = observePointCode;
+            }
+
             const response = await axios.post(`${apiUrl}/create-checkout-session`, {
-                data: values,
+                data: payload,
             });
             const checkoutUrl = response.data?.checkoutUrl;
 
@@ -123,6 +137,9 @@ const RegistrationForm = () => {
         <HeaderComponent hideDate image="https://pvmolqp98bhv9my7.public.blob.vercel-storage.com/Profile.svg" />
         <ImageBackground image="https://pvmolqp98bhv9my7.public.blob.vercel-storage.com/registration-bg.png" />
             <FormWrapper>
+                {isTestMode && (
+                    <div className="server">TEST MODE: Плащането е с тестова цена.</div>
+                )}
                 <a href="/participants">Виж регистрираните участници</a><br /><br />
                 <a href="/results?year=2025">Виж резултатите за 2025 г.</a><br /><br />
                 <Formik
