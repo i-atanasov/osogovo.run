@@ -168,8 +168,12 @@ const RegistrationForm = () => {
             window.location.assign(checkoutUrl);
         } catch (error) {
             if (axios.isAxiosError(error) && error.response?.status === 409) {
-                console.error('Email already registered:', error, values.email);
-                setServerError('Имейлът вече е регистриран. Използвайте друг имейл адрес или се свържете с info@osogovo.run.');
+                console.error('Email already registered with paid status:', error, values.email);
+                setServerError('Имейлът вече е регистриран с потвърдено плащане. Моля, се свържете с info@osogovo.run.');
+            } else if (axios.isAxiosError(error) && error.response?.status === 402) {
+                console.error('Email already registered but payment pending:', error, values.email);
+                const retryUrl = `/register/retry-payment?email=${encodeURIComponent(values.email)}`;
+                setServerError(`Имейлът вече е регистриран, но плащането не е завършено. <a href="${retryUrl}">Опитайте отново с плащането</a> или <a href="mailto:info@osogovo.run">се свържете с нас</a>.`);
             } else if (axios.isAxiosError(error) && typeof error.response?.data?.error === 'string') {
                 console.error('Registration validation error:', error, values.email);
                 setServerError(error.response.data.error);
@@ -335,9 +339,7 @@ const RegistrationForm = () => {
                                 </FormSection>
                             </FormFields>
                             {serverError && (
-                                <div className="server error">
-                                    {serverError}
-                                </div>
+                                <div className="server error" dangerouslySetInnerHTML={{ __html: serverError }} />
                             )}
                             {errors && Object.keys(errors).length > 0 && (
                                 <div className="error">
