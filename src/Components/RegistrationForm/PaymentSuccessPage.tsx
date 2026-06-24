@@ -92,7 +92,7 @@ const PaymentSuccessPage = () => {
 
     return (
         <RegistrationFormWrapper>
-            <HeaderComponent hideDate image="https://pvmolqp98bhv9my7.public.blob.vercel-storage.com/Profile.svg" />
+            <HeaderComponent hideDate />
             <ImageBackground image="https://pvmolqp98bhv9my7.public.blob.vercel-storage.com/registration-bg.png" />
             <FormWrapper success>
                 <FormResult>

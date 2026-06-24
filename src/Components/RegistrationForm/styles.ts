@@ -1,7 +1,6 @@
 import styled from "styled-components"
 import { colors } from "../../config/constants"
 import { ButtonWrapper } from "../Button/styles"
-import { Header } from "../Header/styles"
 
 export const RegistrationFormWrapper = styled.div<{ distance?: number }>`
     display: flex;
@@ -18,9 +17,6 @@ export const RegistrationFormWrapper = styled.div<{ distance?: number }>`
         gap: 10px;
         padding: 20px;
     }
-    ${Header} > img {
-        //to do
-    }
 `
 
 export const FormWrapper = styled.div<{ success?: boolean }>`
@@ -35,7 +31,7 @@ export const FormWrapper = styled.div<{ success?: boolean }>`
         top: 550px;
     }
     @media (min-width: 1200px) {
-        top: 700px;
+        top: 400px;
     }
     > h1, a {
         color: ${colors.RuenOrange};
@@ -156,6 +152,7 @@ export const FormWrapper = styled.div<{ success?: boolean }>`
         margin: 15px 0;
         padding: 12px;
         background-color: #ffe6e6;
+        color: ${colors.OsogovoBlack};
         border-radius: 4px;
         border-left: 4px solid ${colors.RuenOrange};
     }

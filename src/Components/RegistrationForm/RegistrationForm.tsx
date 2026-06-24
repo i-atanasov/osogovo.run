@@ -26,8 +26,12 @@ export interface FormValues {
 const RegistrationForm = () => {
     const [searchParams] = useSearchParams();
     const [serverError, setServerError] = React.useState<string | null>(null);
+    const [discountPercent, setDiscountPercent] = React.useState<number>(0);
+    const [discountCodeChecked, setDiscountCodeChecked] = React.useState<boolean>(false);
+    const [discountCodeInactive, setDiscountCodeInactive] = React.useState<boolean>(false);
     const [distance, setDistance] = React.useState<Distance>(Number(searchParams.get('product')) as Distance || 26);
     const isTestMode = (searchParams.get('test') || '').toLowerCase().trim() === 'true';
+    const uniqueCode = searchParams.get('uniqueCode') || '';
     const observePointCode = searchParams.get('observePoint') || '';
     const selectedProduct = products.find(product => product.distance === distance);
     const price = isTestMode
@@ -53,6 +57,36 @@ const RegistrationForm = () => {
         setServerError(null);
     }
 
+    React.useEffect(() => {
+        const fetchDiscount = async () => {
+            if (!uniqueCode || !apiUrl) {
+                setDiscountPercent(0);
+                setDiscountCodeInactive(false);
+                setDiscountCodeChecked(false);
+                return;
+            }
+
+            try {
+                const response = await axios.get(`${apiUrl}/discount-code`, {
+                    params: { code: uniqueCode },
+                });
+                const isValid = response.data?.valid === true;
+                const isInactive = response.data?.inactive === true;
+                const discount = Number(response.data?.discount ?? 0);
+                setDiscountPercent(isValid ? Math.max(0, Math.min(100, discount)) : 0);
+                setDiscountCodeInactive(isInactive);
+                setDiscountCodeChecked(true);
+            } catch (error) {
+                console.error('Discount code validation failed:', error, uniqueCode);
+                setDiscountPercent(0);
+                setDiscountCodeInactive(false);
+                setDiscountCodeChecked(true);
+            }
+        };
+
+        fetchDiscount();
+    }, [apiUrl, uniqueCode]);
+
     const handleImageFallback = (event: React.SyntheticEvent<HTMLImageElement>) => {
         const image = event.currentTarget;
         if (image.src !== fallbackTShirtImage) {
@@ -64,21 +98,33 @@ const RegistrationForm = () => {
         basePrice: number;
         tShirtPrice: number;
         withTShirt: boolean;
+        discountPercent: number;
     }
 
-    const PaymentDetails: React.FC<PaymentDetailsProps> = ({ basePrice, tShirtPrice, withTShirt }) => {
-        const total = withTShirt ? basePrice + tShirtPrice : basePrice;
+    const PaymentDetails: React.FC<PaymentDetailsProps> = ({ basePrice, tShirtPrice, withTShirt, discountPercent }) => {
+    const appliedDiscount = Math.round(basePrice * (Math.max(0, Math.min(100, discountPercent)) / 100));
+    const discountedBase = Math.max(0, basePrice - appliedDiscount);
+    const total = discountedBase + (withTShirt ? tShirtPrice : 0);
 
         return (
             <>
                 <Price>Плащане на стартова такса: {basePrice} eur.</Price>
-                {withTShirt && (
-                    <Price>Тениска: {tShirtPrice} eur.</Price>
+                {discountPercent > 0 && (
+                    <Price>Отстъпка от стартовата такса: ({discountPercent}%): -{appliedDiscount} eur.</Price>
                 )}
-                <Price>Общо: {total} eur.</Price>
+                {withTShirt && (
+                    <Price>Тениска: {tShirtPrice} eur</Price>
+                )}
+                <Price>Общо: {total} eur</Price>
                 <IBANWrapper>
-                    <p>След валидиране на данните ще бъдете пренасочени към защитената платежна страница на Stripe.</p>
-                    <p>Регистрацията се потвърждава след успешно плащане и сървърна проверка на транзакцията.</p>
+                    {total === 0 ? (
+                        <p>Регистрацията е безплатна с приложения код за отстъпка. Натиснете бутона, за да завършите регистрацията си.</p>
+                    ) : (
+                        <>
+                            <p>След валидиране на данните ще бъдете пренасочени към защитената платежна страница.</p>
+                            <p>Регистрацията се потвърждава след успешно плащане и сървърна проверка на транзакцията.</p>
+                        </>
+                    )}
                 </IBANWrapper>
             </>
         );
@@ -105,6 +151,10 @@ const RegistrationForm = () => {
                 payload.observePointCode = observePointCode;
             }
 
+            if (uniqueCode.trim().length > 0) {
+                payload.uniqueCode = uniqueCode.trim();
+            }
+
             const response = await axios.post(`${apiUrl}/create-checkout-session`, {
                 data: payload,
             });
@@ -119,7 +169,7 @@ const RegistrationForm = () => {
         } catch (error) {
             if (axios.isAxiosError(error) && error.response?.status === 409) {
                 console.error('Email already registered:', error, values.email);
-                setServerError('Имейлът вече е регистриран с потвърдено плащане. Използвайте друг имейл адрес или се свържете с info@osogovo.run.');
+                setServerError('Имейлът вече е регистриран. Използвайте друг имейл адрес или се свържете с info@osogovo.run.');
             } else if (axios.isAxiosError(error) && typeof error.response?.data?.error === 'string') {
                 console.error('Registration validation error:', error, values.email);
                 setServerError(error.response.data.error);
@@ -138,7 +188,16 @@ const RegistrationForm = () => {
         <ImageBackground image="https://pvmolqp98bhv9my7.public.blob.vercel-storage.com/registration-bg.png" />
             <FormWrapper>
                 {isTestMode && (
-                    <div className="server">TEST MODE: Плащането е с тестова цена.</div>
+                    <div className="server error">TEST MODE: Плащането е с тестова цена.</div>
+                )}
+                {!isTestMode && uniqueCode && discountCodeChecked && discountPercent > 0 && (
+                    <div className="server error">Активен код за отстъпка от таксата за регистрация: {discountPercent}%</div>
+                )}
+                {!isTestMode && uniqueCode && discountCodeChecked && discountCodeInactive && (
+                    <div className="server error">Кодът за отстъпка вече не е активен.</div>
+                )}
+                {!isTestMode && uniqueCode && discountCodeChecked && !discountCodeInactive && discountPercent === 0 && (
+                    <div className="server error">Невалиден или неактивен код за отстъпка.</div>
                 )}
                 <a href="/participants">Виж регистрираните участници</a><br /><br />
                 <a href="/results?year=2025">Виж резултатите за 2025 г.</a><br /><br />
@@ -156,7 +215,9 @@ const RegistrationForm = () => {
                         values,
                         setFieldValue,
                     }) => {
-                        const total = values.withTShirt ? price + tShirtPrice : price;
+                        const appliedDiscount = Math.round(price * (Math.max(0, Math.min(100, discountPercent)) / 100));
+                        const discountedBase = Math.max(0, price - appliedDiscount);
+                        const total = discountedBase + (values.withTShirt ? tShirtPrice : 0);
 
                         return (
                         <Form onChange={resetServerError}>
@@ -283,9 +344,14 @@ const RegistrationForm = () => {
                                     Моля, попълнете всички задължителни полета. При проблем, моля свържетe се с info@osogovo.run
                                 </div>
                             )}
-                            <PaymentDetails basePrice={price} tShirtPrice={tShirtPrice} withTShirt={values.withTShirt} />
+                            <PaymentDetails
+                                basePrice={price}
+                                tShirtPrice={tShirtPrice}
+                                withTShirt={values.withTShirt}
+                                discountPercent={discountPercent}
+                            />
                             <Button
-                                label={isSubmitting ? 'Пренасочване...' : `Плати ${total} eur.`}
+                                label={isSubmitting ? 'Пренасочване...' : (total === 0 ? 'Завърши регистрацията' : `Плати ${total} eur`)}
                                 onClick={handleSubmit}
                             />
                         </Form>
