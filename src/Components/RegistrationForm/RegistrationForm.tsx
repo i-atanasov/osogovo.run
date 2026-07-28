@@ -18,8 +18,9 @@ export interface FormValues {
     termsAndConditions: boolean;
     birth: string;
     team?: string;
+    phoneNumber: string;
     withTShirt: boolean;
-    tShirtSize: '' | 'S' | 'M' | 'L' | 'XL';
+    tShirtSize: '' | 'XS' | 'S' | 'M' | 'L' | 'XL';
     paid: boolean;
 }
 
@@ -49,6 +50,7 @@ const RegistrationForm = () => {
         team: '',
         withTShirt: false,
         tShirtSize: '',
+        phoneNumber: '',
         paid: false
     };
     const apiUrl = process.env.REACT_APP_REGISTRATION_API_URL;
@@ -257,6 +259,14 @@ const RegistrationForm = () => {
                                         minLength={4}
                                     />
                                     {errors.email && touched.email && <div className="error">{errors.email}</div>}
+                                    <label htmlFor="phoneNumber">Телефонен номер</label>
+                                    <Field
+                                        id="phoneNumber"
+                                        name="phoneNumber"
+                                        placeholder="+359 / 0898 / +1-234-567-8900"
+                                        required
+                                    />
+                                    {errors.phoneNumber && touched.phoneNumber && <div className="error">{errors.phoneNumber}</div>}
                                     <label htmlFor="gender">Пол</label>
                                     <Field as="select" name="gender" id="gender">
                                         <option value="" hidden></option>
@@ -320,7 +330,7 @@ const RegistrationForm = () => {
                                         <>
                                             <label>Избери размер</label>
                                             <TShirtSizes>
-                                                {(['S', 'M', 'L', 'XL'] as const).map((size) => (
+                                                {(['XS', 'S', 'M', 'L', 'XL'] as const).map((size) => (
                                                     <TShirtSizeButton
                                                         key={size}
                                                         type="button"

@@ -11,6 +11,16 @@ export const validateForm = (values: FormValues) => {
             errors.email = 'Невалиден формат на имейл адрес';
         }
     }
+    if (!values.phoneNumber) {
+        errors.phoneNumber = 'Задължително поле';
+    } else {
+        const phonePattern = /^[0-9+\-\s]+$/;
+        if (!phonePattern.test(values.phoneNumber)) {
+            errors.phoneNumber = 'Телефонният номер може да съдържа само цифри, +, - и интервали';
+        } else if (values.phoneNumber.length < 8) {
+            errors.phoneNumber = 'Телефонният номер трябва да е поне 8 символа';
+        }
+    }
     if (!values.name) {
         errors.name = 'Задължително поле';
     } else if (values.name.length < 4) {
