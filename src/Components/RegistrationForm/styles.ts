@@ -1,7 +1,6 @@
 import styled from "styled-components"
 import { colors } from "../../config/constants"
 import { ButtonWrapper } from "../Button/styles"
-import { Header } from "../Header/styles"
 
 export const RegistrationFormWrapper = styled.div<{ distance?: number }>`
     display: flex;
@@ -18,9 +17,6 @@ export const RegistrationFormWrapper = styled.div<{ distance?: number }>`
         gap: 10px;
         padding: 20px;
     }
-    ${Header} > img {
-        //to do
-    }
 `
 
 export const FormWrapper = styled.div<{ success?: boolean }>`
@@ -35,7 +31,7 @@ export const FormWrapper = styled.div<{ success?: boolean }>`
         top: 550px;
     }
     @media (min-width: 1200px) {
-        top: 700px;
+        top: 400px;
     }
     > h1, a {
         color: ${colors.RuenOrange};
@@ -55,7 +51,6 @@ export const FormWrapper = styled.div<{ success?: boolean }>`
         font-size: 15px;
         color: #30332F;
         line-height: normal;
-        // margin: 0 0 20px 50px;
     }
     label {
         color: #666666;
@@ -83,6 +78,7 @@ export const FormWrapper = styled.div<{ success?: boolean }>`
         }
         &:focus {
             border-color: ${colors.RuenOrange};
+            outline: none;
         }
     }
     input {
@@ -149,21 +145,22 @@ export const FormWrapper = styled.div<{ success?: boolean }>`
         font-family: 'Oswald', sans-serif;
         font-weight: normal;
         max-width: 300px;
+        margin-bottom: 15px;
+    }
     }
     .server {
-        margin: 0;
-            transform: translateY(-100%);
-        @media (min-width: 768px) {
-        }
+        margin: 15px 0;
+        padding: 12px;
+        background-color: #ffe6e6;
+        color: ${colors.OsogovoBlack};
+        border-radius: 4px;
+        border-left: 4px solid ${colors.RuenOrange};
     }
     > form {
         position: relative;
     }
     ${ButtonWrapper} {
         margin: 20px 0;
-        @media (min-width: 768px) {
-            transform: translateY(-100%);
-        }
     }
 `
 
@@ -175,14 +172,8 @@ export const ImageBackground = styled.div<{ image?: string }>`
     width: 100%;
     height: 100%;
     position: absolute;
-    top: 100px;
+    top: -100px;
     left: 0;
-    @media (min-width: 768px) {
-        top: 150px;
-    }
-    @media (min-width: 1200px) {
-        top: 300px;
-    }
 `
 
 export const FormSection = styled.div`
@@ -218,6 +209,18 @@ export const FormResult = styled.div`
     }
 `
 
+export const PaymentActions = styled.div`
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-top: 24px;
+
+    ${ButtonWrapper} {
+        margin: 0;
+        transform: none;
+    }
+`
+
 export const Price = styled.div`
     color: ${colors.RuenOrange};
     font-size: 24px;
@@ -236,5 +239,90 @@ export const IBANWrapper = styled.div`
     text-align: left;
     p {
         margin: 5px 0;
+    }
+`
+
+export const TShirtSelector = styled.div`
+    display: grid;
+    gap: 16px;
+    grid-template-columns: 1fr;
+`
+
+export const TShirtCardButton = styled.button<{ selected?: boolean; grayscale?: boolean }>`
+    border: ${props => props.selected ? `2px solid ${colors.RuenOrange}` : '2px solid transparent'};
+    border-radius: 12px;
+    background: transparent;
+    display: block;
+    position: relative;
+    width: 100%;
+    padding: 10px;
+    cursor: pointer;
+    text-align: left;
+    color: ${colors.OsogovoBlack};
+    transition: border-color 0.2s ease;
+
+    .cta {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 3;
+        padding: 10px 14px;
+        border-radius: 999px;
+        background: rgba(48, 51, 47, 0.85);
+        color: #fff;
+        font-family: 'Oswald', sans-serif;
+        font-size: 16px;
+        letter-spacing: 0.3px;
+        opacity: 1;
+        pointer-events: none;
+    }
+
+    img {
+        display: block;
+        width: 100%;
+        aspect-ratio: 1 / 1;
+        min-height: 220px;
+        object-fit: cover;
+        border-radius: 10px;
+        overflow: hidden;
+        background: #f8f8f8;
+        border: 1px solid #e7e7e7;
+        filter: ${props => props.grayscale ? 'grayscale(1)' : 'none'};
+        &:hover {
+            filter: none;
+        }
+    }
+
+    .caption {
+        display: block;
+        margin-top: 10px;
+        font-family: 'Oswald', sans-serif;
+        font-size: 16px;
+        color: ${colors.OsogovoBlack};
+    }
+`
+
+export const TShirtSizes = styled.div`
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
+`
+
+export const TShirtSizeButton = styled.button<{ selected?: boolean }>`
+    min-width: 54px;
+    padding: 8px 12px;
+    border-radius: 999px;
+    border: 1px solid ${props => props.selected ? colors.RuenOrange : '#cfcfcf'};
+    background: ${props => props.selected ? colors.RuenOrange : '#fff'};
+    color: ${props => props.selected ? '#fff' : colors.OsogovoBlack};
+    font-family: 'Oswald', sans-serif;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+        border-color: ${colors.RuenOrange};
     }
 `

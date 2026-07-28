@@ -1,19 +1,22 @@
 import styled from 'styled-components';
 
 export const Header = styled.header<{ video?: string; image?: string }>`
-    background-color: white;
     color: white;
     width: 100%;
     text-align: center; 
     height: 300px;
     position: relative;
     z-index: 1;
-    @media (min-width: 768px) {
-        height: 400px;
-    }
-    @media (min-width: 1200px) {
-        height: 500px;
-    }
+    background: transparent;
+    ${props => (props.video || props.image) && `
+        @media (min-width: 768px) {
+            height: 400px;
+        }
+        @media (min-width: 1200px) {
+            height: 500px;
+        }
+        background-color: white;
+    `}
     video {
         width: 100%;
         height: 300px;

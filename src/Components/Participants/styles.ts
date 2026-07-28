@@ -15,8 +15,12 @@ export const ParticipantsWrapper = styled.div`
     }
     > table {
         width: 100%;
+        table-layout: fixed;
         th {
             text-align: left;
+        }
+        .small {
+            width: 100px;
         }
     }
     @media (min-width: 768px) {
@@ -29,7 +33,7 @@ export const ParticipantsWrapper = styled.div`
 `
 
 export const Paid = styled.td<{ paid: boolean }>`
-    color: ${props => props.paid ? "green" : ""};
+    color: ${props => props.paid ? "green" : ''};
 `
 
 export const TableRow = styled.tr<{ highlighted: boolean }>`
@@ -39,5 +43,8 @@ export const TableRow = styled.tr<{ highlighted: boolean }>`
         background-color: ${colors.RuenOrange}; 
         color: white;
         cursor: pointer;
+        ${Paid} {
+            text-shadow: 1px 0px 10px white;
+        }
     }
 `

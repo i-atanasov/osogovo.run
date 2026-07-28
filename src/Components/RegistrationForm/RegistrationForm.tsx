@@ -1,12 +1,12 @@
 import React from 'react';
-import { Field, Form, Formik } from 'formik';
-import { FormFields, FormSection, RegistrationFormWrapper, ImageBackground, FormWrapper, FormResult, Price, IBANWrapper } from './styles';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { Field, Form, Formik, FormikHelpers } from 'formik';
+import { FormFields, FormSection, RegistrationFormWrapper, ImageBackground, FormWrapper, Price, IBANWrapper, TShirtCardButton, TShirtSelector, TShirtSizes, TShirtSizeButton } from './styles';
+import { useSearchParams } from 'react-router-dom';
 import { validateForm } from './validation';
 import { HeaderComponent } from '../Header/Header';
 import Button from '../Button/Button';
 import axios from 'axios';
-import { products } from '../../config/constants';
+import { products, tShirtImages } from '../../config/constants';
 
 type Distance = 14 | 26;
 
@@ -18,17 +18,27 @@ export interface FormValues {
     termsAndConditions: boolean;
     birth: string;
     team?: string;
+    withTShirt: boolean;
+    tShirtSize: '' | 'S' | 'M' | 'L' | 'XL';
     paid: boolean;
 }
 
 const RegistrationForm = () => {
     const [searchParams] = useSearchParams();
     const [serverError, setServerError] = React.useState<string | null>(null);
+    const [discountPercent, setDiscountPercent] = React.useState<number>(0);
+    const [discountCodeChecked, setDiscountCodeChecked] = React.useState<boolean>(false);
+    const [discountCodeInactive, setDiscountCodeInactive] = React.useState<boolean>(false);
     const [distance, setDistance] = React.useState<Distance>(Number(searchParams.get('product')) as Distance || 26);
-    const [email, setEmail] = React.useState<string>('');
-    const price = products.find(product => product.distance === distance)?.latePrice || 0;
-    const success = searchParams.get('success') === 'true';
-    const navigate = useNavigate();
+    const isTestMode = (searchParams.get('test') || '').toLowerCase().trim() === 'true';
+    const uniqueCode = searchParams.get('uniqueCode') || '';
+    const observePointCode = searchParams.get('observePoint') || '';
+    const selectedProduct = products.find(product => product.distance === distance);
+    const price = isTestMode
+        ? (selectedProduct?.testProductPrice || selectedProduct?.price || 0)
+        : (selectedProduct?.price || 0);
+
+    const tShirtPrice = selectedProduct?.tShirtPrice || 0;
     const initialValues: FormValues = {
         email: '',
         name: '',
@@ -37,94 +47,169 @@ const RegistrationForm = () => {
         termsAndConditions: false,
         birth: '',
         team: '',
+        withTShirt: false,
+        tShirtSize: '',
         paid: false
     };
     const apiUrl = process.env.REACT_APP_REGISTRATION_API_URL;
+    const fallbackTShirtImage = 'https://pvmolqp98bhv9my7.public.blob.vercel-storage.com/product-box-image.png';
     const resetServerError = () => {
-        setServerError('')
+        setServerError(null);
     }
+
+    React.useEffect(() => {
+        const fetchDiscount = async () => {
+            if (!uniqueCode || !apiUrl) {
+                setDiscountPercent(0);
+                setDiscountCodeInactive(false);
+                setDiscountCodeChecked(false);
+                return;
+            }
+
+            try {
+                const response = await axios.get(`${apiUrl}/discount-code`, {
+                    params: { code: uniqueCode },
+                });
+                const isValid = response.data?.valid === true;
+                const isInactive = response.data?.inactive === true;
+                const discount = Number(response.data?.discount ?? 0);
+                setDiscountPercent(isValid ? Math.max(0, Math.min(100, discount)) : 0);
+                setDiscountCodeInactive(isInactive);
+                setDiscountCodeChecked(true);
+            } catch (error) {
+                console.error('Discount code validation failed:', error, uniqueCode);
+                setDiscountPercent(0);
+                setDiscountCodeInactive(false);
+                setDiscountCodeChecked(true);
+            }
+        };
+
+        fetchDiscount();
+    }, [apiUrl, uniqueCode]);
+
+    const handleImageFallback = (event: React.SyntheticEvent<HTMLImageElement>) => {
+        const image = event.currentTarget;
+        if (image.src !== fallbackTShirtImage) {
+            image.src = fallbackTShirtImage;
+        }
+    };
 
     interface PaymentDetailsProps {
-        price: number;
-        email: string;
+        basePrice: number;
+        tShirtPrice: number;
+        withTShirt: boolean;
+        discountPercent: number;
     }
 
-    const PaymentDetails: React.FC<PaymentDetailsProps> = ({ price, email }) => {
+    const PaymentDetails: React.FC<PaymentDetailsProps> = ({ basePrice, tShirtPrice, withTShirt, discountPercent }) => {
+    const appliedDiscount = Math.round(basePrice * (Math.max(0, Math.min(100, discountPercent)) / 100));
+    const discountedBase = Math.max(0, basePrice - appliedDiscount);
+    const total = discountedBase + (withTShirt ? tShirtPrice : 0);
+
         return (
             <>
-                <Price>Плащане на стартова такса: {price} лв.</Price>
+                <Price>Плащане на стартова такса: {basePrice} eur.</Price>
+                {discountPercent > 0 && (
+                    <Price>Отстъпка от стартовата такса: ({discountPercent}%): -{appliedDiscount} eur.</Price>
+                )}
+                {withTShirt && (
+                    <Price>Тениска: {tShirtPrice} eur</Price>
+                )}
+                <Price>Общо: {total} eur</Price>
                 <IBANWrapper>
-                    <p>IBAN: BG29 IABG 7490 1002 0275 01 </p>
-                    <p>BIC: IABGSF</p>
-                    <p>Получател: Сдружение "Спортен клуб по ориентиране и бягане Осогово"</p>
-                    <p>Основание за плащане: <b>{email}</b> (Вашият имейл) </p>
+                    {total === 0 ? (
+                        <p>Регистрацията е безплатна с приложения код за отстъпка. Натиснете бутона, за да завършите регистрацията си.</p>
+                    ) : (
+                        <>
+                            <p>След валидиране на данните ще бъдете пренасочени към защитената платежна страница.</p>
+                            <p>Регистрацията се потвърждава след успешно плащане и сървърна проверка на транзакцията.</p>
+                        </>
+                    )}
                 </IBANWrapper>
             </>
         );
     }
 
-    const sendEmail = (email: string, name: string, distance: Distance) => {
-        if (typeof apiUrl === 'string' && apiUrl.length > 0) {
-            axios.post(`${apiUrl}/send-email`, {
-                name,
-                email,
-                distance
-            })
-            .then(response => {
-                console.log('Email sent successfully:', response.data);
-            })
-            .catch(error => {
-                console.error('Error sending email:', error);
+    const handleRegistrationSubmit = async (
+        values: FormValues,
+        { setSubmitting }: FormikHelpers<FormValues>
+    ) => {
+        if (typeof apiUrl !== 'string' || apiUrl.length === 0) {
+            console.error('Registration API URL is not defined.');
+            setServerError('Липсва конфигурация за плащането. Моля, свържете се с info@osogovo.run.');
+            setSubmitting(false);
+            return;
+        }
+
+        try {
+            const payload: Record<string, unknown> = {
+                ...values,
+            };
+
+            if (isTestMode) {
+                payload.test = 'true';
+                payload.observePointCode = observePointCode;
+            }
+
+            if (uniqueCode.trim().length > 0) {
+                payload.uniqueCode = uniqueCode.trim();
+            }
+
+            const response = await axios.post(`${apiUrl}/create-checkout-session`, {
+                data: payload,
             });
-        } else {
-            console.error('Email API URL is not defined.');
+            const checkoutUrl = response.data?.checkoutUrl;
+
+            if (typeof checkoutUrl !== 'string' || checkoutUrl.length === 0) {
+                throw new Error('Missing checkout redirect URL');
+            }
+
+            resetServerError();
+            window.location.assign(checkoutUrl);
+        } catch (error) {
+            if (axios.isAxiosError(error) && error.response?.status === 409) {
+                console.error('Email already registered with paid status:', error, values.email);
+                setServerError('Имейлът вече е регистриран с потвърдено плащане. Моля, се свържете с info@osogovo.run.');
+            } else if (axios.isAxiosError(error) && error.response?.status === 402) {
+                console.error('Email already registered but payment pending:', error, values.email);
+                const retryUrl = `/register/retry-payment?email=${encodeURIComponent(values.email)}`;
+                setServerError(`Имейлът вече е регистриран, но плащането не е завършено. <a href="${retryUrl}">Опитайте отново с плащането</a> или <a href="mailto:info@osogovo.run">се свържете с нас</a>.`);
+            } else if (axios.isAxiosError(error) && typeof error.response?.data?.error === 'string') {
+                console.error('Registration validation error:', error, values.email);
+                setServerError(error.response.data.error);
+            } else {
+                console.error('Registration error:', error, values.email);
+                setServerError('Възникна грешка при пренасочването към плащането. Моля, опитайте отново по-късно или се свържете с info@osogovo.run.');
+            }
+        } finally {
+            setSubmitting(false);
         }
     };
 
   return (
     <RegistrationFormWrapper distance={distance}>
-        <HeaderComponent hideDate image="https://pvmolqp98bhv9my7.public.blob.vercel-storage.com/Profile.svg" />
+        <HeaderComponent hideDate />
         <ImageBackground image="https://pvmolqp98bhv9my7.public.blob.vercel-storage.com/registration-bg.png" />
-            <FormWrapper success={success}>
+            <FormWrapper>
+                {isTestMode && (
+                    <div className="server error">TEST MODE: Плащането е с тестова цена.</div>
+                )}
+                {!isTestMode && uniqueCode && discountCodeChecked && discountPercent > 0 && (
+                    <div className="server error">Активен код за отстъпка от таксата за регистрация: {discountPercent}%</div>
+                )}
+                {!isTestMode && uniqueCode && discountCodeChecked && discountCodeInactive && (
+                    <div className="server error">Кодът за отстъпка вече не е активен.</div>
+                )}
+                {!isTestMode && uniqueCode && discountCodeChecked && !discountCodeInactive && discountPercent === 0 && (
+                    <div className="server error">Невалиден или неактивен код за отстъпка.</div>
+                )}
+                <a href="/register/payment">Към плащане</a><br /><br />
                 <a href="/participants">Виж регистрираните участници</a><br /><br />
-                <a href="/results">Виж резултатите</a>
-                {!success && <h1>Регистрацията е затворена</h1>}
-                {!success && <p>Записване е възможно в деня на състезанието, между 7:45 и 8:45, до изчерпване на свободните номера</p>}
-                {!success ? <Formik
+                <a href="/results?year=2025">Виж резултатите за 2025 г.</a><br /><br />
+                <Formik
                     initialValues={ initialValues }
                     validate={ validateForm }
-                    onSubmit={(values, { setSubmitting }) => {
-                        if (typeof apiUrl === 'string' && apiUrl.length > 0) {
-                            const res = axios.post(`${apiUrl}/register`, {
-                                data: values,
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                    Connection: 'Keep-Alive',
-                                },
-                            })
-                            .then(response => {
-                                setSubmitting(false);
-                                setEmail(values.email);
-                                sendEmail(values.email, values.name, distance);
-                                resetServerError();
-                                navigate('/register?success=true');
-                            })
-                            .catch(error => {
-                                if (error?.response?.status === 409) {
-                                    console.error('Email already registered:', error, email);
-                                    setServerError('Имейлът вече е регистриран. Моля, използвайте друг имейл адрес или се свържете с нас на info@osogovo.run');
-                                } else {
-                                    console.error('Registration error:', error, email);
-                                    setServerError('Възникна грешка при регистрацията. Моля, опитайте отново по-късно или се свържете с нас на info@osogovo.run.');
-                                }
-                            });
-                        } else {
-                            console.error('Registration API URL is not defined.');
-                        }
-                        setTimeout(() => {
-                        setSubmitting(false);
-                        }, 400);
-                    }}
+                    onSubmit={ handleRegistrationSubmit }
                 >
                     {({
                         errors,
@@ -133,11 +218,15 @@ const RegistrationForm = () => {
                         handleSubmit,
                         isSubmitting,
                         values,
-                        handleChange
+                        setFieldValue,
                     }) => {
+                        const appliedDiscount = Math.round(price * (Math.max(0, Math.min(100, discountPercent)) / 100));
+                        const discountedBase = Math.max(0, price - appliedDiscount);
+                        const total = discountedBase + (values.withTShirt ? tShirtPrice : 0);
+
                         return (
                         <Form onChange={resetServerError}>
-                            {/* <FormFields>
+                            <FormFields>
                                 <FormSection>
                                     <label htmlFor="distance">Дистанция</label>
                                     <Field 
@@ -147,8 +236,9 @@ const RegistrationForm = () => {
                                         id="distance" 
                                         value={distance} 
                                         onChange={(e: { target: { value: number; }; }) => {
-                                            setDistance(Number(e.target.value) as Distance)
-                                            values.distance = Number(e.target.value) as Distance;
+                                            const nextDistance = Number(e.target.value) as Distance;
+                                            setDistance(nextDistance);
+                                            setFieldValue('distance', nextDistance);
                                         }} 
                                     >
                                         <option value={14}>х.Осогово - 14км</option>
@@ -167,8 +257,6 @@ const RegistrationForm = () => {
                                         minLength={4}
                                     />
                                     {errors.email && touched.email && <div className="error">{errors.email}</div>}
-                                </FormSection>
-                                <FormSection>
                                     <label htmlFor="gender">Пол</label>
                                     <Field as="select" name="gender" id="gender">
                                         <option value="" hidden></option>
@@ -184,6 +272,7 @@ const RegistrationForm = () => {
                                             return <option key={year} value={year}>{year}</option>;
                                         })}
                                     </Field>
+                                    {errors.birth && touched.birth && <div className="error">{errors.birth}</div>}
                                     <label htmlFor="team">Отбор <span>(по желание)</span></label>
                                     <Field id="team" name="team" placeholder="Отбор" />
                                     <label className="checkbox-label" htmlFor="termsAndConditions">
@@ -196,36 +285,82 @@ const RegistrationForm = () => {
                                         <span className="checkmark"></span>
                                         <p>Подавайки заявка за участие декларирам, че съм съгласен с правилата и условията на всяко състезание и ще ги спазвам. Ще участвам по собствено желание и на собствена отговорност, като освобождавам от такава организаторите.</p>
                                     </label>
-                                    {errors.termsAndConditions && dirty && (
+                                    {errors.termsAndConditions && touched.termsAndConditions && (
                                         <div className="error">{errors.termsAndConditions}</div>
                                     )}
                                 </FormSection>
+                                <FormSection>
+                                    <label>Добави официална тениска за бягане Osogovo Run (по желание)</label>
+                                    <TShirtSelector>
+                                        <TShirtCardButton
+                                            type="button"
+                                            onClick={() => {
+                                                const nextSelected = !values.withTShirt;
+                                                setFieldValue('withTShirt', nextSelected);
+                                                if (!nextSelected) {
+                                                    setFieldValue('tShirtSize', '');
+                                                }
+                                            }}
+                                            selected={values.withTShirt}
+                                            grayscale={!values.withTShirt}
+                                        >
+                                            <img src={tShirtImages.front} alt="Официална тениска" onError={handleImageFallback} />
+                                            <span className="cta">{values.withTShirt ? 'Премахни тениска' : 'Добави тениска'}</span>
+                                            <span className="caption">
+                                                {values.withTShirt
+                                                    ? `Тениската е добавена (+${tShirtPrice} eur) - натиснете за премахване`
+                                                    : `Добави тениска (+${tShirtPrice} eur)`}
+                                            </span>
+                                        </TShirtCardButton>
+                                    </TShirtSelector>
+                                    <Field type="hidden" name="withTShirt" />
+                                    <Field type="hidden" name="tShirtSize" />
+
+                                    {values.withTShirt && (
+                                        <>
+                                            <label>Избери размер</label>
+                                            <TShirtSizes>
+                                                {(['S', 'M', 'L', 'XL'] as const).map((size) => (
+                                                    <TShirtSizeButton
+                                                        key={size}
+                                                        type="button"
+                                                        selected={values.tShirtSize === size}
+                                                        onClick={() => setFieldValue('tShirtSize', size)}
+                                                    >
+                                                        {size}
+                                                    </TShirtSizeButton>
+                                                ))}
+                                            </TShirtSizes>
+                                            {errors.tShirtSize && touched.withTShirt && (
+                                                <div className="error">{errors.tShirtSize}</div>
+                                            )}
+                                        </>
+                                    )}
+                                    <Price>Текуща обща сума: {total} eur.</Price>
+                                </FormSection>
                             </FormFields>
-                            <Button
-                                label="Регистрация"
-                                disabled={!dirty || isSubmitting || Object.keys(errors).length > 0}
-                                onClick={handleSubmit}
-                            /> */}
                             {serverError && (
-                                <div className="server error">
-                                    {serverError}
-                                </div>
+                                <div className="server error" dangerouslySetInnerHTML={{ __html: serverError }} />
                             )}
                             {errors && Object.keys(errors).length > 0 && (
                                 <div className="error">
                                     Моля, попълнете всички задължителни полета. При проблем, моля свържетe се с info@osogovo.run
                                 </div>
                             )}
-                            {/* <PaymentDetails price={price} email={values.email} /> */}
+                            <PaymentDetails
+                                basePrice={price}
+                                tShirtPrice={tShirtPrice}
+                                withTShirt={values.withTShirt}
+                                discountPercent={discountPercent}
+                            />
+                            <Button
+                                label={isSubmitting ? 'Пренасочване...' : (total === 0 ? 'Завърши регистрацията' : `Плати ${total} eur`)}
+                                onClick={handleSubmit}
+                            />
                         </Form>
                     );
                 }}
-                </Formik> :
-                <FormResult>
-                    <h2>Благодарим Ви за регистрацията!</h2>
-                    <p>Очакваме Ви на старта на състезанието!</p>
-                    <PaymentDetails price={price} email={email} />
-                </FormResult>}
+                </Formik>
             </FormWrapper> 
   </RegistrationFormWrapper>
   );

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { ImagesFieldWrapper } from "./styles";
 
 function shuffle(array: any[]) {
@@ -21,9 +21,35 @@ const renderImages = (count: number) => {
 }
 
 const ImagesField: React.FC = () => {
+    const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const scrollContainer = scrollContainerRef.current;
+        if (!scrollContainer) return;
+
+        let direction = 1; // 1 for forward, -1 for backward
+
+        const scroll = () => {
+            const maxScroll = scrollContainer.scrollWidth - scrollContainer.clientWidth;
+            const nextScroll = scrollContainer.scrollLeft + (direction * 4);
+
+            if (nextScroll >= maxScroll) {
+                direction = -1;
+                scrollContainer.scrollLeft = maxScroll;
+            } else if (nextScroll <= 0) {
+                direction = 1;
+                scrollContainer.scrollLeft = 0;
+            } else {
+                scrollContainer.scrollLeft = nextScroll;
+            }
+        };
+
+        const interval = setInterval(scroll, 30);
+        return () => clearInterval(interval);
+    }, []);
     
     return (
-        <ImagesFieldWrapper>
+        <ImagesFieldWrapper ref={scrollContainerRef}>
             {renderImages(11)}
         </ImagesFieldWrapper>
     );

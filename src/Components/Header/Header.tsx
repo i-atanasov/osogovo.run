@@ -26,17 +26,17 @@ export const HeaderComponent: React.FC<{ hideDate?: boolean, video?: string; ima
             } else {
                 refVideo.current.srcObject = video ?? null;
             }
-    }, [video]);
+        }, [video]);
 
-    return (
-        <video
-            poster="https://pvmolqp98bhv9my7.public.blob.vercel-storage.com/home_26_02.jpg"
-            ref={refVideo}
-            autoPlay
-            loop
-            playsInline //FIX iOS black screen
-        />
-    );
+        return (
+            <video
+                poster="https://pvmolqp98bhv9my7.public.blob.vercel-storage.com/home_26_02.jpg"
+                ref={refVideo}
+                autoPlay
+                loop
+                playsInline //FIX iOS black screen
+            />
+        );
     };
 
     return (

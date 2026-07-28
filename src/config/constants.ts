@@ -1,5 +1,17 @@
 import { ProductBoxProps } from "../Components/ProductBox/ProductBox"
 
+const parsePrice = (envVar: string | undefined, defaultValue: number): number => {
+    if (!envVar) return defaultValue;
+    const parsed = parseInt(envVar, 10);
+    return isNaN(parsed) ? defaultValue : parsed;
+};
+
+const PRICING = {
+    14: parsePrice(process.env.REACT_APP_PRICE_14, 20),
+    26: parsePrice(process.env.REACT_APP_PRICE_26, 25),
+    tShirt: parsePrice(process.env.REACT_APP_TSHIRT_PRICE, 25),
+};
+
 export const products: ProductBoxProps[] = [
     {
         distance: 14,
@@ -13,10 +25,10 @@ export const products: ProductBoxProps[] = [
         description: 'Осогово рън е състезание по планинско бягане, което се провежда в Осоговската планина. Състезанието предлага различни дистанции и маршрути, които преминават през живописни пейзажи и предизвикателни терени.',
         image: 'https://pvmolqp98bhv9my7.public.blob.vercel-storage.com/OSOGOVO-RUN-14k.png',
         gpx: 'https://pvmolqp98bhv9my7.public.blob.vercel-storage.com/Osogovo_Run_14K_2025.gpx',
-        price: 0,
-        latePrice: 0,
-        priceLabel: '<b>Такса:</b> - (до 17 септември)',
-        latePriceLabel: '<b>Такса:</b> -',
+        price: PRICING[14],
+        priceLabel: `<b>Такса:</b> €${PRICING[14]}`,
+        tShirtPrice: PRICING.tShirt,
+        testProductPrice: 1,
     },
     {
         distance: 26,
@@ -30,10 +42,10 @@ export const products: ProductBoxProps[] = [
         description: 'Руен рън е предизвикателство за опитни бегачи, които искат да се изправят пред дълги дистанции и трудни условия в Осоговската планина. Състезанието предлага уникален опит и възможност за преодоляване на собствените граници.',
         image: 'https://pvmolqp98bhv9my7.public.blob.vercel-storage.com/OSOGOVO-RUN-26k.png',
         gpx: 'https://pvmolqp98bhv9my7.public.blob.vercel-storage.com/Osogovo_Run_2025.gpx',
-        price: 0,
-        latePrice: 0,
-        priceLabel: '<b>Такса:</b> -  (до 17 септември)',
-        latePriceLabel: '<b>Такса:</b> -',
+        price: PRICING[26],
+        priceLabel: `<b>Такса:</b> €${PRICING[26]}`,
+        tShirtPrice: PRICING.tShirt,
+        testProductPrice: 1,
     },
 ]
 
@@ -46,6 +58,12 @@ export const colors = {
     RuenOrange: `#ef5223`,
     OsogovoBlack: `#30332F`
 }
+
+export const tShirtImages = {
+    front: 'https://pvmolqp98bhv9my7.public.blob.vercel-storage.com/Osogovo_Tshirt_Mockup.jpg',
+    // front: 'https://pvmolqp98bhv9my7.public.blob.vercel-storage.com/tshirt-front.png',
+    // back: 'https://pvmolqp98bhv9my7.public.blob.vercel-storage.com/tshirt-back.png',
+};
 
 export const details = {
     conditionsTitle: 'Условия за участие',

@@ -30,5 +30,8 @@ export const validateForm = (values: FormValues) => {
     if (values.termsAndConditions !== true) {
         errors.termsAndConditions = 'Трябва да се съгласите с условията за участие';
     }
+    if (values.withTShirt && !values.tShirtSize) {
+        errors.tShirtSize = 'Изберете размер на тениската';
+    }
     return errors;
 };

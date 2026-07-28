@@ -7,6 +7,13 @@ export const ImagesFieldWrapper = styled.div`
     overflow-y: hidden;
     margin: 40px 0 0;
     width: 100%;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+    
+    &::-webkit-scrollbar {
+        display: none;
+    }
+    
     > img {
         width: 100%;
         height: 400px;
