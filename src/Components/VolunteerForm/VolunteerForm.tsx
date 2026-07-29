@@ -230,6 +230,11 @@ const VolunteerForm = () => {
                                 disabled={isFull || isSubmitting}
                                 label={isSubmitting ? 'Регистриране...' : 'Регистрирай се'}
                             />
+                            {successMessage && (
+                                <div className="server" style={{ backgroundColor: '#d4edda', color: '#155724', borderLeftColor: '#28a745' }}>
+                                    {successMessage}
+                                </div>
+                            )}
                         </Form>
                     )}
                 </Formik>
