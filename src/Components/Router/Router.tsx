@@ -5,6 +5,7 @@ import PaymentSuccessPage from "../RegistrationForm/PaymentSuccessPage";
 import PaymentCancelPage from "../RegistrationForm/PaymentCancelPage";
 import PaymentRequestPage from "../RegistrationForm/PaymentRequestPage";
 import RetryPaymentPage from "../RegistrationForm/RetryPaymentPage";
+import VolunteerForm from "../VolunteerForm/VolunteerForm";
 import Home from "../Home/Home";
 import { Participants } from "../Participants/Participants";
 import RaceDay from "../RaceDay/RaceDay";
@@ -40,6 +41,10 @@ const Router: React.FC = () => {
                 <Route
                     path="/register/retry-payment"
                     element={<RetryPaymentPage />}
+                />
+                <Route
+                    path="/volunteer"
+                    element={<VolunteerForm />}
                 />
                 <Route
                     path="/participants"
