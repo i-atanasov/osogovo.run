@@ -1,7 +1,8 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { DistanceSign, ProductBoxWrapper, ImageWrapper, TextWrapper } from "./styles";
+import { ProductBoxWrapper, ImageWrapper, TextWrapper } from "./styles";
 import Button from "../Button/Button";
+import { euConversionRate } from "../../config/constants";
 
 export interface ProductBoxProps {
     distance: number;
@@ -37,10 +38,9 @@ const ProductBox = (product: ProductBoxProps) => {
                 <p dangerouslySetInnerHTML={{ __html: product.totalDistance }}></p>
                 <p dangerouslySetInnerHTML={{ __html: product.elevation }}></p>
                 <p dangerouslySetInnerHTML={{ __html: product.cutOffTime }}></p>
-                <p className="highlight" dangerouslySetInnerHTML={{ __html: `Такса: €${product.price}` }}></p>
+                <p className="highlight" dangerouslySetInnerHTML={{ __html: `Такса: €${product.price} / ${(product.price * euConversionRate).toFixed(2)} лв` }}></p>
                 {product.latePrice && <p className="highlight" dangerouslySetInnerHTML={{ __html: `Такса след 17.09.2026: €${product.latePrice}` }}></p>}
                 {/* <a href="/participants">Виж регистрираните участници</a> */}
-                {/* <a href="/results">Виж резултатите</a> */}
             </TextWrapper>
             <Button disabled={false} label="Регистрирай се" onClick={() => {
                 navigate(`/register?product=${product.distance}`);

@@ -6,6 +6,8 @@ const parsePrice = (envVar: string | undefined, defaultValue: number): number =>
     return isNaN(parsed) ? defaultValue : parsed;
 };
 
+export const euConversionRate = parsePrice(process.env.REACT_APP_EU_CONVERSION_RATE, 1.95583);
+
 const PRICING = {
     14: parsePrice(process.env.REACT_APP_PRICE_14, 20),
     26: parsePrice(process.env.REACT_APP_PRICE_26, 25),
@@ -26,7 +28,7 @@ export const products: ProductBoxProps[] = [
         image: 'https://pvmolqp98bhv9my7.public.blob.vercel-storage.com/OSOGOVO-RUN-14k.png',
         gpx: 'https://pvmolqp98bhv9my7.public.blob.vercel-storage.com/Osogovo_Run_14K_2025.gpx',
         price: PRICING[14],
-        priceLabel: `<b>Такса:</b> €${PRICING[14]}`,
+        priceLabel: `<b>Такса:</b> €${PRICING[14]} / ${(PRICING[14] * euConversionRate).toFixed(2)} лв`,
         tShirtPrice: PRICING.tShirt,
         testProductPrice: 1,
     },
@@ -43,7 +45,7 @@ export const products: ProductBoxProps[] = [
         image: 'https://pvmolqp98bhv9my7.public.blob.vercel-storage.com/OSOGOVO-RUN-26k.png',
         gpx: 'https://pvmolqp98bhv9my7.public.blob.vercel-storage.com/Osogovo_Run_2025.gpx',
         price: PRICING[26],
-        priceLabel: `<b>Такса:</b> €${PRICING[26]}`,
+        priceLabel: `<b>Такса:</b> €${PRICING[26]} / ${(PRICING[26] * euConversionRate).toFixed(2)} лв`,
         tShirtPrice: PRICING.tShirt,
         testProductPrice: 1,
     },

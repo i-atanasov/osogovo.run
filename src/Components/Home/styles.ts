@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 import { colors } from "../../config/constants";
 
 export const HomeContainer = styled.div`
@@ -31,10 +31,37 @@ export const Footer = styled.footer`
     text-align: center;
     padding: 20px;
     padding: 0 80px 40px;
-`
+`;
 
 export const ProductFieldWrapper = styled.div`
     width: 100%;
+`;
+
+const bounce = keyframes`
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(6px); }
+`;
+
+export const ScrollPrompt = styled.div`
+    position: absolute;
+    top: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    pointer-events: none;
+    z-index: 10;
+    opacity: 1;
+    transition: opacity 0.6s ease;
+
+    svg {
+        animation: ${bounce} 1s infinite;
+    }
 `;
 
 export const ProductFieldContainer = styled.div`
@@ -204,6 +231,7 @@ export const ProductFieldContainer = styled.div`
 
 export const AnimatedSign = styled.span<{ delay?: string, top?: string, left?: string, color?: string, inView?: boolean }>`
     position: absolute;
+    z-index: 10;
     top: ${props => props.top || '50%'};
     left: ${props => props.left || '50%'};
     transform: translate(-50%, -50%);

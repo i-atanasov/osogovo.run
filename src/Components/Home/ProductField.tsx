@@ -1,13 +1,13 @@
 import React, { useEffect, useRef } from "react";
 import { useInView } from "react-intersection-observer";
 import { products, fullRoute } from "../../config/constants";
-import { AnimatedSign, InfoSign, ProductFieldWrapper, ProductBoxContainer, ProductFieldContainer, AnimationWrapper } from "./styles";
+import { AnimatedSign, InfoSign, ProductFieldWrapper, ProductBoxContainer, ProductFieldContainer, AnimationWrapper, ScrollPrompt } from "./styles";
 import ProductBox from "../ProductBox/ProductBox";
 
 export const RenderFullRoute = () => {
     // Intersection observer to detect when the component is in view
     const { ref, inView, entry } = useInView({
-        threshold: 1,   
+        threshold: 0.1, // Trigger when 10% of the component is visible
         triggerOnce: true, // Only trigger once when it comes into view
     });
 
@@ -88,11 +88,26 @@ export const RenderFullRoute = () => {
 }
 
 const ProductField = () => {
+    const scrollPromptRef = React.useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            if (scrollPromptRef.current) {
+                scrollPromptRef.current.style.opacity = '0';
+            }
+        }, 3000);
+        return () => clearTimeout(timer);
+    }, []);
 
     return (
         <ProductFieldWrapper>
-            <ProductFieldContainer  >
-                <RenderFullRoute />
+            <ProductFieldContainer>                
+                <ScrollPrompt ref={scrollPromptRef}>
+                    <span>Виж повече</span>
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M8 3v10M3 9l5 5 5-5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                </ScrollPrompt>                <RenderFullRoute />
                 <img
                     src='https://pvmolqp98bhv9my7.public.blob.vercel-storage.com/product-box-image.png'
                     alt="Route"
