@@ -206,7 +206,7 @@ const RegistrationForm = () => {
                 {!isTestMode && uniqueCode && discountCodeChecked && !discountCodeInactive && discountPercent === 0 && (
                     <div className="server error">Невалиден или неактивен код за отстъпка.</div>
                 )}
-                <a href="/register/payment">Към плащане</a><br /><br />
+                <a href="/register/payment">Към плащане за вече регистрирани потребители</a><br /><br />
                 <a href="/participants">Виж регистрираните участници</a><br /><br />
                 <a href="/results?year=2025">Виж резултатите за 2025 г.</a><br /><br />
                 <Formik

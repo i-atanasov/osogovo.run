@@ -16,15 +16,18 @@ export const CourseField: React.FC = () => {
                 <FeeDescription>
                     <h2>Стартови такси</h2>
                     <table>
-                            {products.map((product, index) => (
-                                <tr key={index}>
-                                    <th>{product.distance} км</th>
-                                    {/* <td><span>{product.price} eur</span> до  септември</td> */}
-                                    {product.latePrice && (
-                                        <td><span>{product.latePrice} eur</span> след 17 септември</td>
-                                    )}
-                                </tr>
-                            ))}
+                        {products.map((product, index) => (
+                            <tr key={index}>
+                                <th>{product.distance} км</th>
+                                {/* <td><span>{product.price} eur</span> до  септември</td> */}
+                                {product.price && (
+                                    <td><span>{product.price} eur</span> до 1 септември</td>
+                                )}
+                                {product.price && (
+                                    <td><span>{product.price + 5} eur</span> след 1 септември</td>
+                                )}
+                            </tr>
+                        ))}
                     </table>
                 </FeeDescription>
             </CourseDescriptionWrapper>
