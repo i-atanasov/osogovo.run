@@ -40,11 +40,13 @@ const Home: React.FC = () => {
     // Navigate is used in the popup sometimes
     // const navigate = useNavigate()
 
+    const popUpEnabled = false;
+
     return (
         <HomeContainer>
-            <HeaderComponent video='http://www.osogovo.run/media/osogovo-run-21-sec-low.mp4' />
-            {showPopUp && <Dimmer show={showPopUp} onClick={() => setShowPopUpAndPersist(false)} />}
-            {showPopUp && 
+            <HeaderComponent video='https://media.osogovo.run/media/osogovo-run-21-sec-low.mp4' />
+            {popUpEnabled && showPopUp && <Dimmer show={showPopUp} onClick={() => setShowPopUpAndPersist(false)} />}
+            {popUpEnabled && showPopUp && 
                 <PopUp showPopUp={showPopUp} closePopUp={setShowPopUpAndPersist}>
                     <p>Новата дата за Осогово Рън е 27 септември 2026!</p>
                     <p>Регистрацията ще бъде отворена скоро.</p>
