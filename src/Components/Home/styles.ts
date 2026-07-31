@@ -25,6 +25,7 @@ export const AnimationWrapper = styled.div<{ inView: boolean }>`
 `;
 
 export const Footer = styled.footer`
+    width: 100%;
     background-color: ${colors.OsogovoBlack};
     color: white;
     text-align: center;

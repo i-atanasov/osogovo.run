@@ -44,7 +44,7 @@ const Home: React.FC = () => {
 
     return (
         <HomeContainer>
-            <HeaderComponent video='http://www.osogovo.run/media/osogovo-run-21-sec-low.mp4' />
+            <HeaderComponent video='https://media.osogovo.run/osogovo-run-21-sec-low.mp4' />
             {showPopUp && <Dimmer show={showPopUp} onClick={() => setShowPopUpAndPersist(false)} />}
             {showPopUp && 
                 <PopUp showPopUp={showPopUp} closePopUp={setShowPopUpAndPersist}>

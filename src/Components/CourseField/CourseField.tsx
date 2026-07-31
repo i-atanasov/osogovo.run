@@ -33,7 +33,7 @@ export const CourseField: React.FC = () => {
             </MapWrapper>
             <RegisterAction>
                 <img src='https://pvmolqp98bhv9my7.public.blob.vercel-storage.com/Profile_Race_OR.png' alt="Course Profile" className="course-profile" />
-                <Button disabled label="Регистрирай се" onClick={() => {
+                <Button disabled={false} label="Регистрирай се" onClick={() => {
                     navigate("/register");
                 }} />
             </RegisterAction>

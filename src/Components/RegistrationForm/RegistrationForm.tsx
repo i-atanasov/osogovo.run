@@ -25,6 +25,7 @@ export interface FormValues {
 }
 
 const RegistrationForm = () => {
+    React.useEffect(() => { window.scrollTo(0, 0); }, []);
     const [searchParams] = useSearchParams();
     const [serverError, setServerError] = React.useState<string | null>(null);
     const [discountPercent, setDiscountPercent] = React.useState<number>(0);

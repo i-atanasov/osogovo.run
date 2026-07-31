@@ -42,7 +42,7 @@ const ProductBox = (product: ProductBoxProps) => {
                 {/* <a href="/participants">Виж регистрираните участници</a> */}
                 {/* <a href="/results">Виж резултатите</a> */}
             </TextWrapper>
-            <Button disabled label="Регистрирай се" onClick={() => {
+            <Button disabled={false} label="Регистрирай се" onClick={() => {
                 navigate(`/register?product=${product.distance}`);
             }} />
             <a className="gpx-path" href={product.gpx} download>{product.distance}k GPX</a>
