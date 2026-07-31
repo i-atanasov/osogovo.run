@@ -1,5 +1,5 @@
 import React from 'react';
-import { Field, Form, Formik, FormikHelpers } from 'formik';
+import { Field, Form, Formik, FormikHelpers, useFormikContext } from 'formik';
 import { FormFields, FormSection, RegistrationFormWrapper, ImageBackground, FormWrapper, Price, IBANWrapper, TShirtCardButton, TShirtSelector, TShirtSizes, TShirtSizeButton } from './styles';
 import { useSearchParams } from 'react-router-dom';
 import { validateForm } from './validation';
@@ -35,6 +35,7 @@ const RegistrationForm = () => {
     const isTestMode = (searchParams.get('test') || '').toLowerCase().trim() === 'true';
     const uniqueCode = searchParams.get('uniqueCode') || '';
     const observePointCode = searchParams.get('observePoint') || '';
+    const emailParam = searchParams.get('email') || '';
     const selectedProduct = products.find(product => product.distance === distance);
     const price = isTestMode
         ? (selectedProduct?.testProductPrice || selectedProduct?.price || 0)
@@ -42,7 +43,7 @@ const RegistrationForm = () => {
 
     const tShirtPrice = selectedProduct?.tShirtPrice || 0;
     const initialValues: FormValues = {
-        email: '',
+        email: emailParam,
         name: '',
         distance: distance as Distance,
         gender: '',
@@ -59,6 +60,22 @@ const RegistrationForm = () => {
     const resetServerError = () => {
         setServerError(null);
     }
+
+    const handleEmailBlur = async (email: string, setFieldValue: (field: string, value: unknown) => void) => {
+        if (!apiUrl || !email) return;
+        try {
+            const response = await axios.post(`${apiUrl}/check-email`, { email });
+            if (response.data?.eligible === true) {
+                setFieldValue('name', response.data.name ?? '');
+                setFieldValue('birth', String(response.data.birth ?? ''));
+                setFieldValue('gender', response.data.gender ?? '');
+                setFieldValue('team', response.data.team ?? '');
+                setDiscountPercent(response.data.longDistanceWinner ? 100 : 10);
+            }
+        } catch {
+            // not eligible or network error — no action needed
+        }
+    };
 
     React.useEffect(() => {
         const fetchDiscount = async () => {
@@ -97,6 +114,17 @@ const RegistrationForm = () => {
         }
     };
 
+    const EmailParamEffect: React.FC = () => {
+        const { setFieldValue } = useFormikContext();
+        React.useEffect(() => {
+            if (emailParam) {
+                handleEmailBlur(emailParam, setFieldValue);
+            }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        }, []);
+        return null;
+    };
+
     interface PaymentDetailsProps {
         basePrice: number;
         tShirtPrice: number;
@@ -105,7 +133,7 @@ const RegistrationForm = () => {
     }
 
     const PaymentDetails: React.FC<PaymentDetailsProps> = ({ basePrice, tShirtPrice, withTShirt, discountPercent }) => {
-    const appliedDiscount = Math.round(basePrice * (Math.max(0, Math.min(100, discountPercent)) / 100));
+    const appliedDiscount = basePrice * (Math.max(0, Math.min(100, discountPercent)) / 100);
     const discountedBase = Math.max(0, basePrice - appliedDiscount);
     const total = discountedBase + (withTShirt ? tShirtPrice : 0);
 
@@ -172,7 +200,7 @@ const RegistrationForm = () => {
         } catch (error) {
             if (axios.isAxiosError(error) && error.response?.status === 409) {
                 console.error('Email already registered with paid status:', error, values.email);
-                setServerError('Имейлът вече е регистриран с потвърдено плащане. Моля, се свържете с info@osogovo.run.');
+                setServerError('Имейлът вече е регистриран с потвърдено плащане. Моля, свържете се с info@osogovo.run за повече информация.');
             } else if (axios.isAxiosError(error) && error.response?.status === 402) {
                 console.error('Email already registered but payment pending:', error, values.email);
                 const retryUrl = `/register/retry-payment?email=${encodeURIComponent(values.email)}`;
@@ -219,16 +247,18 @@ const RegistrationForm = () => {
                         touched,
                         dirty,
                         handleSubmit,
+                        handleBlur,
                         isSubmitting,
                         values,
                         setFieldValue,
                     }) => {
-                        const appliedDiscount = Math.round(price * (Math.max(0, Math.min(100, discountPercent)) / 100));
+                        const appliedDiscount = price * (Math.max(0, Math.min(100, discountPercent)) / 100);
                         const discountedBase = Math.max(0, price - appliedDiscount);
                         const total = discountedBase + (values.withTShirt ? tShirtPrice : 0);
 
                         return (
                         <Form onChange={resetServerError}>
+                            <EmailParamEffect />
                             <FormFields>
                                 <FormSection>
                                     <label htmlFor="distance">Дистанция</label>
@@ -248,9 +278,6 @@ const RegistrationForm = () => {
                                         <option value={26}>вр.Руен - 26км</option>
                                     </Field>
 
-                                    <label htmlFor="name">Име и фамилия</label>
-                                    <Field id="name" name="name" placeholder="Име и фамилия" />
-                                    {errors.name && touched.name && <div className="error">{errors.name}</div>}
                                     <label htmlFor="email">Email</label>
                                     <Field
                                         id="email"
@@ -258,8 +285,16 @@ const RegistrationForm = () => {
                                         placeholder="Въведете валиден email"
                                         type="email"
                                         minLength={4}
+                                        onBlur={(e: React.FocusEvent<HTMLInputElement>) => {
+                                            handleBlur(e);
+                                            handleEmailBlur(e.target.value.trim().toLowerCase(), setFieldValue);
+                                        }}
                                     />
                                     {errors.email && touched.email && <div className="error">{errors.email}</div>}
+
+                                    <label htmlFor="name">Име и фамилия</label>
+                                    <Field id="name" name="name" placeholder="Име и фамилия" />
+                                    {errors.name && touched.name && <div className="error">{errors.name}</div>}
                                     <label htmlFor="phoneNumber">Телефонен номер</label>
                                     <Field
                                         id="phoneNumber"
