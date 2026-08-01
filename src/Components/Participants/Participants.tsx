@@ -12,6 +12,7 @@ type Participant = {
     gender: string;
     team?: string;
     bib: number;
+    updated_at?: string;
     osogovo?: string
     ruen?: string
 };
@@ -26,7 +27,11 @@ export const Participants: React.FC = () => {
         const fetchParticipants = async () => {
             const response = await axios.get(`${apiUrl}/participants`);
             const data = response.data;
-            data.sort((a: Participant, b: Participant) => a.bib - b.bib);
+            data.sort((a: Participant, b: Participant) => {
+                const aTime = a.updated_at ?? '';
+                const bTime = b.updated_at ?? '';
+                return aTime.localeCompare(bTime);
+            });
             setParticipants(data);
             setLoading(false);
         };
@@ -65,15 +70,7 @@ export const Participants: React.FC = () => {
                 </thead>
                 {loading && <p>Зареждане...</p>}
                 <tbody>
-                    {participants.sort((a, b) => {
-                        const osogovoA = a.osogovo ?? "";
-                        const osogovoB = b.osogovo ?? "";
-                        const osogovoCompare = osogovoA.localeCompare(osogovoB);
-                        if (osogovoCompare !== 0) return osogovoCompare;
-                        const ruenA = a.ruen ?? "";
-                        const ruenB = b.ruen ?? "";
-                        return ruenA.localeCompare(ruenB);
-                    }).map((participant) => {
+                    {participants.map((participant) => {
                         const category = getCategory(participant);
                         const final = participant.distance === '14' ? 'osogovo' : 'ruen';
                         position++; // Increment position for each participant
@@ -102,10 +99,11 @@ export const Participants: React.FC = () => {
                 <p>Виж резултатите: <a href="/results?year=2025">2025 г.</a></p>
                 <p><a href="/register/payment">Към плащане за вече регистрирани потребители</a></p>
                 {/* <a href="/race-day">Виж инструкции за състезателния ден</a> */}
-                <h1>Списък с участници - обща категория / 14 км</h1>
-                {renderTable(undefined, "14")}
+                <h1>Списък с участници:</h1>
+                {renderTable()}
+                {/* {renderTable(undefined, "14")}
                 <h1>Списък с участници - обща категория / 26 км</h1>
-                {renderTable(undefined, "26")}
+                {renderTable(undefined, "26")} */}
                 {/* <h1>Списък с участници - категория Жени / 14 км</h1>
                 {renderTable('Ж', "14")}
                 <h1>Списък с участници - категория Жени / 26 км</h1>
@@ -126,8 +124,8 @@ export const Participants: React.FC = () => {
                 {renderTable('Ж20', "14")}
                 <h1>Списък с участници - категория Жени до 20 / 26 км</h1>
                 {renderTable('Ж20', "26")} */}
-                <p>Дистанция 26 км: {participants.filter(p => p.distance === "26").length} души</p>
-                <p>Дистанция 14 км: {participants.filter(p => p.distance === "14").length} души</p>
+                <p>Дистанция 26 км: {participants.filter(p => p.distance === "26").length} {participants.filter(p => p.distance === "26").length === 1 ? 'участник' : 'участници'}</p>
+                <p>Дистанция 14 км: {participants.filter(p => p.distance === "14").length} {participants.filter(p => p.distance === "14").length === 1 ? 'участник' : 'участници'}</p>
             </ParticipantsWrapper>
         </HomeContainer>
     );

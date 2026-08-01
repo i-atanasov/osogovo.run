@@ -30,11 +30,11 @@ export const ParticipantsWrapper = styled.div`
         text-decoration: none;
         color: ${colors.RuenOrange};
     }
-`
+`;
 
 export const Paid = styled.td<{ paid: boolean }>`
     color: ${props => props.paid ? "green" : ''};
-`
+`;
 
 export const TableRow = styled.tr<{ highlighted: boolean }>`
     background-color: ${props => props.highlighted ? colors.RuenOrange : "transparent"};
@@ -44,7 +44,7 @@ export const TableRow = styled.tr<{ highlighted: boolean }>`
         color: white;
         cursor: pointer;
         ${Paid} {
-            text-shadow: 1px 0px 10px white;
+            color: white;
         }
     }
-`
+`;
