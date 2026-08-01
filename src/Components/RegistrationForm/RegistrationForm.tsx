@@ -62,7 +62,7 @@ const RegistrationForm = () => {
     }
 
     const handleEmailBlur = async (email: string, setFieldValue: (field: string, value: unknown) => void) => {
-        if (!apiUrl || !email) return;
+        if (!apiUrl || !email || uniqueCode) return;
         try {
             const response = await axios.post(`${apiUrl}/check-email`, { email });
             if (response.data?.eligible === true) {
