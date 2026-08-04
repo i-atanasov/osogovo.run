@@ -22,16 +22,16 @@ export const RegistrationFormWrapper = styled.div<{ distance?: number }>`
 export const FormWrapper = styled.div<{ success?: boolean }>`
     position: absolute;
     background-color: ${props => props.success ? 'transparent' : 'white'};
-    top: 450px;
+    top: 150px;
     max-width: 1160px;
     padding: 40px;
     width: 60vw;
     @media (min-width: 768px) {
         width: 80vw;
-        top: 550px;
+        top: 150px;
     }
     @media (min-width: 1200px) {
-        top: 400px;
+        top: 150px;
     }
     > h1, a {
         color: ${colors.RuenOrange};

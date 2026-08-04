@@ -220,7 +220,7 @@ const RegistrationForm = () => {
   return (
     <RegistrationFormWrapper distance={distance}>
         <HeaderComponent hideDate />
-        <ImageBackground image="https://pvmolqp98bhv9my7.public.blob.vercel-storage.com/registration-bg.png" />
+        <ImageBackground image="https://pvmolqp98bhv9my7.public.blob.vercel-storage.com/Register_Background.jpg" />
             <FormWrapper>
                 {isTestMode && (
                     <div className="server error">TEST MODE: Плащането е с тестова цена.</div>
