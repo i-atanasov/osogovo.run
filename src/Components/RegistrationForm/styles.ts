@@ -26,6 +26,7 @@ export const FormWrapper = styled.div<{ success?: boolean }>`
     max-width: 1160px;
     padding: 40px;
     width: 60vw;
+    z-index: 10;
     @media (min-width: 768px) {
         width: 80vw;
         top: 150px;
