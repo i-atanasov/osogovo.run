@@ -29,8 +29,7 @@ export const Footer = styled.footer`
     background-color: ${colors.OsogovoBlack};
     color: white;
     text-align: center;
-    padding: 20px;
-    padding: 0 80px 40px;
+    padding: 20px 0;
 `;
 
 export const ProductFieldWrapper = styled.div`
