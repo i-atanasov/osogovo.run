@@ -139,14 +139,14 @@ const RegistrationForm = () => {
 
         return (
             <>
-                <Price>Плащане на стартова такса: {basePrice} eur / {(basePrice * euConversionRate).toFixed(2)} лв.</Price>
+                <Price>Плащане на стартова такса: {basePrice} eur.</Price>
                 {discountPercent > 0 && (
-                    <Price>Отстъпка от стартовата такса: ({discountPercent}%): -{appliedDiscount} eur / {(-appliedDiscount * euConversionRate).toFixed(2)} лв.</Price>
+                    <Price>Отстъпка от стартовата такса: ({discountPercent}%): -{appliedDiscount} eur.</Price>
                 )}
                 {withTShirt && (
-                    <Price>Тениска: {tShirtPrice} eur / {(tShirtPrice * euConversionRate).toFixed(2)} лв.</Price>
+                    <Price>Тениска: {tShirtPrice} eur.</Price>
                 )}
-                <Price>Общо: {total} eur / {(total * euConversionRate).toFixed(2)} лв.</Price>
+                <Price>Общо: {total} eur.</Price>
                 <IBANWrapper>
                     {total === 0 ? (
                         <p>Регистрацията е безплатна с приложения код за отстъпка. Натиснете бутона, за да завършите регистрацията си.</p>
@@ -354,8 +354,8 @@ const RegistrationForm = () => {
                                             <span className="cta">{values.withTShirt ? 'Премахни тениска' : 'Добави тениска'}</span>
                                             <span className="caption">
                                                 {values.withTShirt
-                                                    ? `Тениската е добавена (+${tShirtPrice} eur / ${(tShirtPrice * euConversionRate).toFixed(2)} лв) - натиснете за премахване`
-                                                    : `Добави тениска (+${tShirtPrice} eur / ${(tShirtPrice * euConversionRate).toFixed(2)} лв)`
+                                                    ? `Тениската е добавена (+${tShirtPrice} eur) - натиснете за премахване`
+                                                    : `Добави тениска (+${tShirtPrice} eur)`
                                                 }
                                             </span>
                                         </TShirtCardButton>
@@ -383,7 +383,7 @@ const RegistrationForm = () => {
                                             )}
                                         </>
                                     )}
-                                    <Price>Текуща обща сума: {total} eur / {(total * euConversionRate).toFixed(2)} лв</Price>
+                                    <Price>Текуща обща сума: {total} eur.</Price>
                                 </FormSection>
                             </FormFields>
                             {serverError && (
@@ -401,7 +401,7 @@ const RegistrationForm = () => {
                                 discountPercent={discountPercent}
                             />
                             <Button
-                                label={isSubmitting ? 'Пренасочване...' : (total === 0 ? 'Завърши регистрацията' : `Плати ${total} eur / ${(total * euConversionRate).toFixed(2)} лв`)}
+                                label={isSubmitting ? 'Пренасочване...' : (total === 0 ? 'Завърши регистрацията' : `Плати ${total} eur.`)}
                                 onClick={handleSubmit}
                             />
                         </Form>

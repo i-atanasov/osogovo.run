@@ -3,7 +3,6 @@ import { CourseDescription, CourseFieldWrapper, CourseDescriptionWrapper, FeeDes
 import { CourseDescription as CourseDescriptionData, products } from "../../config/constants"
 import Button from "../Button/Button"
 import { useNavigate } from "react-router-dom"
-import { euConversionRate } from "../../config/constants"
 
 export const CourseField: React.FC = () => {
     const navigate = useNavigate();
@@ -22,10 +21,10 @@ export const CourseField: React.FC = () => {
                                 <th>{product.distance} км</th>
                                 {/* <td><span>{product.price} eur</span> до  септември</td> */}
                                 {product.price && (
-                                    <td><span>{product.price} eur / {(product.price * euConversionRate).toFixed(2)} лв</span> до 1 септември</td>
+                                    <td><span>{product.price} eur</span> до 1 септември</td>
                                 )}
                                 {product.price && (
-                                    <td><span>{product.price + 5} eur / {((product.price + 5) * euConversionRate).toFixed(2)} лв</span> след 1 септември</td>
+                                    <td><span>{product.price + 5} eur</span> след 1 септември</td>
                                 )}
                             </tr>
                         ))}
