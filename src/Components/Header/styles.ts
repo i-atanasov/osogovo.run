@@ -65,7 +65,7 @@ export const Header = styled.header<{ video?: string; image?: string }>`
 export const Logo = styled.a<{ top?: string, left?: string }>`
     position: absolute;
     top: ${props => props.top ? props.top : '20px'};
-    left: ${props => props.left ? props.left : '50%'};
+    left: ${props => props.left ? props.left : '80px'};
     width: 100px;
     height: 100px;
     transform: translateX(-50%);
