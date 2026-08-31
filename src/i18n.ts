@@ -26,7 +26,14 @@ const getInitialLanguage = (): SupportedLanguage => {
         return storedLanguage;
     }
 
-    return window.navigator.language.toLowerCase().startsWith('bg') ? 'bg' : 'en';
+    const browserLanguage = window.navigator.language.toLowerCase();
+    const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+    if (browserLanguage.startsWith('bg') || timeZone === 'Europe/Sofia') {
+    return 'bg';
+    }
+
+    return 'en';
 };
 
 i18n
