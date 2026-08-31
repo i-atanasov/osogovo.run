@@ -1,6 +1,7 @@
 import React from 'react';
 import axios from 'axios';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import Button from '../Button/Button';
 import { HeaderComponent } from '../Header/Header';
 import { FormResult, FormWrapper, ImageBackground, PaymentActions, RegistrationFormWrapper } from './styles';
@@ -10,6 +11,7 @@ type PaymentState = 'loading' | 'paid' | 'pending' | 'cancelled' | 'missing' | '
 const PaymentSuccessPage = () => {
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
+    const { t } = useTranslation();
     const [paymentState, setPaymentState] = React.useState<PaymentState>('loading');
     const [participantName, setParticipantName] = React.useState<string>('');
     const apiUrl = process.env.REACT_APP_REGISTRATION_API_URL;
@@ -66,29 +68,11 @@ const PaymentSuccessPage = () => {
         };
     }, [apiUrl, sessionId]);
 
-    const title = paymentState === 'paid'
-        ? `Благодарим Ви за регистрацията${participantName ? `, ${participantName}` : ''}!`
-        : paymentState === 'pending'
-            ? 'Плащането се обработва'
-            : paymentState === 'cancelled'
-                ? 'Плащането е прекратено'
-                : paymentState === 'missing'
-                    ? 'Липсва информация за плащането'
-                    : paymentState === 'error'
-                        ? 'Не успяхме да потвърдим плащането'
-                        : 'Проверяваме плащането';
+    const title = t(`registration:paymentPages.success.titles.${paymentState}`, {
+        namePart: participantName ? t('registration:paymentPages.success.namePart', { name: participantName }) : '',
+    });
 
-    const message = paymentState === 'paid'
-        ? 'Плащането е потвърдено успешно и регистрацията Ви е активна. Очакваме Ви на старта на състезанието.'
-        : paymentState === 'pending'
-            ? 'Сървърът все още изчаква окончателно потвърждение. Обновете страницата след няколко секунди.'
-            : paymentState === 'cancelled'
-                ? 'Не получихме успешно потвърдено плащане за тази регистрация. Можете да опитате отново.'
-                : paymentState === 'missing'
-                    ? 'Отворете тази страница само след връщане от системата за плащане или започнете нова регистрация.'
-                    : paymentState === 'error'
-                        ? 'Възникна проблем при проверката на плащането. Ако сумата е била удържана, свържете се с info@osogovo.run.'
-                        : 'Моля, изчакайте, докато проверим състоянието на плащането.';
+    const message = t(`registration:paymentPages.success.messages.${paymentState}`);
 
     return (
         <RegistrationFormWrapper>
@@ -100,15 +84,15 @@ const PaymentSuccessPage = () => {
                     <p>{message}</p>
                     <PaymentActions>
                         {paymentState === 'pending' && (
-                            <Button label="Провери отново" onClick={() => window.location.reload()} />
+                            <Button label={t('registration:paymentPages.success.checkAgain')} onClick={() => window.location.reload()} />
                         )}
                         {(paymentState === 'cancelled' || paymentState === 'missing' || paymentState === 'error') && (
-                            <Button label="Към регистрацията" onClick={() => navigate('/register')} />
+                            <Button label={t('registration:paymentPages.common.toRegistrationDefinite')} onClick={() => navigate('/register')} />
                         )}
                         {paymentState === 'paid' && (
-                            <Button label="Виж участниците" onClick={() => navigate('/participants')} />
+                            <Button label={t('registration:paymentPages.common.toParticipants')} onClick={() => navigate('/participants')} />
                         )}
-                        <Button label="Начална страница" onClick={() => navigate('/')} />
+                        <Button label={t('registration:paymentPages.common.home')} onClick={() => navigate('/')} />
                     </PaymentActions>
                 </FormResult>
             </FormWrapper>

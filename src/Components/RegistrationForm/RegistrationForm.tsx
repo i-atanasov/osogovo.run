@@ -2,11 +2,12 @@ import React from 'react';
 import { Field, Form, Formik, FormikHelpers, useFormikContext } from 'formik';
 import { FormFields, FormSection, RegistrationFormWrapper, ImageBackground, FormWrapper, Price, IBANWrapper, TShirtCardButton, TShirtSelector, TShirtSizes, TShirtSizeButton } from './styles';
 import { useSearchParams } from 'react-router-dom';
-import { validateForm } from './validation';
+import { createValidateForm } from './validation';
 import { HeaderComponent } from '../Header/Header';
 import Button from '../Button/Button';
 import axios from 'axios';
 import { euConversionRate, products, tShirtImages } from '../../config/constants';
+import { useTranslation } from 'react-i18next';
 
 type Distance = 14 | 26;
 
@@ -26,6 +27,7 @@ export interface FormValues {
 
 const RegistrationForm = () => {
     React.useEffect(() => { window.scrollTo(0, 0); }, []);
+    const { t } = useTranslation();
     const [searchParams] = useSearchParams();
     const [serverError, setServerError] = React.useState<string | null>(null);
     const [discountPercent, setDiscountPercent] = React.useState<number>(0);
@@ -56,6 +58,7 @@ const RegistrationForm = () => {
         paid: false
     };
     const apiUrl = process.env.REACT_APP_REGISTRATION_API_URL;
+    const validateRegistrationForm = React.useMemo(() => createValidateForm(t), [t]);
     const fallbackTShirtImage = 'https://pvmolqp98bhv9my7.public.blob.vercel-storage.com/product-box-image.png';
     const resetServerError = () => {
         setServerError(null);
@@ -139,21 +142,21 @@ const RegistrationForm = () => {
 
         return (
             <>
-                <Price>Плащане на стартова такса: {basePrice} eur.</Price>
+                <Price>{t('registration:payment.entryFee', { amount: basePrice })}</Price>
                 {discountPercent > 0 && (
-                    <Price>Отстъпка от стартовата такса: ({discountPercent}%): -{appliedDiscount} eur.</Price>
+                    <Price>{t('registration:payment.discount', { discountPercent, amount: appliedDiscount })}</Price>
                 )}
                 {withTShirt && (
-                    <Price>Тениска: {tShirtPrice} eur.</Price>
+                    <Price>{t('registration:payment.tShirt', { amount: tShirtPrice })}</Price>
                 )}
-                <Price>Общо: {total} eur.</Price>
+                <Price>{t('registration:payment.total', { amount: total })}</Price>
                 <IBANWrapper>
                     {total === 0 ? (
-                        <p>Регистрацията е безплатна с приложения код за отстъпка. Натиснете бутона, за да завършите регистрацията си.</p>
+                        <p>{t('registration:payment.freeRegistration')}</p>
                     ) : (
                         <>
-                            <p>След валидиране на данните ще бъдете пренасочени към защитената платежна страница.</p>
-                            <p>Регистрацията се потвърждава след успешно плащане и сървърна проверка на транзакцията.</p>
+                            <p>{t('registration:payment.redirectInfo')}</p>
+                            <p>{t('registration:payment.confirmationInfo')}</p>
                         </>
                     )}
                 </IBANWrapper>
@@ -167,7 +170,7 @@ const RegistrationForm = () => {
     ) => {
         if (typeof apiUrl !== 'string' || apiUrl.length === 0) {
             console.error('Registration API URL is not defined.');
-            setServerError('Липсва конфигурация за плащането. Моля, свържете се с info@osogovo.run.');
+            setServerError(t('registration:errors.missingPaymentConfiguration'));
             setSubmitting(false);
             return;
         }
@@ -200,17 +203,17 @@ const RegistrationForm = () => {
         } catch (error) {
             if (axios.isAxiosError(error) && error.response?.status === 409) {
                 console.error('Email already registered with paid status:', error, values.email);
-                setServerError('Имейлът вече е регистриран с потвърдено плащане. Моля, свържете се с info@osogovo.run за повече информация.');
+                setServerError(t('registration:errors.emailAlreadyPaid'));
             } else if (axios.isAxiosError(error) && error.response?.status === 402) {
                 console.error('Email already registered but payment pending:', error, values.email);
                 const retryUrl = `/register/retry-payment?email=${encodeURIComponent(values.email)}`;
-                setServerError(`Имейлът вече е регистриран, но плащането не е завършено. <a href="${retryUrl}">Опитайте отново с плащането</a> или <a href="mailto:info@osogovo.run">се свържете с нас</a>.`);
+                setServerError(t('registration:errors.paymentPending', { retryUrl }));
             } else if (axios.isAxiosError(error) && typeof error.response?.data?.error === 'string') {
                 console.error('Registration validation error:', error, values.email);
                 setServerError(error.response.data.error);
             } else {
                 console.error('Registration error:', error, values.email);
-                setServerError('Възникна грешка при пренасочването към плащането. Моля, опитайте отново по-късно или се свържете с info@osogovo.run.');
+                setServerError(t('registration:errors.checkoutRedirectFailed'));
             }
         } finally {
             setSubmitting(false);
@@ -223,23 +226,23 @@ const RegistrationForm = () => {
         <ImageBackground image="https://pvmolqp98bhv9my7.public.blob.vercel-storage.com/Register_Background.jpg" />
             <FormWrapper>
                 {isTestMode && (
-                    <div className="server error">TEST MODE: Плащането е с тестова цена.</div>
+                    <div className="server error">{t('registration:notices.testMode')}</div>
                 )}
                 {!isTestMode && uniqueCode && discountCodeChecked && discountPercent > 0 && (
-                    <div className="server error">Активен код за отстъпка от таксата за регистрация: {discountPercent}%</div>
+                    <div className="server error">{t('registration:notices.activeDiscount', { discountPercent })}</div>
                 )}
                 {!isTestMode && uniqueCode && discountCodeChecked && discountCodeInactive && (
-                    <div className="server error">Кодът за отстъпка вече не е активен.</div>
+                    <div className="server error">{t('registration:notices.inactiveDiscount')}</div>
                 )}
                 {!isTestMode && uniqueCode && discountCodeChecked && !discountCodeInactive && discountPercent === 0 && (
-                    <div className="server error">Невалиден или неактивен код за отстъпка.</div>
+                    <div className="server error">{t('registration:notices.invalidDiscount')}</div>
                 )}
-                <a href="/register/payment">Към плащане за вече регистрирани потребители</a><br /><br />
-                <a href="/participants">Виж регистрираните участници</a><br /><br />
-                <a href="/results?year=2025">Виж резултатите за 2025 г.</a><br /><br />
+                <a href="/register/payment">{t('registration:links.payment')}</a><br /><br />
+                <a href="/participants">{t('registration:links.participants')}</a><br /><br />
+                <a href="/results?year=2025">{t('registration:links.results2025')}</a><br /><br />
                 <Formik
                     initialValues={ initialValues }
-                    validate={ validateForm }
+                    validate={ validateRegistrationForm }
                     onSubmit={ handleRegistrationSubmit }
                 >
                     {({
@@ -261,7 +264,7 @@ const RegistrationForm = () => {
                             <EmailParamEffect />
                             <FormFields>
                                 <FormSection>
-                                    <label htmlFor="distance">Дистанция</label>
+                                    <label htmlFor="distance">{t('registration:fields.distance')}</label>
                                     <Field 
                                         as="select" 
                                         required 
@@ -274,15 +277,15 @@ const RegistrationForm = () => {
                                             setFieldValue('distance', nextDistance);
                                         }} 
                                     >
-                                        <option value={14}>х.Осогово - 14км</option>
-                                        <option value={26}>вр.Руен - 26км</option>
+                                        <option value={14}>{t('registration:fields.distance14')}</option>
+                                        <option value={26}>{t('registration:fields.distance26')}</option>
                                     </Field>
 
-                                    <label htmlFor="email">Email</label>
+                                    <label htmlFor="email">{t('registration:fields.email')}</label>
                                     <Field
                                         id="email"
                                         name="email"
-                                        placeholder="Въведете валиден email"
+                                        placeholder={t('registration:fields.emailPlaceholder')}
                                         type="email"
                                         minLength={4}
                                         onBlur={(e: React.FocusEvent<HTMLInputElement>) => {
@@ -292,26 +295,26 @@ const RegistrationForm = () => {
                                     />
                                     {errors.email && touched.email && <div className="error">{errors.email}</div>}
 
-                                    <label htmlFor="name">Име и фамилия</label>
-                                    <Field id="name" name="name" placeholder="Име и фамилия" />
+                                    <label htmlFor="name">{t('registration:fields.name')}</label>
+                                    <Field id="name" name="name" placeholder={t('registration:fields.namePlaceholder')} />
                                     {errors.name && touched.name && <div className="error">{errors.name}</div>}
-                                    <label htmlFor="phoneNumber">Телефонен номер</label>
+                                    <label htmlFor="phoneNumber">{t('registration:fields.phoneNumber')}</label>
                                     <Field
                                         id="phoneNumber"
                                         name="phoneNumber"
-                                        placeholder="+359 / 0898 / +1-234-567-8900"
+                                        placeholder={t('registration:fields.phonePlaceholder')}
                                         required
                                     />
                                     {errors.phoneNumber && touched.phoneNumber && <div className="error">{errors.phoneNumber}</div>}
-                                    <label htmlFor="gender">Пол</label>
+                                    <label htmlFor="gender">{t('registration:fields.gender')}</label>
                                     <Field as="select" name="gender" id="gender">
                                         <option value="" hidden></option>
-                                        <option value="male">Мъж</option>
-                                        <option value="female">Жена</option>
+                                        <option value="male">{t('registration:fields.genderMale')}</option>
+                                        <option value="female">{t('registration:fields.genderFemale')}</option>
                                     </Field>
                                     {errors.gender && touched.gender && <div className="error">{errors.gender}</div>}
-                                    <label htmlFor="birth">Година на раждане</label>
-                                    <Field className='year-option' as="select" id="birth" name="birth" required placeholder="Година на раждане" >
+                                    <label htmlFor="birth">{t('registration:fields.birth')}</label>
+                                    <Field className='year-option' as="select" id="birth" name="birth" required placeholder={t('registration:fields.birth')} >
                                         <option value="" hidden></option>
                                         {Array.from({ length: 60 }, (_, i) => {
                                             const year = new Date().getFullYear() - i - 15; // 15 is the minimum age
@@ -319,8 +322,8 @@ const RegistrationForm = () => {
                                         })}
                                     </Field>
                                     {errors.birth && touched.birth && <div className="error">{errors.birth}</div>}
-                                    <label htmlFor="team">Отбор <span>(по желание)</span></label>
-                                    <Field id="team" name="team" placeholder="Отбор" />
+                                    <label htmlFor="team">{t('registration:fields.team')} <span>{t('registration:fields.optional')}</span></label>
+                                    <Field id="team" name="team" placeholder={t('registration:fields.team')} />
                                     <label className="checkbox-label" htmlFor="termsAndConditions">
                                         <Field
                                             type="checkbox"
@@ -329,14 +332,14 @@ const RegistrationForm = () => {
                                             required
                                         />
                                         <span className="checkmark"></span>
-                                        <p>Подавайки заявка за участие декларирам, че съм съгласен с правилата и условията на всяко състезание и ще ги спазвам. Ще участвам по собствено желание и на собствена отговорност, като освобождавам от такава организаторите.</p>
+                                        <p>{t('registration:terms')}</p>
                                     </label>
                                     {errors.termsAndConditions && touched.termsAndConditions && (
                                         <div className="error">{errors.termsAndConditions}</div>
                                     )}
                                 </FormSection>
                                 <FormSection>
-                                    <label>Добави официална тениска за бягане Osogovo Run (по желание)</label>
+                                    <label>{t('registration:tShirt.label')}</label>
                                     <TShirtSelector>
                                         <TShirtCardButton
                                             type="button"
@@ -350,12 +353,12 @@ const RegistrationForm = () => {
                                             selected={values.withTShirt}
                                             grayscale={!values.withTShirt}
                                         >
-                                            <img src={tShirtImages.front} alt="Официална тениска" onError={handleImageFallback} />
-                                            <span className="cta">{values.withTShirt ? 'Премахни тениска' : 'Добави тениска'}</span>
+                                            <img src={tShirtImages.front} alt={t('registration:tShirt.imageAlt')} onError={handleImageFallback} />
+                                            <span className="cta">{values.withTShirt ? t('registration:tShirt.remove') : t('registration:tShirt.add')}</span>
                                             <span className="caption">
                                                 {values.withTShirt
-                                                    ? `Тениската е добавена (+${tShirtPrice} eur) - натиснете за премахване`
-                                                    : `Добави тениска (+${tShirtPrice} eur)`
+                                                    ? t('registration:tShirt.addedCaption', { price: tShirtPrice })
+                                                    : t('registration:tShirt.addCaption', { price: tShirtPrice })
                                                 }
                                             </span>
                                         </TShirtCardButton>
@@ -365,7 +368,7 @@ const RegistrationForm = () => {
 
                                     {values.withTShirt && (
                                         <>
-                                            <label>Избери размер</label>
+                                            <label>{t('registration:tShirt.sizeLabel')}</label>
                                             <TShirtSizes>
                                                 {(['XS', 'S', 'M', 'L', 'XL'] as const).map((size) => (
                                                     <TShirtSizeButton
@@ -383,7 +386,7 @@ const RegistrationForm = () => {
                                             )}
                                         </>
                                     )}
-                                    <Price>Текуща обща сума: {total} eur.</Price>
+                                    <Price>{t('registration:payment.currentTotal', { amount: total })}</Price>
                                 </FormSection>
                             </FormFields>
                             {serverError && (
@@ -391,7 +394,7 @@ const RegistrationForm = () => {
                             )}
                             {errors && Object.keys(errors).length > 0 && (
                                 <div className="error">
-                                    Моля, попълнете всички задължителни полета. При проблем, моля свържетe се с info@osogovo.run
+                                    {t('registration:notices.formHasErrors')}
                                 </div>
                             )}
                             <PaymentDetails
@@ -401,7 +404,7 @@ const RegistrationForm = () => {
                                 discountPercent={discountPercent}
                             />
                             <Button
-                                label={isSubmitting ? 'Пренасочване...' : (total === 0 ? 'Завърши регистрацията' : `Плати ${total} eur.`)}
+                                label={isSubmitting ? t('registration:payment.redirecting') : (total === 0 ? t('registration:payment.finishFree') : t('registration:payment.payAmount', { amount: total }))}
                                 onClick={handleSubmit}
                             />
                         </Form>

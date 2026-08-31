@@ -1,17 +1,21 @@
 import React from 'react';
 import axios from 'axios';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import Button from '../Button/Button';
 import { HeaderComponent } from '../Header/Header';
 import { FormResult, FormWrapper, ImageBackground, PaymentActions, RegistrationFormWrapper } from './styles';
 
+type CancelMessageKey = 'defaultMessage' | 'payLaterEmailSent' | 'pendingWithoutEmail';
+
 const PaymentCancelPage = () => {
     const navigate = useNavigate();
+    const { t } = useTranslation();
     const [searchParams] = useSearchParams();
     const product = searchParams.get('product');
     const sessionId = searchParams.get('session_id');
     const apiUrl = process.env.REACT_APP_REGISTRATION_API_URL;
-    const [message, setMessage] = React.useState('Регистрацията е запазена като изчакваща, но не е потвърдена. Можете да стартирате плащането отново, когато сте готови.');
+    const [messageKey, setMessageKey] = React.useState<CancelMessageKey>('defaultMessage');
     const [retrying, setRetrying] = React.useState(false);
     const [retryError, setRetryError] = React.useState<string | null>(null);
 
@@ -29,11 +33,11 @@ const PaymentCancelPage = () => {
                 });
 
                 if (!isCancelled && response.data?.payLaterEmailSent) {
-                    setMessage('Регистрацията е запазена. Изпратихме имейл с инструкции за плащане по банков път. При нужда: info@osogovo.run');
+                    setMessageKey('payLaterEmailSent');
                 }
             } catch (error) {
                 if (!isCancelled) {
-                    setMessage('Регистрацията е запазена като изчакваща. Ако не получите инструкции за плащане, пишете ни на info@osogovo.run');
+                    setMessageKey('pendingWithoutEmail');
                 }
             }
         };
@@ -71,7 +75,7 @@ const PaymentCancelPage = () => {
             if (axios.isAxiosError(error) && typeof error.response?.data?.error === 'string') {
                 setRetryError(error.response.data.error);
             } else {
-                setRetryError('Възникна грешка при повторно стартиране на плащането. Моля, опитайте отново.');
+                setRetryError(t('registration:paymentPages.cancel.retryError'));
             }
             setRetrying(false);
         }
@@ -83,17 +87,17 @@ const PaymentCancelPage = () => {
             <ImageBackground image="https://pvmolqp98bhv9my7.public.blob.vercel-storage.com/registration-bg.png" />
             <FormWrapper success>
                 <FormResult>
-                    <h2>Плащането не беше завършено</h2>
-                    <p>{message}</p>
+                    <h2>{t('registration:paymentPages.cancel.title')}</h2>
+                    <p>{t(`registration:paymentPages.cancel.${messageKey}`)}</p>
                     {retryError && <p>{retryError}</p>}
                     <PaymentActions>
                         <Button
-                            label={retrying ? 'Пренасочване...' : 'Опитайте отново'}
+                            label={retrying ? t('registration:paymentPages.common.redirecting') : t('registration:paymentPages.cancel.retry')}
                             onClick={retryPayment}
                             disabled={retrying}
                         />
                            
-                        <Button label="Начална страница" onClick={() => navigate('/')} />
+                        <Button label={t('registration:paymentPages.common.home')} onClick={() => navigate('/')} />
                     </PaymentActions>
                 </FormResult>
             </FormWrapper>

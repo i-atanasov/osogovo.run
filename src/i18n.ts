@@ -2,8 +2,10 @@ import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import bgCommon from './locales/bg/common';
 import bgHome from './locales/bg/home';
+import bgRegistration from './locales/bg/registration';
 import enCommon from './locales/en/common';
 import enHome from './locales/en/home';
+import enRegistration from './locales/en/registration';
 
 export const SUPPORTED_LANGUAGES = ['bg', 'en'] as const;
 export type SupportedLanguage = typeof SUPPORTED_LANGUAGES[number];
@@ -30,10 +32,12 @@ i18n
             bg: {
                 common: bgCommon,
                 home: bgHome,
+                registration: bgRegistration,
             },
             en: {
                 common: enCommon,
                 home: enHome,
+                registration: enRegistration,
             },
         },
         lng: getInitialLanguage(),
