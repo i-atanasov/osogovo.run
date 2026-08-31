@@ -1,4 +1,5 @@
 import React from "react"
+import { useTranslation } from "react-i18next";
 
 import { Dimmer, Footer, HomeContainer } from "./styles";
 import ProductField from "./ProductField";
@@ -12,6 +13,7 @@ import PopUp from "../PopUp/PopUp";
 const HOME_POPUP_STORAGE_KEY = 'osogovo_home_popup_visible';
 
 const Home: React.FC = () => {
+    const { t } = useTranslation();
     const [ showPopUp, setShowPopUp ] = React.useState<boolean>(() => {
         if (typeof window === 'undefined') {
             return true;
@@ -48,15 +50,15 @@ const Home: React.FC = () => {
             {popUpEnabled && showPopUp && <Dimmer show={showPopUp} onClick={() => setShowPopUpAndPersist(false)} />}
             {popUpEnabled && showPopUp && 
                 <PopUp showPopUp={showPopUp} closePopUp={setShowPopUpAndPersist}>
-                    <p>Новата дата за Осогово Рън е 27 септември 2026!</p>
-                    <p>Регистрацията ще бъде отворена скоро.</p>
+                    <p>{t('home:popup.date')}</p>
+                    <p>{t('home:popup.registration')}</p>
                 </PopUp>}
             <ProductField/>
             <CourseField/>
             <ImagesField/>
             <DetailsField/>
             <SponsorsField/>
-            <Footer>Copyright © 2025 Osogovo Run</Footer>
+            <Footer>{t('home:footer')}</Footer>
         </HomeContainer>
     );
 }

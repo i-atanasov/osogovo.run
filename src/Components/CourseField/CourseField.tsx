@@ -1,30 +1,33 @@
 import React from "react"
 import { CourseDescription, CourseFieldWrapper, CourseDescriptionWrapper, FeeDescription, MapWrapper, RegisterAction } from "./styles"
-import { CourseDescription as CourseDescriptionData, products } from "../../config/constants"
+import { products } from "../../config/constants"
 import Button from "../Button/Button"
 import { useNavigate } from "react-router-dom"
+import { useTranslation } from "react-i18next"
 
 export const CourseField: React.FC = () => {
     const navigate = useNavigate();
+    const { t } = useTranslation();
+
     return (
         <CourseFieldWrapper id="courses">
             <CourseDescriptionWrapper>
                 <CourseDescription>
-                    <h2>{CourseDescriptionData.title}</h2>
-                    <p>{CourseDescriptionData.description}</p>
+                    <h2>{t('home:course.title')}</h2>
+                    <p>{t('home:course.description')}</p>
                 </CourseDescription>
                 <FeeDescription>
-                    <h2>Стартови такси</h2>
+                    <h2>{t('home:course.feesTitle')}</h2>
                     <table>
                         {products.map((product, index) => (
                             <tr key={index}>
-                                <th>{product.distance} км</th>
+                                <th>{t('home:course.distanceLabel', { distance: product.distance })}</th>
                                 {/* <td><span>{product.price} eur</span> до  септември</td> */}
                                 {product.price && (
-                                    <td><span>{product.price} eur</span> до 1 септември</td>
+                                    <td><span>{product.price} eur</span> {t('home:course.earlyFee')}</td>
                                 )}
                                 {product.price && (
-                                    <td><span>{product.price + 5} eur</span> след 1 септември</td>
+                                    <td><span>{product.price + 5} eur</span> {t('home:course.lateFee')}</td>
                                 )}
                             </tr>
                         ))}
@@ -36,7 +39,7 @@ export const CourseField: React.FC = () => {
             </MapWrapper>
             <RegisterAction>
                 <img src='https://pvmolqp98bhv9my7.public.blob.vercel-storage.com/Profile_Race_OR.png' alt="Course Profile" className="course-profile" />
-                <Button disabled={false} label="Регистрирай се" onClick={() => {
+                <Button disabled={false} label={t('home:course.register')} onClick={() => {
                     navigate("/register");
                 }} />
             </RegisterAction>

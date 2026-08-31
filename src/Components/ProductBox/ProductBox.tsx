@@ -1,8 +1,8 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { ProductBoxWrapper, ImageWrapper, TextWrapper } from "./styles";
 import Button from "../Button/Button";
-import { euConversionRate } from "../../config/constants";
 
 export interface ProductBoxProps {
     distance: number;
@@ -26,6 +26,8 @@ export interface ProductBoxProps {
 
 const ProductBox = (product: ProductBoxProps) => {  
     const navigate = useNavigate();
+    const { t } = useTranslation();
+
     return (
         <ProductBoxWrapper>
             <ImageWrapper href={`/register?product=${product.distance}`}>
@@ -38,14 +40,14 @@ const ProductBox = (product: ProductBoxProps) => {
                 <p dangerouslySetInnerHTML={{ __html: product.totalDistance }}></p>
                 <p dangerouslySetInnerHTML={{ __html: product.elevation }}></p>
                 <p dangerouslySetInnerHTML={{ __html: product.cutOffTime }}></p>
-                <p className="highlight" dangerouslySetInnerHTML={{ __html: `Такса: €${product.price}` }}></p>
-                {product.latePrice && <p className="highlight" dangerouslySetInnerHTML={{ __html: `Такса след 17.09.2026: €${product.latePrice}` }}></p>}
+                <p className="highlight" dangerouslySetInnerHTML={{ __html: `${t('home:products.fee')}: €${product.price}` }}></p>
+                {product.latePrice && <p className="highlight" dangerouslySetInnerHTML={{ __html: `${t('home:products.lateFee')}: €${product.latePrice}` }}></p>}
                 {/* <a href="/participants">Виж регистрираните участници</a> */}
             </TextWrapper>
-            <Button disabled={false} label="Регистрирай се" onClick={() => {
+            <Button disabled={false} label={t('home:products.register')} onClick={() => {
                 navigate(`/register?product=${product.distance}`);
             }} />
-            <a className="gpx-path" href={product.gpx} download>{product.distance}k GPX</a>
+            <a className="gpx-path" href={product.gpx} download data-download-label={t('home:products.downloadGpx')}>{product.distance}k GPX</a>
         </ProductBoxWrapper>
     );
 };

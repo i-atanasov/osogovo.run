@@ -28,7 +28,7 @@ export const ProductBoxWrapper = styled.div`
         color: black;
         text-decoration: none;
         &:after {
-            content: 'Кликни за сваляне';
+            content: attr(data-download-label);
             position: absolute;
             width: 130%;
             height: 25px;
