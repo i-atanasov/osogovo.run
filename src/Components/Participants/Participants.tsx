@@ -17,6 +17,15 @@ type Participant = {
     ruen?: string
 };
 
+const formatParticipantName = (name: string) => {
+    return name
+        .trim()
+        .toLocaleLowerCase('bg-BG')
+        .replace(/(^|[\s-])([^\s-])/gu, (match, separator: string, letter: string) => {
+            return `${separator}${letter.toLocaleUpperCase('bg-BG')}`;
+        });
+};
+
 export const Participants: React.FC = () => {
     const [participants, setParticipants] = React.useState<Participant[]>([]);
     // const [highlightedParticipant, setHighlightedParticipant] = React.useState<number | null>(null);
@@ -79,7 +88,7 @@ export const Participants: React.FC = () => {
                             (distanceFilter && participant.distance !== distanceFilter) ? null :
                             (showResult && participant[final] !== showResult) ? null :
                             <TableRow key={position} highlighted={false} >
-                                <td>{position}. { participant.name }</td>
+                                <td>{position}. { formatParticipantName(participant.name) }</td>
                                 <td>{ category }</td>
                                 <td>{ participant.distance }</td>
                                 <td>{ participant.team }</td>
