@@ -2,16 +2,18 @@ import styled from 'styled-components';
 import { colors } from '../../config/constants';
 
 export const ButtonWrapper = styled.button<{ highlight?: boolean, disabled?: boolean }>`
+   
+    padding: 20px 30px;
     ${props => props.highlight && `
         position: absolute;
         display: none;
         top: 20px;
         right: 100px;
+        padding: 13px 30px;
         @media (min-width: 768px) {
             display: block;
         }
     `}
-    padding: 15px 30px;
     background-color: ${colors.RuenOrange};
     color: white;
     line-height: 100%;
