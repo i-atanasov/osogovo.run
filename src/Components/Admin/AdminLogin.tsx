@@ -3,6 +3,7 @@ import { GoogleLogin, CredentialResponse } from "@react-oauth/google";
 import { Navigate } from "react-router-dom";
 import { useAdminAuth } from "./AdminAuthContext";
 import { AdminErrorText, AdminLoginCard, AdminShell, AdminStatusText, AdminTitle } from "./styles";
+import { HeaderComponent } from "../Header/Header";
 
 const AdminLogin: React.FC = () => {
     const { admin, loading, error, signInWithGoogle } = useAdminAuth();
@@ -21,7 +22,9 @@ const AdminLogin: React.FC = () => {
     }
 
     return (
-        <AdminShell>
+        <>
+            <HeaderComponent hideDate video='https://media.osogovo.run/media/osogovo-run-21-sec-low.mp4' />
+            <AdminShell>
             <AdminLoginCard>
                 <AdminTitle>Osogovo Run Admin</AdminTitle>
                 {googleClientId ? (
@@ -36,7 +39,8 @@ const AdminLogin: React.FC = () => {
                 {loading && <AdminStatusText>Проверка на сесията...</AdminStatusText>}
                 {error && <AdminErrorText>{error}</AdminErrorText>}
             </AdminLoginCard>
-        </AdminShell>
+            </AdminShell>
+        </>
     );
 };
 

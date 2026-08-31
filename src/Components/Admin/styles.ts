@@ -2,14 +2,14 @@ import styled from "styled-components";
 import { colors } from "../../config/constants";
 
 export const AdminShell = styled.main`
-    min-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 32px 16px;
-    background: linear-gradient(135deg, #f6f3ee 0%, #ffffff 48%, #ebe6dd 100%);
     color: ${colors.OsogovoBlack};
     font-family: 'Oswald', sans-serif;
+    transform: translateY(-50%);
+    position: relative;
 `;
 
 export const AdminLoginCard = styled.section`
