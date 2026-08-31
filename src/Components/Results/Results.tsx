@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import axios from "axios";
 import { useSearchParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { HomeContainer } from "../Home/styles";
 import { HeaderComponent } from "../Header/Header";
 import { ParticipantsWrapper, TableRow } from "../Participants/styles";
@@ -18,6 +19,7 @@ type Result = {
 };
 
 export const Results: React.FC = () => {
+    const { t } = useTranslation();
     const [results, setResults] = React.useState<Result[]>([]);
     const [loading, setLoading] = React.useState(true);
     const [error, setError] = React.useState<string | null>(null);
@@ -29,7 +31,7 @@ export const Results: React.FC = () => {
     useEffect(() => {
         const fetchResults = async () => {
             if (year === new Date().getFullYear().toString()) {
-                setError(`Няма налични резултати за ${year} година.`);
+                setError(t('results:errors.unavailableForYear', { year }));
                 setLoading(false);
                 return;
             }
@@ -46,13 +48,13 @@ export const Results: React.FC = () => {
                 });
                 setResults(data);
             } catch (err) {
-                setError('Грешка при зареждане на резултатите. Моля, опитайте отново.');
+                setError(t('results:errors.loadFailed'));
             } finally {
                 setLoading(false);
             }
         };
         fetchResults();
-    }, [apiUrl, year]);
+    }, [apiUrl, year, t]);
 
     const getCategory = (result: Result, year?: string) => {
         const birthYear = parseInt(result.birth, 10);
@@ -76,11 +78,11 @@ export const Results: React.FC = () => {
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                 <thead>
                     <tr>
-                        <th>Позиция</th>
-                        <th>Име</th>
-                        <th>Категория</th>
-                        <th>Отбор</th>
-                        <th>Финал</th>
+                        <th>{t('results:table.position')}</th>
+                        <th>{t('results:table.name')}</th>
+                        <th>{t('results:table.category')}</th>
+                        <th>{t('results:table.team')}</th>
+                        <th>{t('results:table.finish')}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -104,37 +106,37 @@ export const Results: React.FC = () => {
 
     return (
         <HomeContainer>
-            <HeaderComponent video='http://www.osogovo.run/media/osogovo-run-21-sec-low.mp4' />
+            <HeaderComponent hideDate video='http://www.osogovo.run/media/osogovo-run-21-sec-low.mp4' />
             <ParticipantsWrapper>
-                <a href="/participants">Виж участниците</a>
-                <h1>Резултати {year}</h1>
-                {loading && <p>Зареждане...</p>}
+                <a href="/participants">{t('results:links.participants')}</a>
+                <h1>{t('results:title', { year })}</h1>
+                {loading && <p>{t('results:loading')}</p>}
                 {error && <p style={{ color: 'red' }}>{error}</p>}
                 {!loading && !error && (
                     <>
-                        <h2>Общо класиране 14 км</h2>
+                        <h2>{t('results:sections.overall', { distance: 14 })}</h2>
                         {renderTable(undefined, "14")}
-                        <h2>Общо класиране 26 км</h2>
+                        <h2>{t('results:sections.overall', { distance: 26 })}</h2>
                         {renderTable(undefined, "26")}
-                        <h1>Класиране - категория Жени / 14 км</h1>
+                        <h1>{t('results:sections.women', { distance: 14 })}</h1>
                         {renderTable('Ж', "14")}
-                        <h1>Класиране - категория Жени / 26 км</h1>
+                        <h1>{t('results:sections.women', { distance: 26 })}</h1>
                         {renderTable('Ж', "26")}
-                        <h1>Класиране - категория Жени 40+ / 14 км</h1>
+                        <h1>{t('results:sections.women40', { distance: 14 })}</h1>
                         {renderTable('Ж40', "14")}
-                        <h1>Класиране - категория Жени 40+ / 26 км</h1>
+                        <h1>{t('results:sections.women40', { distance: 26 })}</h1>
                         {renderTable('Ж40', "26")}
-                        <h1>Класиране - категория Мъже 40+ / 14 км</h1>
+                        <h1>{t('results:sections.men40', { distance: 14 })}</h1>
                         {renderTable('М40', "14")}
-                        <h1>Класиране - категория Мъже 40+ / 26 км</h1>
+                        <h1>{t('results:sections.men40', { distance: 26 })}</h1>
                         {renderTable('М40', "26")}
-                        <h1>Класиране - категория Мъже до 20 / 14 км</h1>
+                        <h1>{t('results:sections.men20', { distance: 14 })}</h1>
                         {renderTable('М20', "14")}
-                        <h1>Класиране - категория Мъже до 20 / 26 км</h1>
+                        <h1>{t('results:sections.men20', { distance: 26 })}</h1>
                         {renderTable('М20', "26")}
-                        <h1>Класиране - категория Жени до 20 / 14 км</h1>
+                        <h1>{t('results:sections.women20', { distance: 14 })}</h1>
                         {renderTable('Ж20', "14")}
-                        <h1>Класиране - категория Жени до 20 / 26 км</h1>
+                        <h1>{t('results:sections.women20', { distance: 26 })}</h1>
                         {renderTable('Ж20', "26")}
                     </>
                 )}

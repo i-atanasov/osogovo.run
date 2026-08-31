@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import axios from "axios";
+import { useTranslation } from "react-i18next";
 import { HomeContainer } from "../Home/styles";
 import { HeaderComponent } from "../Header/Header";
 import { Paid, ParticipantsWrapper, TableRow } from "./styles";
@@ -27,6 +28,7 @@ const formatParticipantName = (name: string) => {
 };
 
 export const Participants: React.FC = () => {
+    const { t } = useTranslation();
     const [participants, setParticipants] = React.useState<Participant[]>([]);
     // const [highlightedParticipant, setHighlightedParticipant] = React.useState<number | null>(null);
     const [loading, setLoading] = React.useState(true);
@@ -68,16 +70,16 @@ export const Participants: React.FC = () => {
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                 <thead>
                     <tr>
-                        <th>Име</th>
-                        <th>Категория</th>
-                        <th>Дистанция</th>
-                        <th>Отбор</th>
+                        <th>{t('participants:table.name')}</th>
+                        <th>{t('participants:table.category')}</th>
+                        <th>{t('participants:table.distance')}</th>
+                        <th>{t('participants:table.team')}</th>
                         {showResult ? 
-                            <th>Финал</th> : 
-                            <th>Статус</th>}
+                            <th>{t('participants:table.finish')}</th> : 
+                            <th>{t('participants:table.status')}</th>}
                     </tr>
                 </thead>
-                {loading && <p>Зареждане...</p>}
+                {loading && <p>{t('participants:table.loading')}</p>}
                 <tbody>
                     {participants.map((participant) => {
                         const category = getCategory(participant);
@@ -92,7 +94,7 @@ export const Participants: React.FC = () => {
                                 <td>{ category }</td>
                                 <td>{ participant.distance }</td>
                                 <td>{ participant.team }</td>
-                                {showResult ? <td>{ participant[final] }</td> : <Paid paid={participant.paid} >{ participant.paid ? 'Платено' : 'Очаква плащане' }</Paid>}
+                                {showResult ? <td>{ participant[final] }</td> : <Paid paid={participant.paid} >{ participant.paid ? t('participants:status.paid') : t('participants:status.pending') }</Paid>}
                             </TableRow>
                         );
                     })}
@@ -103,12 +105,12 @@ export const Participants: React.FC = () => {
 
     return (
         <HomeContainer>
-            <HeaderComponent video='http://www.osogovo.run/media/osogovo-run-21-sec-low.mp4' />
+            <HeaderComponent hideDate video='http://www.osogovo.run/media/osogovo-run-21-sec-low.mp4' />
             <ParticipantsWrapper>
-                <p>Виж резултатите: <a href="/results?year=2025">2025 г.</a></p>
-                <p><a href="/register/payment">Към плащане за вече регистрирани потребители</a></p>
+                <p>{t('participants:links.results')} <a href="/results?year=2025">{t('participants:links.resultsYear')}</a></p>
+                <p><a href="/register/payment">{t('participants:links.payment')}</a></p>
                 {/* <a href="/race-day">Виж инструкции за състезателния ден</a> */}
-                <h1>Списък с участници:</h1>
+                <h1>{t('participants:title')}</h1>
                 {renderTable()}
                 {/* {renderTable(undefined, "14")}
                 <h1>Списък с участници - обща категория / 26 км</h1>
@@ -133,8 +135,16 @@ export const Participants: React.FC = () => {
                 {renderTable('Ж20', "14")}
                 <h1>Списък с участници - категория Жени до 20 / 26 км</h1>
                 {renderTable('Ж20', "26")} */}
-                <p>Дистанция 26 км: {participants.filter(p => p.distance === "26").length} {participants.filter(p => p.distance === "26").length === 1 ? 'участник' : 'участници'}</p>
-                <p>Дистанция 14 км: {participants.filter(p => p.distance === "14").length} {participants.filter(p => p.distance === "14").length === 1 ? 'участник' : 'участници'}</p>
+                <p>{t('participants:counts.distance', {
+                    distance: 26,
+                    count: participants.filter(p => p.distance === "26").length,
+                    label: participants.filter(p => p.distance === "26").length === 1 ? t('participants:counts.participant') : t('participants:counts.participants'),
+                })}</p>
+                <p>{t('participants:counts.distance', {
+                    distance: 14,
+                    count: participants.filter(p => p.distance === "14").length,
+                    label: participants.filter(p => p.distance === "14").length === 1 ? t('participants:counts.participant') : t('participants:counts.participants'),
+                })}</p>
             </ParticipantsWrapper>
         </HomeContainer>
     );

@@ -4,6 +4,9 @@ const common = {
         en: 'EN',
         switchLabel: 'Смени език',
     },
+    actions: {
+        close: 'Затвори',
+    },
     nav: {
         admin: 'Админ',
         conditions: 'Условия за участие',
