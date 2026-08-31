@@ -48,7 +48,8 @@ export const FormWrapper = styled.div<{ success?: boolean }>`
         }
     }
     p {
-        font-family: 'Oswald-Light', sans-serif;
+        font-family: 'Oswald', sans-serif;
+        font-weight: 300;
         font-size: 15px;
         color: #30332F;
         line-height: normal;

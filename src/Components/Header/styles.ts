@@ -179,6 +179,38 @@ export const MenuItem = styled.a`
     }
 `;
 
+export const LanguageSwitcher = styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    min-height: 38px;
+    padding: 8px 14px 2px;
+    color: #30332F;
+    font-size: 16px;
+`;
+
+export const LanguageButton = styled.button<{ active?: boolean }>`
+    border: 0;
+    padding: 0;
+    background: transparent;
+    color: ${props => props.active ? '#ef5223' : '#30332F'};
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 16px;
+    font-weight: ${props => props.active ? 700 : 400};
+
+    &:hover,
+    &:focus-visible {
+        color: #ef5223;
+        outline: none;
+    }
+`;
+
+export const LanguageSeparator = styled.span`
+    color: rgba(48, 51, 47, 0.42);
+`;
+
 export const Date = styled.div`
     position: absolute;
     font-family: 'Oswald', sans-serif;

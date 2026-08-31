@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Date, Header, Logo, MenuButton, MenuDropdown, MenuIcon, MenuItem, MenuWrapper } from "./styles";
+import { useTranslation } from 'react-i18next';
+import { Date, Header, LanguageButton, LanguageSeparator, LanguageSwitcher, Logo, MenuButton, MenuDropdown, MenuIcon, MenuItem, MenuWrapper } from "./styles";
 import { useAdminAuth } from '../Admin/AdminAuthContext';
-import Button from '../Button/Button';
 
 interface VideoProps {
     isMuted: boolean;
@@ -44,16 +44,22 @@ export const HeaderComponent: React.FC<{ hideDate?: boolean, video?: string; ima
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const menuRef = useRef<HTMLDivElement | null>(null);
     const { admin } = useAdminAuth();
+    const { i18n, t } = useTranslation();
+    const currentLanguage = i18n.resolvedLanguage || i18n.language;
     const menuItems = [
-        { label: 'Начало', href: '/' },
-        { label: 'Регистрирай се', href: '/register' },
-        { label: 'Информация за трасетата', href: '/#courses' },
-        { label: 'Условия за участие', href: '/#conditions' },
-        { label: 'Плащане', href: '/register/payment' },
-        { label: 'Участници', href: '/participants' },
-        { label: 'Класиране', href: '/results?year=2025' },
-        ...(admin ? [{ label: 'Админ', href: '/admin' }] : []),
+        { label: t('nav.home'), href: '/' },
+        { label: t('nav.register'), href: '/register' },
+        { label: t('nav.courses'), href: '/#courses' },
+        { label: t('nav.conditions'), href: '/#conditions' },
+        { label: t('nav.payment'), href: '/register/payment' },
+        { label: t('nav.participants'), href: '/participants' },
+        { label: t('nav.results'), href: '/results?year=2025' },
+        ...(admin ? [{ label: t('nav.admin'), href: '/admin' }] : []),
     ];
+
+    const handleLanguageChange = (language: 'bg' | 'en') => {
+        i18n.changeLanguage(language);
+    };
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -83,13 +89,10 @@ export const HeaderComponent: React.FC<{ hideDate?: boolean, video?: string; ima
             {image && <img src={image} alt="Header Image" />}
             {children}
             <Logo href="/" />
-            <Button disabled={false} highlight={true} onClick={() => {
-                window.location.href = '/register'
-            }} label="Регистрирай се" />
             <MenuWrapper ref={menuRef}>
                 <MenuButton
                     type="button"
-                    aria-label="Отвори меню"
+                    aria-label={t('nav.toggleMenu')}
                     aria-expanded={isMenuOpen}
                     onClick={() => setIsMenuOpen((isOpen) => !isOpen)}
                 >
@@ -102,6 +105,23 @@ export const HeaderComponent: React.FC<{ hideDate?: boolean, video?: string; ima
                                 {item.label}
                             </MenuItem>
                         ))}
+                        <LanguageSwitcher aria-label={t('language.switchLabel')}>
+                            <LanguageButton
+                                type="button"
+                                active={currentLanguage === 'bg'}
+                                onClick={() => handleLanguageChange('bg')}
+                            >
+                                {t('language.bg')}
+                            </LanguageButton>
+                            <LanguageSeparator>|</LanguageSeparator>
+                            <LanguageButton
+                                type="button"
+                                active={currentLanguage === 'en'}
+                                onClick={() => handleLanguageChange('en')}
+                            >
+                                {t('language.en')}
+                            </LanguageButton>
+                        </LanguageSwitcher>
                     </MenuDropdown>
                 )}
             </MenuWrapper>

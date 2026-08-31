@@ -5,6 +5,7 @@ import { SpeedInsights } from '@vercel/speed-insights/react';
 import Router from './Components/Router/Router';
 import { AdminAuthProvider } from './Components/Admin/AdminAuthContext';
 import './App.css';
+import './i18n';
 
 export default function App() {
   const googleClientId = process.env.REACT_APP_GOOGLE_CLIENT_ID || '';

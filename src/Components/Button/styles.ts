@@ -20,7 +20,8 @@ export const ButtonWrapper = styled.button<{ highlight?: boolean, disabled?: boo
     border: 1px solid transparent;
     border-radius: 40px;
     text-transform: uppercase;
-    font-family: 'Oswald-Bold', sans-serif;
+    font-family: 'Oswald', sans-serif;
+    font-weight: 700;
     cursor: pointer;
     font-size: 20px;
     width: fit-content;
