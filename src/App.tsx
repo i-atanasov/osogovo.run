@@ -3,6 +3,7 @@ import { GoogleOAuthProvider } from '@react-oauth/google';
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from '@vercel/speed-insights/react';
 import Router from './Components/Router/Router';
+import { AdminAuthProvider } from './Components/Admin/AdminAuthContext';
 import './App.css';
 
 export default function App() {
@@ -10,11 +11,13 @@ export default function App() {
 
   return (
     <GoogleOAuthProvider clientId={googleClientId}>
-      <Layout>
-          <Router />
-          <Analytics />
-          <SpeedInsights />
-      </Layout>
+      <AdminAuthProvider>
+        <Layout>
+            <Router />
+            <Analytics />
+            <SpeedInsights />
+        </Layout>
+      </AdminAuthProvider>
     </GoogleOAuthProvider>
   );
 }

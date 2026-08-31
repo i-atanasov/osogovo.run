@@ -1,5 +1,5 @@
-import React from "react"
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import React, { useEffect } from "react"
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import RegistrationForm from "../RegistrationForm/RegistrationForm";
 import PaymentSuccessPage from "../RegistrationForm/PaymentSuccessPage";
 import PaymentCancelPage from "../RegistrationForm/PaymentCancelPage";
@@ -11,14 +11,33 @@ import { Participants } from "../Participants/Participants";
 import RaceDay from "../RaceDay/RaceDay";
 import Results from "../Results/Results";
 import { IframeFeedback } from "../FeedbackPage/FeedbackPage";
-import { AdminAuthProvider } from "../Admin/AdminAuthContext";
 import AdminLogin from "../Admin/AdminLogin";
 import AdminDashboard from "../Admin/AdminDashboard";
 import ProtectedAdminRoute from "../Admin/ProtectedAdminRoute";
 
+const HashScroller: React.FC = () => {
+    const location = useLocation();
+
+    useEffect(() => {
+        if (!location.hash) {
+            return;
+        }
+
+        const targetId = decodeURIComponent(location.hash.slice(1));
+        const timeoutId = window.setTimeout(() => {
+            document.getElementById(targetId)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 0);
+
+        return () => window.clearTimeout(timeoutId);
+    }, [location.hash, location.pathname]);
+
+    return null;
+};
+
 const Router: React.FC = () => {
     return (
         <BrowserRouter>
+            <HashScroller />
             <Routes>
                 <Route
                     path="/"
@@ -68,20 +87,14 @@ const Router: React.FC = () => {
                 />
                 <Route
                     path="/admin/login"
-                    element={
-                        <AdminAuthProvider>
-                            <AdminLogin />
-                        </AdminAuthProvider>
-                    }
+                    element={<AdminLogin />}
                 />
                 <Route
                     path="/admin"
                     element={
-                        <AdminAuthProvider>
-                            <ProtectedAdminRoute>
-                                <AdminDashboard />
-                            </ProtectedAdminRoute>
-                        </AdminAuthProvider>
+                        <ProtectedAdminRoute>
+                            <AdminDashboard />
+                        </ProtectedAdminRoute>
                     }
                 />
             </Routes>

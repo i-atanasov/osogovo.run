@@ -6,7 +6,7 @@ export const Header = styled.header<{ video?: string; image?: string }>`
     text-align: center; 
     height: 300px;
     position: relative;
-    z-index: 1;
+    z-index: auto;
     background: transparent;
     ${props => (props.video || props.image) && `
         @media (min-width: 768px) {
@@ -84,6 +84,99 @@ export const Logo = styled.a<{ top?: string, left?: string }>`
         filter: brightness(0.8);
     }
     transition: filter 0.3s ease-in-out;
+`;
+
+export const MenuWrapper = styled.div`
+    position: fixed;
+    top: max(20px, env(safe-area-inset-top));
+    right: max(20px, env(safe-area-inset-right));
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    font-family: 'Oswald', sans-serif;
+`;
+
+export const MenuButton = styled.button`
+    width: 48px;
+    height: 48px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    border-radius: 50%;
+    background: rgba(48, 51, 47, 0.72);
+    color: white;
+    cursor: pointer;
+    backdrop-filter: blur(8px);
+    transition: background 0.2s ease, border-color 0.2s ease;
+
+    &:hover {
+        background: rgba(239, 82, 35, 0.92);
+        border-color: white;
+    }
+`;
+
+export const MenuIcon = styled.span`
+    position: relative;
+    width: 22px;
+    height: 2px;
+    border-radius: 2px;
+    background: currentColor;
+
+    &:before,
+    &:after {
+        content: '';
+        position: absolute;
+        left: 0;
+        width: 22px;
+        height: 2px;
+        border-radius: 2px;
+        background: currentColor;
+    }
+
+    &:before {
+        top: -7px;
+    }
+
+    &:after {
+        top: 7px;
+    }
+`;
+
+export const MenuDropdown = styled.nav`
+    z-index: 20;
+    width: min(82vw, 280px);
+    margin-top: 10px;
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    border: 1px solid rgba(48, 51, 47, 0.14);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.96);
+    box-shadow: 0 18px 50px rgba(0, 0, 0, 0.18);
+`;
+
+export const MenuItem = styled.a`
+    display: flex;
+    align-items: center;
+    min-height: 42px;
+    padding: 0 14px;
+    border-radius: 6px;
+    color: #30332F;
+    font-size: 18px;
+    line-height: 1.1;
+    text-align: left;
+    text-decoration: none;
+    text-transform: uppercase;
+
+    &:hover,
+    &:focus-visible {
+        background: #ef5223;
+        color: white;
+        outline: none;
+    }
 `;
 
 export const Date = styled.div`

@@ -5,7 +5,7 @@ import { details } from "../../config/constants";
 const DetailsField = () => {
     return (
         <DetailsWrapper>
-            <Conditions>
+            <Conditions id="conditions">
                 <h2>{details.conditionsTitle}</h2>
                 <p>
                     {details.conditions}

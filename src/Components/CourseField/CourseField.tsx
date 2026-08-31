@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom"
 export const CourseField: React.FC = () => {
     const navigate = useNavigate();
     return (
-        <CourseFieldWrapper>
+        <CourseFieldWrapper id="courses">
             <CourseDescriptionWrapper>
                 <CourseDescription>
                     <h2>{CourseDescriptionData.title}</h2>
