@@ -11,6 +11,10 @@ import { Participants } from "../Participants/Participants";
 import RaceDay from "../RaceDay/RaceDay";
 import Results from "../Results/Results";
 import { IframeFeedback } from "../FeedbackPage/FeedbackPage";
+import { AdminAuthProvider } from "../Admin/AdminAuthContext";
+import AdminLogin from "../Admin/AdminLogin";
+import AdminDashboard from "../Admin/AdminDashboard";
+import ProtectedAdminRoute from "../Admin/ProtectedAdminRoute";
 
 const Router: React.FC = () => {
     return (
@@ -61,6 +65,24 @@ const Router: React.FC = () => {
                 <Route
                     path="/feedback"
                     element={<IframeFeedback />}
+                />
+                <Route
+                    path="/admin/login"
+                    element={
+                        <AdminAuthProvider>
+                            <AdminLogin />
+                        </AdminAuthProvider>
+                    }
+                />
+                <Route
+                    path="/admin"
+                    element={
+                        <AdminAuthProvider>
+                            <ProtectedAdminRoute>
+                                <AdminDashboard />
+                            </ProtectedAdminRoute>
+                        </AdminAuthProvider>
+                    }
                 />
             </Routes>
         </BrowserRouter>
