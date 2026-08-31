@@ -26,7 +26,7 @@ const getInitialLanguage = (): SupportedLanguage => {
         return storedLanguage;
     }
 
-    return window.navigator.language.toLowerCase().startsWith('en') ? 'en' : 'bg';
+    return window.navigator.language.toLowerCase().startsWith('bg') ? 'bg' : 'en';
 };
 
 i18n
