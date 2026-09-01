@@ -26,6 +26,12 @@ const participants = {
     profile: {
         backToParticipants: 'Back to participants',
         title: 'Participations',
+        sections: {
+            incoming: 'Upcoming events',
+            completed: 'Past events',
+            badges: 'Badges',
+            badgesDescription: 'Coming soon',
+        },
         table: {
             year: 'Year',
             status: 'Type',

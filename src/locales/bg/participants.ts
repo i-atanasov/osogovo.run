@@ -26,6 +26,12 @@ const participants = {
     profile: {
         backToParticipants: 'Назад към участниците',
         title: 'Участия',
+        sections: {
+            incoming: 'Предстоящи участия',
+            completed: 'Минали участия',
+            badges: 'Баджове',
+            badgesDescription: 'Предстои',
+        },
         table: {
             year: 'Година',
             status: 'Тип',

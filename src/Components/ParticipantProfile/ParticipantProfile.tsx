@@ -63,6 +63,33 @@ export const ParticipantProfile: React.FC = () => {
         }
     }, [apiUrl, name, t]);
 
+    const renderParticipationsTable = (participations: Participation[]) => (
+        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <thead>
+                <tr>
+                    <th>{t('participants:profile.table.year')}</th>
+                    <th>{t('participants:table.distance')}</th>
+                    <th>{t('participants:table.team')}</th>
+                    <th>{t('participants:table.finish')}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {participations.map((participation) => {
+                    const finishTime = getFinishTime(participation);
+
+                    return (
+                        <TableRow key={`${participation.status}-${participation.year}-${participation.distance}-${participation.bib ?? participation.name}`} highlighted={false}>
+                            <td>{participation.year}</td>
+                            <td>{participation.distance}</td>
+                            <td>{participation.team}</td>
+                            <td>{finishTime ?? '-'}</td>
+                        </TableRow>
+                    );
+                })}
+            </tbody>
+        </table>
+    );
+
     return (
         <HomeContainer>
             <HeaderComponent hideDate video='http://www.osogovo.run/media/osogovo-run-21-sec-low.mp4' />
@@ -73,33 +100,12 @@ export const ParticipantProfile: React.FC = () => {
                 {!loading && !error && profile && (
                     <>
                         <h1>{formatParticipantName(profile.name)}</h1>
-                        <h2>{t('participants:profile.title')}</h2>
-                        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                            <thead>
-                                <tr>
-                                    <th>{t('participants:profile.table.year')}</th>
-                                    <th>{t('participants:profile.table.status')}</th>
-                                    <th>{t('participants:table.distance')}</th>
-                                    <th>{t('participants:table.team')}</th>
-                                    <th>{t('participants:table.finish')}</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {profile.participations.map((participation) => {
-                                    const finishTime = getFinishTime(participation);
-
-                                    return (
-                                        <TableRow key={`${participation.year}-${participation.distance}-${participation.bib ?? participation.name}`} highlighted={false}>
-                                            <td>{participation.year}</td>
-                                            <td>{t(`participants:profile.status.${participation.status}`)}</td>
-                                            <td>{participation.distance}</td>
-                                            <td>{participation.team}</td>
-                                            <td>{finishTime ?? '-'}</td>
-                                        </TableRow>
-                                    );
-                                })}
-                            </tbody>
-                        </table>
+                        <h2>{t('participants:profile.sections.incoming')}</h2>
+                        {renderParticipationsTable(profile.participations.filter((participation) => participation.status === 'incoming'))}
+                        <h2>{t('participants:profile.sections.completed')}</h2>
+                        {renderParticipationsTable(profile.participations.filter((participation) => participation.status === 'previous'))}
+                        <h2>{t('participants:profile.sections.badges')}</h2>
+                        <p>{t('participants:profile.sections.badgesDescription')}</p>
                     </>
                 )}
             </ParticipantsWrapper>
