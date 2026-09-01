@@ -4,7 +4,8 @@ import { useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { HomeContainer } from "../Home/styles";
 import { HeaderComponent } from "../Header/Header";
-import { ParticipantsWrapper, TableRow } from "../Participants/styles";
+import { ParticipantsWrapper, TableCellLink, TableRow } from "../Participants/styles";
+import { toParticipantSlug } from "../Participants/utils";
 
 type Result = {
     name: string;
@@ -89,13 +90,15 @@ export const Results: React.FC = () => {
                     {filtered.map((result) => {
                         const finishTime = result.distance === '14' ? result.osogovo : result.ruen;
                         const category = getCategory(result, year);
+                        const participantPath = `/participant/${toParticipantSlug(result.name)}`;
+
                         return (
                             <TableRow key={result.bib} highlighted={false}>
-                                <td className="small">{position++}</td>
-                                <td>{result.name}</td>
-                                <td className="small">{category}</td>
-                                <td>{result.team}</td>
-                                <td className="small">{finishTime}</td>
+                                <td className="small"><TableCellLink to={participantPath}>{position++}</TableCellLink></td>
+                                <td><TableCellLink to={participantPath}>{result.name}</TableCellLink></td>
+                                <td className="small"><TableCellLink to={participantPath}>{category}</TableCellLink></td>
+                                <td><TableCellLink to={participantPath}>{result.team}</TableCellLink></td>
+                                <td className="small"><TableCellLink to={participantPath}>{finishTime}</TableCellLink></td>
                             </TableRow>
                         );
                     })}

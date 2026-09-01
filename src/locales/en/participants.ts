@@ -37,7 +37,7 @@ const participants = {
             status: 'Type',
         },
         status: {
-            incoming: 'Incoming',
+            incoming: 'Upcoming',
             previous: 'Completed',
         },
         errors: {

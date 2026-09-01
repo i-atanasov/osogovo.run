@@ -42,6 +42,8 @@ export const ParticipantProfile: React.FC = () => {
     const [loading, setLoading] = React.useState(true);
     const [error, setError] = React.useState<string | null>(null);
     const apiUrl = process.env.REACT_APP_REGISTRATION_API_URL;
+    const incomingParticipations = profile?.participations.filter((participation) => participation.status === 'incoming') ?? [];
+    const completedParticipations = profile?.participations.filter((participation) => participation.status === 'previous') ?? [];
 
     useEffect(() => {
         const fetchParticipantProfile = async () => {
@@ -100,10 +102,18 @@ export const ParticipantProfile: React.FC = () => {
                 {!loading && !error && profile && (
                     <>
                         <h1>{formatParticipantName(profile.name)}</h1>
-                        <h2>{t('participants:profile.sections.incoming')}</h2>
-                        {renderParticipationsTable(profile.participations.filter((participation) => participation.status === 'incoming'))}
-                        <h2>{t('participants:profile.sections.completed')}</h2>
-                        {renderParticipationsTable(profile.participations.filter((participation) => participation.status === 'previous'))}
+                        {incomingParticipations.length > 0 && (
+                            <>
+                                <h2>{t('participants:profile.sections.incoming')}</h2>
+                                {renderParticipationsTable(incomingParticipations)}
+                            </>
+                        )}
+                        {completedParticipations.length > 0 && (
+                            <>
+                                <h2>{t('participants:profile.sections.completed')}</h2>
+                                {renderParticipationsTable(completedParticipations)}
+                            </>
+                        )}
                         <h2>{t('participants:profile.sections.badges')}</h2>
                         <p>{t('participants:profile.sections.badgesDescription')}</p>
                     </>
