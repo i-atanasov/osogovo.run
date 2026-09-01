@@ -54,6 +54,7 @@ export const HeaderComponent: React.FC<{ hideDate?: boolean, video?: string; ima
         { label: t('nav.payment'), href: '/register/payment' },
         { label: t('nav.participants'), href: '/participants' },
         { label: t('nav.results'), href: '/results?year=2025' },
+        { label: t('nav.records'), href: '/#records' },
         ...(admin ? [{ label: t('nav.admin'), href: '/admin' }] : []),
     ];
 

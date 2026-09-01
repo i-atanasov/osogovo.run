@@ -292,6 +292,88 @@ export const CourseWrapper = styled.div`
     display: flex;
 `
 
+export const RecordsWrapper = styled.section`
+    background: white;
+    box-sizing: border-box;
+    font-family: 'Oswald', sans-serif;
+    padding: 48px 20px;
+    width: 100%;
+
+    > h2 {
+        color: ${colors.OsogovoBlack};
+        font-size: 32px;
+        font-weight: 500;
+        line-height: 1.2;
+        margin: 0 auto 28px;
+        max-width: 980px;
+        text-transform: uppercase;
+    }
+
+    > div, p {
+        margin: 0 auto;
+        max-width: 980px;
+        padding: 10px 0;
+    }
+`
+
+export const RecordsGrid = styled.div`
+    display: grid;
+    gap: 20px;
+    margin: 0 auto;
+    max-width: 980px;
+
+    @media (min-width: 768px) {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+`
+
+export const RecordCard = styled.article`
+    border: 1px solid rgba(48, 51, 47, 0.14);
+    border-radius: 8px;
+    padding: 24px;
+
+    > h3 {
+        color: ${colors.RuenOrange};
+        font-size: 24px;
+        font-weight: 500;
+        line-height: 1.2;
+        margin: 0 0 18px;
+        text-transform: uppercase;
+    }
+
+    > p {
+        color: ${colors.OsogovoBlack};
+        font-size: 16px;
+        font-weight: 300;
+        line-height: 1.4;
+        margin: 18px 0 0;
+    }
+`
+
+export const RecordDetail = styled.div`
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 10px 0;
+
+    & + & {
+        border-top: 1px solid rgba(48, 51, 47, 0.12);
+    }
+
+    span {
+        color: #666666;
+        font-size: 16px;
+        font-weight: 300;
+    }
+
+    strong {
+        color: ${colors.OsogovoBlack};
+        font-size: 18px;
+        font-weight: 500;
+        text-align: right;
+    }
+`
+
 export const InfoSign = styled.h1<{ inView: boolean }>`
     visibility: ${props => props.inView ? 'visible' : 'hidden'};
     opacity: ${props => props.inView ? '1' : '0'};

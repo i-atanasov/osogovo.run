@@ -9,6 +9,7 @@ import DetailsField from "../DetailsField/DetailsField";
 import SponsorsField from "../SponsorsField/SponsorsField";
 import { HeaderComponent } from "../Header/Header";
 import PopUp from "../PopUp/PopUp";
+import Records from "./Records";
 
 const HOME_POPUP_STORAGE_KEY = 'osogovo_home_popup_visible';
 
@@ -54,6 +55,7 @@ const Home: React.FC = () => {
                     <p>{t('home:popup.registration')}</p>
                 </PopUp>}
             <ProductField/>
+            <Records />
             <CourseField/>
             <ImagesField/>
             <DetailsField/>

@@ -66,6 +66,19 @@ const home = {
         lateFee: 'after September 1',
         register: 'Register',
     },
+    records: {
+        title: 'Course records',
+        holder: 'Record holder',
+        time: 'Time',
+        bonus: 'Current record bonus:',
+        note: 'If the bonus is not awarded this year, the amount accumulates into next year\'s record bonus.',
+        male: {
+            title: 'Male',
+        },
+        female: {
+            title: 'Female',
+        },
+    },
     details: {
         conditionsTitle: 'Participation Terms',
         conditions: 'Open to physically and mentally healthy participants from 15 to 75 years of age. Participants must follow the markings and obey traffic rules before, during and after the race. Participants who do not provide a pre-race medical check at registration start at their own risk. Participation costs are covered by the participants. Carrying an ID card is mandatory for long-distance participants because the course enters a border zone.',

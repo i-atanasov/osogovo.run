@@ -21,6 +21,7 @@ const common = {
         register: 'Регистрирай се',
         results: 'Класиране',
         toggleMenu: 'Отвори меню',
+        records: 'Рекорди',
     },
 };
 

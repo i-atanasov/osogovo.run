@@ -21,6 +21,7 @@ const common = {
         register: 'Register',
         results: 'Results',
         toggleMenu: 'Open menu',
+        records: 'Records',
     },
 };
 
