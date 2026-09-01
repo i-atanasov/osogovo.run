@@ -296,7 +296,7 @@ export const RecordsWrapper = styled.section`
     background: white;
     box-sizing: border-box;
     font-family: 'Oswald', sans-serif;
-    padding: 48px 20px;
+    padding: 48px 40px;
     width: 100%;
 
     > h2 {
