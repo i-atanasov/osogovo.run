@@ -309,10 +309,11 @@ export const RecordsWrapper = styled.section`
         text-transform: uppercase;
     }
 
-    > div, p {
+    h4, p {
+        font-weight: 400;
         margin: 0 auto;
         max-width: 980px;
-        padding: 10px 0;
+        padding: 15px 0;
     }
 `
 
@@ -324,6 +325,40 @@ export const RecordsGrid = styled.div`
 
     @media (min-width: 768px) {
         grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+`
+
+export const DesktopRecordBonus = styled.div`
+    display: none;
+
+    @media (min-width: 768px) {
+        display: block;
+    }
+`
+
+export const MobileRecordBonus = styled.div`
+    border-top: 1px solid rgba(48, 51, 47, 0.12);
+    display: flex;
+    gap: 16px;
+    justify-content: space-between;
+    padding: 10px 0;
+    align-items: center;
+
+    @media (min-width: 768px) {
+        display: none;
+    }
+
+    span {
+        color: #666666;
+        font-size: 16px;
+        font-weight: 300;
+    }
+
+    strong {
+        color: ${colors.OsogovoBlack};
+        font-size: 18px;
+        font-weight: 500;
+        text-align: right;
     }
 `
 
@@ -352,7 +387,7 @@ export const RecordCard = styled.article`
 
 export const RecordDetail = styled.div`
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     gap: 16px;
     padding: 10px 0;
 

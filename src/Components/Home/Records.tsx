@@ -1,18 +1,18 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { RecordCard, RecordDetail, RecordsGrid, RecordsWrapper } from "./styles";
+import { DesktopRecordBonus, MobileRecordBonus, RecordCard, RecordDetail, RecordsGrid, RecordsWrapper } from "./styles";
 
 const records = [
-    {
-        key: 'male',
-        holder: 'Никола Кондарев',
-        time: '02:21:00',
-        bonus: '100 eur',
-    },
     {
         key: 'female',
         holder: 'Десислава Санданска',
         time: '03:12:11',
+        bonus: '100 eur',
+    },
+    {
+        key: 'male',
+        holder: 'Никола Кондарев',
+        time: '02:21:00',
         bonus: '100 eur',
     },
 ];
@@ -33,19 +33,25 @@ const Records: React.FC = () => {
                         <RecordDetail>
                             <strong>{record.time}</strong>
                         </RecordDetail>
+                        <MobileRecordBonus>
+                            <h4>{t('home:records.bonus')}</h4>
+                            <strong>{record.bonus}</strong>
+                        </MobileRecordBonus>
                     </RecordCard>
                 ))} 
             </RecordsGrid>
-            <div>{t('home:records.bonus')}</div>
-            <RecordsGrid>
-                {records.map((record) => (
-                    <RecordCard key={record.key}>
-                        <RecordDetail key={record.key}>
-                            <strong>{record.bonus}</strong>
-                        </RecordDetail>
-                    </RecordCard>
-                ))}
-            </RecordsGrid>
+            <DesktopRecordBonus>
+                <h4>{t('home:records.bonus')}</h4>
+                <RecordsGrid>
+                    {records.map((record) => (
+                        <RecordCard key={record.key}>
+                            <RecordDetail key={record.key}>
+                                <strong>{record.bonus}</strong>
+                            </RecordDetail>
+                        </RecordCard>
+                    ))}
+                </RecordsGrid>
+            </DesktopRecordBonus>
             <p>{t('home:records.note')}</p>
         </RecordsWrapper>
     );

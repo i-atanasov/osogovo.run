@@ -70,7 +70,7 @@ const home = {
         title: 'Course records',
         holder: 'Record holder',
         time: 'Time',
-        bonus: 'Current record bonus:',
+        bonus: 'Current record bonus for improving the record to Ruen Peak:',
         note: 'If the bonus is not awarded this year, the amount accumulates into next year\'s record bonus.',
         male: {
             title: 'Male',
