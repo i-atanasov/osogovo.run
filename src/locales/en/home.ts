@@ -72,7 +72,7 @@ const home = {
         transportTitle: 'Transport',
         transportFinish: '<b>Transport after finishing:</b> from the parking area at Osogovo Hut by bus back to the start. The first bus departs after 13:00 when seats are filled.',
         transportLuggage: '<b>Luggage transport:</b> participants can hand over luggage to be transported from the start to the finish. Luggage must be given to the organizers by 8:50 on race day.',
-        programTitle: 'Race Day Program',
+        programTitle: 'Race Day Program | 27.09.2026',
         programRegistration: '<b>8:00-8:45</b> Registration in the start area',
         programStart: '<b>9:00</b> START for all distances',
         programEnd: '<b>14:30</b> finish area closes',

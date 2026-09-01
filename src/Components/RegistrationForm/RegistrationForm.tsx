@@ -8,6 +8,7 @@ import Button from '../Button/Button';
 import axios from 'axios';
 import { euConversionRate, products, tShirtImages } from '../../config/constants';
 import { useTranslation } from 'react-i18next';
+import RaceCountdown from '../RaceCountdown/RaceCountdown';
 
 type Distance = 14 | 26;
 
@@ -225,6 +226,7 @@ const RegistrationForm = () => {
         <HeaderComponent hideDate />
         <ImageBackground image="https://pvmolqp98bhv9my7.public.blob.vercel-storage.com/Register_Background.jpg" />
             <FormWrapper>
+                
                 {isTestMode && (
                     <div className="server error">{t('registration:notices.testMode')}</div>
                 )}
@@ -237,6 +239,7 @@ const RegistrationForm = () => {
                 {!isTestMode && uniqueCode && discountCodeChecked && !discountCodeInactive && discountPercent === 0 && (
                     <div className="server error">{t('registration:notices.invalidDiscount')}</div>
                 )}
+                <RaceCountdown />
                 <a href="/register/payment">{t('registration:links.payment')}</a><br /><br />
                 <a href="/participants">{t('registration:links.participants')}</a><br /><br />
                 <a href="/results?year=2025">{t('registration:links.results2025')}</a><br /><br />

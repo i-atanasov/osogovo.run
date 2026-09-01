@@ -11,6 +11,14 @@ const registration = {
         invalidDiscount: 'Invalid or inactive discount code.',
         formHasErrors: 'Please fill in all required fields. If you have trouble, contact info@osogovo.run',
     },
+    countdown: {
+        title: 'Race starts in',
+        started: 'The race has started',
+        days: 'days',
+        hours: 'hours',
+        minutes: 'minutes',
+        seconds: 'seconds',
+    },
     fields: {
         distance: 'Distance',
         email: 'Email',

@@ -11,6 +11,14 @@ const registration = {
         invalidDiscount: 'Невалиден или неактивен код за отстъпка.',
         formHasErrors: 'Моля, попълнете всички задължителни полета. При проблем, моля свържетe се с info@osogovo.run',
     },
+    countdown: {
+        title: 'Стартът е след',
+        started: 'Състезанието започна',
+        days: 'дни',
+        hours: 'часа',
+        minutes: 'минути',
+        seconds: 'секунди',
+    },
     fields: {
         distance: 'Дистанция',
         email: 'Email',
