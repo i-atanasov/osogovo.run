@@ -11,8 +11,10 @@ export const ProductBoxWrapper = styled.div`
     height: 650px;
     max-width: 400px;
     overflow: hidden;
+    margin-bottom: 20px;
     @media (min-width: 768px) {
         width: 70%;
+        margin-bottom: 0;
     }
     @media (min-width: 1200px) {
         width: 30%;
