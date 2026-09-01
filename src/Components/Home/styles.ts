@@ -305,14 +305,13 @@ export const RecordsWrapper = styled.section`
         font-weight: 500;
         line-height: 1.2;
         margin: 0 auto 28px;
-        max-width: 980px;
-        text-transform: uppercase;
+        max-width: 1260px;
     }
 
     h4, p {
         font-weight: 400;
         margin: 0 auto;
-        max-width: 980px;
+        max-width: 1260px;
         padding: 15px 0;
     }
 `
@@ -321,7 +320,7 @@ export const RecordsGrid = styled.div`
     display: grid;
     gap: 20px;
     margin: 0 auto;
-    max-width: 980px;
+    max-width: 1260px;
 
     @media (min-width: 768px) {
         grid-template-columns: repeat(2, minmax(0, 1fr));
