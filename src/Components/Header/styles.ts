@@ -214,22 +214,22 @@ export const LanguageSeparator = styled.span`
 export const Date = styled.div`
     position: absolute;
     font-family: 'Oswald', sans-serif;
-    font-size: 48px;
+    font-size: 36px;
     bottom: 60px;
     left: 20px;
     font-weight: bold;
     color: #FFF;
     text-align: left;
-    line-height: 56px;
+    line-height: 36px;
     text-transform: uppercase;
     -webkit-text-fill-color: transparent;
     text-fill-color: transparent;
     -webkit-text-stroke: 2px;
     text-stroke: 2px;
     @media (min-width: 1200px) {
-        font-size: 128px;
-        line-height: 136px;
+        font-size: 96px;
+        line-height: 96px;
         -webkit-text-stroke: 3px;
         text-stroke: 3px;
     }
-`
+`;

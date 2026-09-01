@@ -7,6 +7,10 @@ const common = {
     actions: {
         close: 'Затвори',
     },
+    eventDate: {
+        day: '27',
+        month: 'септември',
+    },
     nav: {
         admin: 'Админ',
         conditions: 'Условия за участие',

@@ -125,7 +125,7 @@ export const HeaderComponent: React.FC<{ hideDate?: boolean, video?: string; ima
                     </MenuDropdown>
                 )}
             </MenuWrapper>
-            {!hideDate && <Date>27<br/> септември</Date>}
+            {!hideDate && <Date>{t('eventDate.day')}<br/> {t('eventDate.month')}</Date>}
         </Header>
     );
 }
