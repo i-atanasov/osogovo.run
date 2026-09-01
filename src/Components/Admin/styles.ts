@@ -26,7 +26,7 @@ export const AdminLoginCard = styled.section`
 `;
 
 export const AdminDashboardCard = styled.section`
-    width: min(100%, 960px);
+    width: min(100%, 1280px);
     min-height: 320px;
     display: flex;
     align-items: flex-start;

@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { Link } from "react-router-dom";
 import { colors } from "../../config/constants";
 
 export const ParticipantsWrapper = styled.div`
@@ -39,12 +40,24 @@ export const Paid = styled.td<{ paid: boolean }>`
 export const TableRow = styled.tr<{ highlighted: boolean }>`
     background-color: ${props => props.highlighted ? colors.RuenOrange : "transparent"};
     color: ${props => props.highlighted ? "white" : colors.OsogovoBlack};
+
+    a {
+        color: inherit;
+    }
+
     &:hover {
-        background-color: ${colors.RuenOrange}; 
+        background-color: ${colors.RuenOrange};
         color: white;
         cursor: pointer;
+
         ${Paid} {
             color: white;
         }
     }
+`;
+
+export const TableCellLink = styled(Link)`
+    display: block;
+    color: inherit;
+    text-decoration: none;
 `;

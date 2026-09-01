@@ -14,6 +14,7 @@ import { IframeFeedback } from "../FeedbackPage/FeedbackPage";
 import AdminLogin from "../Admin/AdminLogin";
 import AdminDashboard from "../Admin/AdminDashboard";
 import ProtectedAdminRoute from "../Admin/ProtectedAdminRoute";
+import ParticipantProfile from "../ParticipantProfile/ParticipantProfile";
 
 const HashScroller: React.FC = () => {
     const location = useLocation();
@@ -72,6 +73,10 @@ const Router: React.FC = () => {
                 <Route
                     path="/participants"
                     element={<Participants />}
+                />
+                <Route
+                    path="/participant/:name"
+                    element={<ParticipantProfile />}
                 />
                 <Route
                     path="/race-day"

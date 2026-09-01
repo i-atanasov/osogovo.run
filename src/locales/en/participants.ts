@@ -23,6 +23,21 @@ const participants = {
         participant: 'participant',
         participants: 'participants',
     },
+    profile: {
+        backToParticipants: 'Back to participants',
+        title: 'Participations',
+        table: {
+            year: 'Year',
+            status: 'Type',
+        },
+        status: {
+            incoming: 'Incoming',
+            previous: 'Completed',
+        },
+        errors: {
+            loadFailed: 'Could not load participant information.',
+        },
+    },
 };
 
 export default participants;

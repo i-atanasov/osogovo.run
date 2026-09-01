@@ -3,7 +3,8 @@ import axios from "axios";
 import { useTranslation } from "react-i18next";
 import { HomeContainer } from "../Home/styles";
 import { HeaderComponent } from "../Header/Header";
-import { Paid, ParticipantsWrapper, TableRow } from "./styles";
+import { Paid, ParticipantsWrapper, TableCellLink, TableRow } from "./styles";
+import { formatParticipantName, toParticipantSlug } from "./utils";
 
 type Participant = {
     name: string;
@@ -16,15 +17,6 @@ type Participant = {
     updated_at?: string;
     osogovo?: string
     ruen?: string
-};
-
-const formatParticipantName = (name: string) => {
-    return name
-        .trim()
-        .toLocaleLowerCase('bg-BG')
-        .replace(/(^|[\s-])([^\s-])/gu, (match, separator: string, letter: string) => {
-            return `${separator}${letter.toLocaleUpperCase('bg-BG')}`;
-        });
 };
 
 export const Participants: React.FC = () => {
@@ -47,7 +39,7 @@ export const Participants: React.FC = () => {
             setLoading(false);
         };
         fetchParticipants();
-    }, []);
+    }, [apiUrl]);
 
     const getCategory = (participant: Participant) => {
         const birthYear = parseInt(participant.birth, 10);
@@ -84,17 +76,18 @@ export const Participants: React.FC = () => {
                     {participants.map((participant) => {
                         const category = getCategory(participant);
                         const final = participant.distance === '14' ? 'osogovo' : 'ruen';
+                        const participantPath = `/participant/${toParticipantSlug(participant.name)}`;
                         position++; // Increment position for each participant
                         return (
                             (categoryFilter && !category.includes(categoryFilter)) ? null : 
                             (distanceFilter && participant.distance !== distanceFilter) ? null :
                             (showResult && participant[final] !== showResult) ? null :
-                            <TableRow key={position} highlighted={false} >
-                                <td>{position}. { formatParticipantName(participant.name) }</td>
-                                <td>{ category }</td>
-                                <td>{ participant.distance }</td>
-                                <td>{ participant.team }</td>
-                                {showResult ? <td>{ participant[final] }</td> : <Paid paid={participant.paid} >{ participant.paid ? t('participants:status.paid') : t('participants:status.pending') }</Paid>}
+                            <TableRow key={participantPath} highlighted={false} >
+                                <td><TableCellLink to={participantPath}>{position}. { formatParticipantName(participant.name) }</TableCellLink></td>
+                                <td><TableCellLink to={participantPath}>{ category }</TableCellLink></td>
+                                <td><TableCellLink to={participantPath}>{ participant.distance }</TableCellLink></td>
+                                <td><TableCellLink to={participantPath}>{ participant.team }</TableCellLink></td>
+                                {showResult ? <td><TableCellLink to={participantPath}>{ participant[final] }</TableCellLink></td> : <Paid paid={participant.paid} ><TableCellLink to={participantPath}>{ participant.paid ? t('participants:status.paid') : t('participants:status.pending') }</TableCellLink></Paid>}
                             </TableRow>
                         );
                     })}

@@ -23,6 +23,21 @@ const participants = {
         participant: 'участник',
         participants: 'участници',
     },
+    profile: {
+        backToParticipants: 'Назад към участниците',
+        title: 'Участия',
+        table: {
+            year: 'Година',
+            status: 'Тип',
+        },
+        status: {
+            incoming: 'Предстоящо',
+            previous: 'Завършило',
+        },
+        errors: {
+            loadFailed: 'Не успяхме да заредим информацията за участника.',
+        },
+    },
 };
 
 export default participants;
