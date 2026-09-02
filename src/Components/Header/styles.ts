@@ -57,7 +57,7 @@ export const Header = styled.header<{ video?: string; image?: string }>`
             width: 100%;
             height: 30%;
             background: linear-gradient(0deg,rgba(48, 51, 47, 1) 0%, rgba(0, 0, 0, 0) 100%);
-            bottom: 30px;
+            bottom: 0;
             left: 0;
         }
     `}
@@ -87,7 +87,7 @@ export const CountdownWrapper = styled.div`
     align-items: center;
     background: transparent;
     position: absolute;
-    bottom: 0;
+    bottom: 30px;
     right: 0;
     z-index: 1;
 `;
