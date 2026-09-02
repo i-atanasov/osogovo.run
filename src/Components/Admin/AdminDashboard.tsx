@@ -15,7 +15,7 @@ const AdminDashboard: React.FC = () => {
             <HeaderComponent hideDate video='https://media.osogovo.run/media/osogovo-run-21-sec-low.mp4' />
             <AdminShell>
                 <AdminDashboardCard>
-                    <AdminTitle>Admin Dashboard</AdminTitle>
+                    <AdminTitle>Админ табло</AdminTitle>
                     <AdminUserWrapper>
                         <AdminUser>
                             {admin?.picture && <img src={admin?.picture} alt="Admin" />}

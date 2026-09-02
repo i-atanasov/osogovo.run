@@ -155,6 +155,20 @@ export const AdminTable = styled.table`
     }
 `;
 
+export const AdminTableRow = styled.tr<{ selected: boolean }>`
+    background-color: ${props => props.selected ? 'rgba(48, 51, 47, 0.2)' : 'transparent'};
+    cursor: pointer;
+    outline: none;
+
+    &:hover {
+        background-color: ${props => props.selected ? 'rgba(48, 51, 47, 0.2)' : 'rgba(48, 51, 47, 0.06)'};
+    }
+
+    &:focus-visible {
+        box-shadow: inset 3px 0 0 ${colors.OsogovoBlack};
+    }
+`;
+
 export const AdminMetricsGrid = styled.div`
     display: grid;
     gap: 16px;

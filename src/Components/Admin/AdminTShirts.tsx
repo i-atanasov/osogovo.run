@@ -1,6 +1,6 @@
 import React from "react";
 import axios from "axios";
-import { AdminErrorText, AdminStatusText, AdminTable, AdminTableWrapper } from "./styles";
+import { AdminErrorText, AdminStatusText, AdminTable, AdminTableRow, AdminTableWrapper } from "./styles";
 
 type AdminParticipant = {
     email: string;
@@ -89,11 +89,11 @@ const AdminTShirts: React.FC = () => {
                         const total = GENDERS.reduce((sum, gender) => sum + getCount(gender.key, size), 0);
 
                         return (
-                            <tr key={size}>
+                            <AdminTableRow key={size} selected={false}>
                                 <td>{size}</td>
                                 {GENDERS.map((gender) => <td key={gender.key}>{getCount(gender.key, size)}</td>)}
                                 <td>{total}</td>
-                            </tr>
+                            </AdminTableRow>
                         );
                     })}
                 </tbody>

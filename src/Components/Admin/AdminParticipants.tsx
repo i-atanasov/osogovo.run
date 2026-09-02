@@ -1,6 +1,6 @@
 import React from "react";
 import axios from "axios";
-import { AdminErrorText, AdminStatusText, AdminTable, AdminTableWrapper } from "./styles";
+import { AdminErrorText, AdminStatusText, AdminTable, AdminTableRow, AdminTableWrapper } from "./styles";
 
 type AdminParticipant = {
     email: string;
@@ -28,6 +28,7 @@ const AdminParticipants: React.FC = () => {
     const [participants, setParticipants] = React.useState<AdminParticipant[]>([]);
     const [loading, setLoading] = React.useState(true);
     const [error, setError] = React.useState<string | null>(null);
+    const [selectedEmail, setSelectedEmail] = React.useState<string | null>(null);
 
     React.useEffect(() => {
         const fetchParticipants = async () => {
@@ -84,7 +85,18 @@ const AdminParticipants: React.FC = () => {
                 </thead>
                 <tbody>
                     {participants.map((participant) => (
-                        <tr key={participant.email}>
+                        <AdminTableRow
+                            key={participant.email}
+                            selected={selectedEmail === participant.email}
+                            tabIndex={0}
+                            onClick={() => setSelectedEmail(participant.email)}
+                            onKeyDown={(event) => {
+                                if (event.key === 'Enter' || event.key === ' ') {
+                                    event.preventDefault();
+                                    setSelectedEmail(participant.email);
+                                }
+                            }}
+                        >
                             <td>{participant.name}</td>
                             <td>{participant.email}</td>
                             <td>{participant.phone_number ?? '-'}</td>
@@ -99,7 +111,7 @@ const AdminParticipants: React.FC = () => {
                             <td>{participant.discount_code_used ?? '-'}</td>
                             <td>{new Date(participant.created_at).toLocaleString()}</td>
                             <td>{new Date(participant.updated_at).toLocaleString()}</td>
-                        </tr>
+                        </AdminTableRow>
                     ))}
                 </tbody>
             </AdminTable>
