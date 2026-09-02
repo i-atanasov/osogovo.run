@@ -1,10 +1,14 @@
 import React from "react";
 import { useAdminAuth } from "./AdminAuthContext";
-import { AdminDashboardCard, AdminShell, AdminTitle, AdminUser, SignOutButton, AdminUserWrapper } from "./styles";
+import { AdminDashboardCard, AdminNavButton, AdminNavList, AdminShell, AdminTitle, AdminUser, SignOutButton, AdminUserWrapper } from "./styles";
 import { HeaderComponent } from "../Header/Header";
+import AdminParticipants from "./AdminParticipants";
+import AdminTShirts from "./AdminTShirts";
+import AdminPayments from "./AdminPayments";
 
 const AdminDashboard: React.FC = () => {
     const { admin, signOut } = useAdminAuth();
+    const [activeView, setActiveView] = React.useState<'participants' | 'tshirts' | 'payments' | null>(null);
 
     return (
         <>
@@ -18,7 +22,34 @@ const AdminDashboard: React.FC = () => {
                             {admin?.name || admin?.email}
                         </AdminUser>
                         <SignOutButton onClick={signOut}>Изход</SignOutButton>
+                        
                     </AdminUserWrapper>
+                    <AdminNavList>
+                        <AdminNavButton
+                            type="button"
+                            active={activeView === 'participants'}
+                            onClick={() => setActiveView('participants')}
+                        >
+                            Участници
+                        </AdminNavButton>
+                        <AdminNavButton
+                            type="button"
+                            active={activeView === 'tshirts'}
+                            onClick={() => setActiveView('tshirts')}
+                        >
+                            Тениски
+                        </AdminNavButton>
+                        <AdminNavButton
+                            type="button"
+                            active={activeView === 'payments'}
+                            onClick={() => setActiveView('payments')}
+                        >
+                            Приходи
+                        </AdminNavButton>
+                    </AdminNavList>
+                    {activeView === 'participants' && <AdminParticipants />}
+                    {activeView === 'tshirts' && <AdminTShirts />}
+                    {activeView === 'payments' && <AdminPayments />}
                 </AdminDashboardCard>
             </AdminShell>
         </>
