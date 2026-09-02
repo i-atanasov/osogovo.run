@@ -1,6 +1,6 @@
 import React from "react";
 import axios from "axios";
-import { AdminErrorText, AdminStatusText, AdminTable, AdminTableRow, AdminTableWrapper } from "./styles";
+import { AdminErrorText, AdminFilters, AdminStatusText, AdminTable, AdminTableRow, AdminTableWrapper } from "./styles";
 
 type AdminParticipant = {
     email: string;
@@ -29,6 +29,8 @@ const AdminParticipants: React.FC = () => {
     const [loading, setLoading] = React.useState(true);
     const [error, setError] = React.useState<string | null>(null);
     const [selectedEmail, setSelectedEmail] = React.useState<string | null>(null);
+    const [genderFilter, setGenderFilter] = React.useState('');
+    const [distanceFilter, setDistanceFilter] = React.useState('');
 
     React.useEffect(() => {
         const fetchParticipants = async () => {
@@ -61,9 +63,32 @@ const AdminParticipants: React.FC = () => {
         return <AdminErrorText>{error}</AdminErrorText>;
     }
 
+    const filteredParticipants = participants.filter((participant) => (
+        (!genderFilter || participant.gender === genderFilter)
+        && (!distanceFilter || participant.distance === distanceFilter)
+    ));
+
     return (
         <AdminTableWrapper>
-            <AdminStatusText>{participants.length} участници. Общо платени: {participants.filter(p => p.paid).length}</AdminStatusText>
+            <AdminFilters>
+                <label>
+                    Пол
+                    <select value={genderFilter} onChange={(event) => setGenderFilter(event.target.value)}>
+                        <option value="">Всички</option>
+                        <option value="female">Жени</option>
+                        <option value="male">Мъже</option>
+                    </select>
+                </label>
+                <label>
+                    Дистанция
+                    <select value={distanceFilter} onChange={(event) => setDistanceFilter(event.target.value)}>
+                        <option value="">Всички</option>
+                        <option value="14">14 км</option>
+                        <option value="26">26 км</option>
+                    </select>
+                </label>
+            </AdminFilters>
+            <AdminStatusText>{filteredParticipants.length} участници. Общо платени: {filteredParticipants.filter((participant) => participant.payment_status === 'paid').length}</AdminStatusText>
             <AdminTable>
                 <thead>
                     <tr>
@@ -84,7 +109,7 @@ const AdminParticipants: React.FC = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    {participants.map((participant) => (
+                    {filteredParticipants.map((participant) => (
                         <AdminTableRow
                             key={participant.email}
                             selected={selectedEmail === participant.email}

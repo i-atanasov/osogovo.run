@@ -129,6 +129,32 @@ export const AdminTableWrapper = styled.div`
     width: 100%;
 `;
 
+export const AdminFilters = styled.div`
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 16px;
+
+    label {
+        color: ${colors.OsogovoBlack};
+        display: flex;
+        flex-direction: column;
+        font-size: 15px;
+        gap: 6px;
+    }
+
+    select {
+        background: white;
+        border: 1px solid rgba(48, 51, 47, 0.24);
+        border-radius: 4px;
+        color: ${colors.OsogovoBlack};
+        font-family: inherit;
+        font-size: 16px;
+        min-height: 38px;
+        padding: 0 10px;
+    }
+`;
+
 export const AdminTable = styled.table`
     border-collapse: collapse;
     font-size: 14px;
