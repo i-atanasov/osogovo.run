@@ -50,6 +50,7 @@ const AdminParticipants: React.FC = () => {
     const [bib, setBib] = React.useState('');
     const [bibError, setBibError] = React.useState<string | null>(null);
     const [savingBib, setSavingBib] = React.useState(false);
+    const [confirmingBib, setConfirmingBib] = React.useState<number | null>(null);
 
     React.useEffect(() => {
         const fetchParticipants = async () => {
@@ -96,6 +97,7 @@ const AdminParticipants: React.FC = () => {
     const closeBibDialog = () => {
         if (!savingBib) {
             setParticipantForBib(null);
+            setConfirmingBib(null);
         }
     };
 
@@ -115,9 +117,35 @@ const AdminParticipants: React.FC = () => {
         try {
             setSavingBib(true);
             setBibError(null);
+            const response = await axios.get<{ available: boolean }>(`${apiUrl}/admin/participants/bib-availability`, {
+                params: { bib: parsedBib, email: participantForBib.email },
+                withCredentials: true,
+            });
+
+            if (!response.data.available) {
+                setBibError('Този стартов номер вече е зает.');
+                return;
+            }
+
+            setConfirmingBib(parsedBib);
+        } catch {
+            setBibError('Неуспешна проверка на стартовия номер.');
+        } finally {
+            setSavingBib(false);
+        }
+    };
+
+    const confirmBib = async () => {
+        if (!apiUrl || !participantForBib || confirmingBib === null) {
+            return;
+        }
+
+        try {
+            setSavingBib(true);
+            setBibError(null);
             const response = await axios.patch<{ bib: number }>(
                 `${apiUrl}/admin/participants/${encodeURIComponent(participantForBib.email)}`,
-                { bib: parsedBib },
+                { bib: confirmingBib },
                 { withCredentials: true },
             );
             setParticipants((currentParticipants) => currentParticipants.map((participant) => (
@@ -126,6 +154,7 @@ const AdminParticipants: React.FC = () => {
                     : participant
             )));
             setParticipantForBib(null);
+            setConfirmingBib(null);
         } catch (requestError) {
             if (axios.isAxiosError(requestError) && requestError.response?.status === 409) {
                 setBibError('Този стартов номер вече е зает.');
@@ -245,7 +274,6 @@ const AdminParticipants: React.FC = () => {
                             Номер
                             <input
                                 autoFocus
-                                min="1"
                                 inputMode="numeric"
                                 onChange={(event) => setBib(event.target.value)}
                                 required
@@ -264,6 +292,29 @@ const AdminParticipants: React.FC = () => {
                             </SignOutButton>
                         </AdminDialogActions>
                     </AdminDialog>
+                    {confirmingBib !== null && (
+                        <AdminDialogBackdrop onMouseDown={() => !savingBib && setConfirmingBib(null)}>
+                            <AdminDialog onSubmit={(event) => {
+                                event.preventDefault();
+                                confirmBib();
+                            }} onMouseDown={(event) => event.stopPropagation()}>
+                                <h2>Потвърждение</h2>
+                                <p>Сигурни ли сте, че искате да запазите номер {confirmingBib} за {participantForBib.name}?</p>
+                                <AdminDialogActions>
+                                    <AdminBibButton
+                                        type="button"
+                                        onClick={() => setConfirmingBib(null)}
+                                        disabled={savingBib}
+                                    >
+                                        Отказ
+                                    </AdminBibButton>
+                                    <SignOutButton type="submit" disabled={savingBib}>
+                                        {savingBib ? 'Запазване...' : 'Потвърди'}
+                                    </SignOutButton>
+                                </AdminDialogActions>
+                            </AdminDialog>
+                        </AdminDialogBackdrop>
+                    )}
                 </AdminDialogBackdrop>
             )}
         </AdminTableWrapper>
