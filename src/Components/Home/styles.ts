@@ -42,7 +42,7 @@ const bounce = keyframes`
     50% { transform: translateY(6px); }
 `;
 
-export const ScrollPrompt = styled.div`
+export const ScrollPrompt = styled.a`
     position: absolute;
     top: 16px;
     left: 50%;
@@ -54,8 +54,8 @@ export const ScrollPrompt = styled.div`
     color: rgba(255, 255, 255, 0.8);
     font-size: 12px;
     letter-spacing: 0.1em;
-    pointer-events: none;
-    z-index: 10;
+    text-decoration: none;
+    z-index: 20;
     opacity: 1;
     transition: opacity 0.6s ease;
 

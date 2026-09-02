@@ -91,7 +91,7 @@ export const RenderFullRoute = () => {
 
 const ProductField = () => {
     const { t } = useTranslation();
-    const scrollPromptRef = React.useRef<HTMLDivElement>(null);
+    const scrollPromptRef = React.useRef<HTMLAnchorElement>(null);
     const productTranslationKeys = ['osogovoRun14', 'ruenRun26'];
     const translatedProducts = products.map((product, index) => {
         const productKey = productTranslationKeys[index];
@@ -113,6 +113,7 @@ const ProductField = () => {
         const timer = setTimeout(() => {
             if (scrollPromptRef.current) {
                 scrollPromptRef.current.style.opacity = '0';
+                scrollPromptRef.current.style.pointerEvents = 'none';
             }
         }, 3000);
         return () => clearTimeout(timer);
@@ -121,7 +122,7 @@ const ProductField = () => {
     return (
         <ProductFieldWrapper>
             <ProductFieldContainer>                
-                <ScrollPrompt ref={scrollPromptRef}>
+                <ScrollPrompt href="#product-box-container" ref={scrollPromptRef}>
                     <span>{t('home:route.scrollPrompt')}</span>
                     <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M8 3v10M3 9l5 5 5-5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
@@ -132,7 +133,7 @@ const ProductField = () => {
                     alt="Route"
                 />
             </ProductFieldContainer>
-            <ProductBoxContainer>   
+            <ProductBoxContainer id="product-box-container">
                 {translatedProducts.map((product, index) => (
                     <ProductBox
                         key={index}
