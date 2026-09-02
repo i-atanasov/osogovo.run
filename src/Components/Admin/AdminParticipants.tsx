@@ -1,6 +1,21 @@
 import React from "react";
 import axios from "axios";
-import { AdminErrorText, AdminFilters, AdminStatusText, AdminTable, AdminTableRow, AdminTableWrapper } from "./styles";
+import { Pencil } from "lucide-react";
+import {
+    AdminBibButton,
+    AdminBibValue,
+    AdminDialog,
+    AdminDialogActions,
+    AdminDialogBackdrop,
+    AdminErrorText,
+    AdminFilters,
+    AdminIconButton,
+    AdminStatusText,
+    AdminTable,
+    AdminTableRow,
+    AdminTableWrapper,
+    SignOutButton,
+} from "./styles";
 
 type AdminParticipant = {
     email: string;
@@ -31,6 +46,10 @@ const AdminParticipants: React.FC = () => {
     const [selectedEmail, setSelectedEmail] = React.useState<string | null>(null);
     const [genderFilter, setGenderFilter] = React.useState('');
     const [distanceFilter, setDistanceFilter] = React.useState('');
+    const [participantForBib, setParticipantForBib] = React.useState<AdminParticipant | null>(null);
+    const [bib, setBib] = React.useState('');
+    const [bibError, setBibError] = React.useState<string | null>(null);
+    const [savingBib, setSavingBib] = React.useState(false);
 
     React.useEffect(() => {
         const fetchParticipants = async () => {
@@ -68,6 +87,56 @@ const AdminParticipants: React.FC = () => {
         && (!distanceFilter || participant.distance === distanceFilter)
     ));
 
+    const openBibDialog = (participant: AdminParticipant) => {
+        setParticipantForBib(participant);
+        setBib(participant.bib?.toString() ?? '');
+        setBibError(null);
+    };
+
+    const closeBibDialog = () => {
+        if (!savingBib) {
+            setParticipantForBib(null);
+        }
+    };
+
+    const submitBib = async (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+
+        const parsedBib = Number(bib);
+        if (!Number.isInteger(parsedBib) || parsedBib <= 0) {
+            setBibError('Моля, въведете положително цяло число.');
+            return;
+        }
+
+        if (!apiUrl || !participantForBib) {
+            return;
+        }
+
+        try {
+            setSavingBib(true);
+            setBibError(null);
+            const response = await axios.patch<{ bib: number }>(
+                `${apiUrl}/admin/participants/${encodeURIComponent(participantForBib.email)}`,
+                { bib: parsedBib },
+                { withCredentials: true },
+            );
+            setParticipants((currentParticipants) => currentParticipants.map((participant) => (
+                participant.email === participantForBib.email
+                    ? { ...participant, bib: response.data.bib }
+                    : participant
+            )));
+            setParticipantForBib(null);
+        } catch (requestError) {
+            if (axios.isAxiosError(requestError) && requestError.response?.status === 409) {
+                setBibError('Този стартов номер вече е зает.');
+            } else {
+                setBibError('Неуспешно запазване на стартовия номер.');
+            }
+        } finally {
+            setSavingBib(false);
+        }
+    };
+
     return (
         <AdminTableWrapper>
             <AdminFilters>
@@ -92,6 +161,7 @@ const AdminParticipants: React.FC = () => {
             <AdminTable>
                 <thead>
                     <tr>
+                        <th>Стартов номер</th>
                         <th>Име</th>
                         <th>Имейл</th>
                         <th>Телефон</th>
@@ -101,7 +171,6 @@ const AdminParticipants: React.FC = () => {
                         <th>Отбор</th>
                         <th>Тениска</th>
                         <th>Плащане</th>
-                        <th>Стартов номер</th>
                         <th>Платено</th>
                         <th>Код за отстъпка</th>
                         <th>Регистриран на</th>
@@ -122,6 +191,34 @@ const AdminParticipants: React.FC = () => {
                                 }
                             }}
                         >
+                            <td>
+                                {participant.bib === null || participant.bib === undefined ? (
+                                    <AdminBibButton
+                                        type="button"
+                                        onClick={(event) => {
+                                            event.stopPropagation();
+                                            openBibDialog(participant);
+                                        }}
+                                    >
+                                        Дай номер
+                                    </AdminBibButton>
+                                ) : (
+                                    <AdminBibValue>
+                                        {participant.bib}
+                                        <AdminIconButton
+                                            aria-label="Редактирай стартов номер"
+                                            title="Редактирай стартов номер"
+                                            type="button"
+                                            onClick={(event) => {
+                                                event.stopPropagation();
+                                                openBibDialog(participant);
+                                            }}
+                                        >
+                                            <Pencil aria-hidden="true" size={16} />
+                                        </AdminIconButton>
+                                    </AdminBibValue>
+                                )}
+                            </td>
                             <td>{participant.name}</td>
                             <td>{participant.email}</td>
                             <td>{participant.phone_number ?? '-'}</td>
@@ -131,7 +228,6 @@ const AdminParticipants: React.FC = () => {
                             <td>{participant.team ?? '-'}</td>
                             <td>{participant.with_t_shirt ? participant.t_shirt_size ?? 'Yes' : 'No'}</td>
                             <td>{participant.payment_status}</td>
-                            <td>{participant.bib ?? '-'}</td>
                             <td>{participant.amount !== null && participant.amount !== undefined ? `${participant.amount/100} ${participant.currency ?? ''}`.trim() : '-'}</td>
                             <td>{participant.discount_code_used ?? '-'}</td>
                             <td>{new Date(participant.created_at).toLocaleString()}</td>
@@ -140,6 +236,36 @@ const AdminParticipants: React.FC = () => {
                     ))}
                 </tbody>
             </AdminTable>
+            {participantForBib && (
+                <AdminDialogBackdrop onMouseDown={closeBibDialog}>
+                    <AdminDialog onSubmit={submitBib} onMouseDown={(event) => event.stopPropagation()}>
+                        <h2>Стартов номер</h2>
+                        <p>{participantForBib.name}</p>
+                        <label>
+                            Номер
+                            <input
+                                autoFocus
+                                min="1"
+                                inputMode="numeric"
+                                onChange={(event) => setBib(event.target.value)}
+                                required
+                                step="1"
+                                type="number"
+                                value={bib}
+                            />
+                        </label>
+                        {bibError && <AdminErrorText>{bibError}</AdminErrorText>}
+                        <AdminDialogActions>
+                            <AdminBibButton type="button" onClick={closeBibDialog} disabled={savingBib}>
+                                Отказ
+                            </AdminBibButton>
+                            <SignOutButton type="submit" disabled={savingBib}>
+                                {savingBib ? 'Запазване...' : 'Запази'}
+                            </SignOutButton>
+                        </AdminDialogActions>
+                    </AdminDialog>
+                </AdminDialogBackdrop>
+            )}
         </AdminTableWrapper>
     );
 };

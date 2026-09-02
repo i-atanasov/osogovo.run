@@ -195,6 +195,100 @@ export const AdminTableRow = styled.tr<{ selected: boolean }>`
     }
 `;
 
+export const AdminBibButton = styled.button`
+    min-height: 32px;
+    padding: 0 10px;
+    border: 1px solid ${colors.RuenOrange};
+    border-radius: 4px;
+    background: transparent;
+    color: ${colors.RuenOrange};
+    font-family: inherit;
+    font-size: 14px;
+    cursor: pointer;
+
+    &:hover {
+        background: ${colors.RuenOrange};
+        color: white;
+    }
+`;
+
+export const AdminBibValue = styled.span`
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+`;
+
+export const AdminIconButton = styled.button`
+    width: 32px;
+    height: 32px;
+    display: inline-grid;
+    place-items: center;
+    padding: 0;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    background: transparent;
+    color: ${colors.OsogovoBlack};
+    cursor: pointer;
+
+    &:hover {
+        border-color: ${colors.RuenOrange};
+        color: ${colors.RuenOrange};
+    }
+`;
+
+export const AdminDialogBackdrop = styled.div`
+    position: fixed;
+    inset: 0;
+    z-index: 10;
+    display: grid;
+    place-items: center;
+    padding: 24px;
+    background: rgba(48, 51, 47, 0.48);
+`;
+
+export const AdminDialog = styled.form`
+    width: min(100%, 380px);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 24px;
+    border-radius: 8px;
+    background: white;
+    box-shadow: 0 22px 70px rgba(48, 51, 47, 0.3);
+
+    h2,
+    p {
+        margin: 0;
+    }
+
+    h2 {
+        font-size: 24px;
+        text-transform: uppercase;
+    }
+
+    label {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        font-size: 16px;
+    }
+
+    input {
+        min-height: 42px;
+        box-sizing: border-box;
+        border: 1px solid rgba(48, 51, 47, 0.24);
+        border-radius: 4px;
+        font: inherit;
+        padding: 0 10px;
+    }
+`;
+
+export const AdminDialogActions = styled.div`
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+`;
+
 export const AdminMetricsGrid = styled.div`
     display: grid;
     gap: 16px;

@@ -8,7 +8,7 @@ import AdminPayments from "./AdminPayments";
 
 const AdminDashboard: React.FC = () => {
     const { admin, signOut } = useAdminAuth();
-    const [activeView, setActiveView] = React.useState<'participants' | 'tshirts' | 'payments' | null>(null);
+    const [activeView, setActiveView] = React.useState<'participants' | 'tshirts' | 'payments' | null>('participants');
 
     return (
         <>
