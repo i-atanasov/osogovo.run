@@ -7,7 +7,7 @@ export const RaceCountdownWrapper = styled.section`
     background: #fff7f3;
     padding: 18px;
     margin-bottom: 24px;
-`
+`;
 
 export const CountdownHeader = styled.h2`
     color: ${colors.OsogovoBlack};
@@ -16,7 +16,7 @@ export const CountdownHeader = styled.h2`
     font-weight: 500;
     line-height: 1.2;
     margin: 0 0 16px;
-`
+`;
 
 export const CountdownGrid = styled.div`
     display: grid;
@@ -26,7 +26,7 @@ export const CountdownGrid = styled.div`
     @media (min-width: 768px) {
         grid-template-columns: repeat(4, minmax(0, 1fr));
     }
-`
+`;
 
 export const CountdownUnit = styled.div`
     align-items: center;
@@ -55,4 +55,4 @@ export const CountdownUnit = styled.div`
         text-align: center;
         text-transform: uppercase;
     }
-`
+`;

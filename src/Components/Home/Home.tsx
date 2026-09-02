@@ -10,6 +10,7 @@ import SponsorsField from "../SponsorsField/SponsorsField";
 import { HeaderComponent } from "../Header/Header";
 import PopUp from "../PopUp/PopUp";
 import Records from "./Records";
+import RaceCountdown from "../RaceCountdown/RaceCountdown";
 
 const HOME_POPUP_STORAGE_KEY = 'osogovo_home_popup_visible';
 
@@ -47,7 +48,7 @@ const Home: React.FC = () => {
 
     return (
         <HomeContainer>
-            <HeaderComponent video='https://media.osogovo.run/media/osogovo-run-21-sec-low.mp4' />
+            <HeaderComponent showCountdown video='https://media.osogovo.run/media/osogovo-run-21-sec-low.mp4' />
             {popUpEnabled && showPopUp && <Dimmer show={showPopUp} onClick={() => setShowPopUpAndPersist(false)} />}
             {popUpEnabled && showPopUp && 
                 <PopUp showPopUp={showPopUp} closePopUp={setShowPopUpAndPersist}>

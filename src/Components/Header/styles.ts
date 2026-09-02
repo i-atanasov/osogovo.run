@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { CountdownUnit, RaceCountdownWrapper } from '../RaceCountdown/styles';
 
 export const Header = styled.header<{ video?: string; image?: string }>`
     color: white;
@@ -56,11 +57,40 @@ export const Header = styled.header<{ video?: string; image?: string }>`
             width: 100%;
             height: 30%;
             background: linear-gradient(0deg,rgba(48, 51, 47, 1) 0%, rgba(0, 0, 0, 0) 100%);
-            bottom: 0;
+            bottom: 30px;
             left: 0;
         }
     `}
+
+    ${RaceCountdownWrapper} {
+        border: none;
+        width: 60%;
+        background: transparent;
+        margin: 0;
+        border-radius: 0;
+        h2 {
+            display: none;
+        }
+        ${CountdownUnit} {
+            background: transparent;
+            > span {
+                color: white;
+            }
+        }
+    }
 `
+
+export const CountdownWrapper = styled.div`
+    width: 30%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: transparent;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    z-index: 1;
+`;
 
 export const Logo = styled.a<{ top?: string, left?: string }>`
     position: absolute;

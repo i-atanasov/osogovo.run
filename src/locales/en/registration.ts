@@ -16,8 +16,8 @@ const registration = {
         started: 'The race has started',
         days: 'days',
         hours: 'hours',
-        minutes: 'minutes',
-        seconds: 'seconds',
+        minutes: 'min',
+        seconds: 'sec',
     },
     fields: {
         distance: 'Distance',

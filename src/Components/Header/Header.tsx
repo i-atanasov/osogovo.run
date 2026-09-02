@@ -2,6 +2,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Date, Header, LanguageButton, LanguageSeparator, LanguageSwitcher, Logo, MenuButton, MenuDropdown, MenuIcon, MenuItem, MenuWrapper } from "./styles";
 import { useAdminAuth } from '../Admin/AdminAuthContext';
+import { CountdownWrapper } from '../Header/styles';
+import RaceCountdown from '../RaceCountdown/RaceCountdown';
 
 interface VideoProps {
     isMuted: boolean;
@@ -40,7 +42,7 @@ const HeaderVideo = ({ isMuted, video }: VideoProps) => {
     );
 };
 
-export const HeaderComponent: React.FC<{ hideDate?: boolean, video?: string; image?: string, children?: React.ReactNode }> = ({ hideDate, video, image, children }) => {
+export const HeaderComponent: React.FC<{ hideDate?: boolean, video?: string; image?: string, children?: React.ReactNode, showCountdown?: boolean }> = ({ hideDate, video, image, children, showCountdown }) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const menuRef = useRef<HTMLDivElement | null>(null);
     const { admin } = useAdminAuth();
@@ -86,6 +88,12 @@ export const HeaderComponent: React.FC<{ hideDate?: boolean, video?: string; ima
 
     return (
         <Header video={video} image={image}>
+            {showCountdown && (
+                <CountdownWrapper>
+                    <RaceCountdown />
+                </CountdownWrapper>
+            )}
+                
             {video && <HeaderVideo isMuted={true} video={video} />}
             {image && <img src={image} alt="Header Image" />}
             {children}

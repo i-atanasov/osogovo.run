@@ -1,5 +1,6 @@
 import styled, { keyframes } from "styled-components";
 import { colors } from "../../config/constants";
+import { CountdownUnit, RaceCountdownWrapper } from "../RaceCountdown/styles";
 
 export const HomeContainer = styled.div`
     background-color: #f0f0f0;

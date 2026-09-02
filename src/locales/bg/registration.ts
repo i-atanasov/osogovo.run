@@ -16,8 +16,8 @@ const registration = {
         started: 'Състезанието започна',
         days: 'дни',
         hours: 'часа',
-        minutes: 'минути',
-        seconds: 'секунди',
+        minutes: 'мин',
+        seconds: 'сек',
     },
     fields: {
         distance: 'Дистанция',
