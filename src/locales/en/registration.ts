@@ -45,6 +45,8 @@ const registration = {
         addedCaption: 'T-shirt added (+{{price}} eur) - click to remove',
         addCaption: 'Add T-shirt (+{{price}} eur)',
         sizeLabel: 'Choose size',
+        unavailable: 'Ordering a T-shirt is no longer available. You can proceed to payment without a T-shirt.',
+        proceedWithout: 'Proceed to payment',
     },
     payment: {
         entryFee: 'Entry fee payment: {{amount}} eur.',

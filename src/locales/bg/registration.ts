@@ -45,6 +45,8 @@ const registration = {
         addedCaption: 'Тениската е добавена (+{{price}} eur) - натиснете за премахване',
         addCaption: 'Добави тениска (+{{price}} eur)',
         sizeLabel: 'Избери размер',
+        unavailable: 'Поръчването на тениска вече не е възможно. Можете да продължите към плащането без тениска.',
+        proceedWithout: 'Продължи към плащането',
     },
     payment: {
         entryFee: 'Плащане на стартова такса: {{amount}} eur.',

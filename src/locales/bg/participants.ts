@@ -13,6 +13,11 @@ const participants = {
         finish: 'Финал',
         status: 'Статус',
         loading: 'Зареждане...',
+        with_t_shirt: 'Тениска',
+    },
+    t_shirt_icluded: {
+        yes: 'Включена',
+        no: '-',
     },
     status: {
         paid: 'Платено',

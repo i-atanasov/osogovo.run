@@ -13,6 +13,11 @@ const participants = {
         finish: 'Finish',
         status: 'Status',
         loading: 'Loading...',
+        with_t_shirt: 'T-shirt',
+    },
+    t_shirt_icluded: {
+        yes: 'Included',
+        no: '-',
     },
     status: {
         paid: 'Paid',

@@ -14,9 +14,11 @@ type Participant = {
     gender: string;
     team?: string;
     bib: number;
-    updated_at?: string;
+    created_at?: string;
     osogovo?: string
     ruen?: string
+    with_t_shirt?: boolean;
+    t_shirt_size?: string;
 };
 
 export const Participants: React.FC = () => {
@@ -31,8 +33,8 @@ export const Participants: React.FC = () => {
             const response = await axios.get(`${apiUrl}/participants`);
             const data = response.data;
             data.sort((a: Participant, b: Participant) => {
-                const aTime = a.updated_at ?? '';
-                const bTime = b.updated_at ?? '';
+                const aTime = a.created_at ?? '';
+                const bTime = b.created_at ?? '';
                 return aTime.localeCompare(bTime);
             });
             setParticipants(data);
@@ -69,6 +71,7 @@ export const Participants: React.FC = () => {
                         {showResult ? 
                             <th>{t('participants:table.finish')}</th> : 
                             <th>{t('participants:table.status')}</th>}
+                        <th>{t('participants:table.with_t_shirt')}</th>
                     </tr>
                 </thead>
                 {loading && <p>{t('participants:table.loading')}</p>}
@@ -86,8 +89,26 @@ export const Participants: React.FC = () => {
                                 <td><TableCellLink to={participantPath}>{position}. { formatParticipantName(participant.name) }</TableCellLink></td>
                                 <td><TableCellLink to={participantPath}>{ category }</TableCellLink></td>
                                 <td><TableCellLink to={participantPath}>{ participant.distance }</TableCellLink></td>
-                                <td><TableCellLink to={participantPath}>{ participant.team }</TableCellLink></td>
-                                {showResult ? <td><TableCellLink to={participantPath}>{ participant[final] }</TableCellLink></td> : <Paid paid={participant.paid} ><TableCellLink to={participantPath}>{ participant.paid ? t('participants:status.paid') : t('participants:status.pending') }</TableCellLink></Paid>}
+                                <td>
+                                    <TableCellLink
+                                        to={participantPath}
+                                        style={{ overflowX: 'auto', whiteSpace: 'nowrap', marginRight: '5px' }}
+                                    >
+                                        { participant.team }
+                                    </TableCellLink>
+                                </td>
+                                {showResult ? 
+                                    <td>
+                                        <TableCellLink to={participantPath}>
+                                            { participant[final] }
+                                        </TableCellLink>
+                                    </td> : 
+                                    <Paid paid={participant.paid} >
+                                        <TableCellLink to={participantPath}>
+                                            { participant.paid ? t('participants:status.paid') : t('participants:status.pending') }
+                                        </TableCellLink>
+                                    </Paid>}
+                                <td><TableCellLink to={participantPath}>{ participant.with_t_shirt ? participant.t_shirt_size : '-' }</TableCellLink></td>
                             </TableRow>
                         );
                     })}
