@@ -1,6 +1,6 @@
 import React from 'react';
 import { Field, Form, Formik, FormikHelpers, useFormikContext } from 'formik';
-import { FormFields, FormSection, RegistrationFormWrapper, ImageBackground, FormWrapper, Price, IBANWrapper, TShirtCardButton, TShirtSelector, TShirtSizes, TShirtSizeButton } from './styles';
+import { FormFields, FormSection, RegistrationFormWrapper, ImageBackground, FormWrapper, Price, IBANWrapper, TShirtCardButton, TShirtSelector, TShirtSizes, TShirtSizeButton, TShirtUnavailableTooltip } from './styles';
 import { useSearchParams } from 'react-router-dom';
 import { createValidateForm } from './validation';
 import { HeaderComponent } from '../Header/Header';
@@ -342,29 +342,38 @@ const RegistrationForm = () => {
                                     )}
                                 </FormSection>
                                 <FormSection>
-                                    <label>{t('registration:tShirt.label')}</label>
+                                    <label>
+                                        {t(tShirtPrice === 0 ? 'registration:tShirt.unavailableLabel' : 'registration:tShirt.label')}
+                                    </label>
                                     <TShirtSelector>
-                                        <TShirtCardButton
-                                            type="button"
-                                            onClick={() => {
-                                                const nextSelected = !values.withTShirt;
-                                                setFieldValue('withTShirt', nextSelected);
-                                                if (!nextSelected) {
-                                                    setFieldValue('tShirtSize', '');
-                                                }
-                                            }}
-                                            selected={values.withTShirt}
-                                            grayscale={!values.withTShirt}
+                                        <TShirtUnavailableTooltip
+                                            $disabled={tShirtPrice === 0}
+                                            data-tooltip={t('registration:tShirt.unavailable')}
+                                            tabIndex={tShirtPrice === 0 ? 0 : -1}
                                         >
-                                            <img src={tShirtImages.front} alt={t('registration:tShirt.imageAlt')} onError={handleImageFallback} />
-                                            <span className="cta">{values.withTShirt ? t('registration:tShirt.remove') : t('registration:tShirt.add')}</span>
-                                            <span className="caption">
-                                                {values.withTShirt
-                                                    ? t('registration:tShirt.addedCaption', { price: tShirtPrice })
-                                                    : t('registration:tShirt.addCaption', { price: tShirtPrice })
-                                                }
-                                            </span>
-                                        </TShirtCardButton>
+                                            <TShirtCardButton
+                                                type="button"
+                                                disabled={tShirtPrice === 0}
+                                                onClick={() => {
+                                                    const nextSelected = !values.withTShirt;
+                                                    setFieldValue('withTShirt', nextSelected);
+                                                    if (!nextSelected) {
+                                                        setFieldValue('tShirtSize', '');
+                                                    }
+                                                }}
+                                                selected={values.withTShirt}
+                                                grayscale={!values.withTShirt}
+                                            >
+                                                <img src={tShirtImages.front} alt={t('registration:tShirt.imageAlt')} onError={handleImageFallback} />
+                                                <span className="cta">{values.withTShirt ? t('registration:tShirt.remove') : t('registration:tShirt.add')}</span>
+                                                <span className="caption">
+                                                    {values.withTShirt
+                                                        ? t('registration:tShirt.addedCaption', { price: tShirtPrice })
+                                                        : t('registration:tShirt.addCaption', { price: tShirtPrice })
+                                                    }
+                                                </span>
+                                            </TShirtCardButton>
+                                        </TShirtUnavailableTooltip>
                                     </TShirtSelector>
                                     <Field type="hidden" name="withTShirt" />
                                     <Field type="hidden" name="tShirtSize" />

@@ -250,6 +250,43 @@ export const TShirtSelector = styled.div`
     grid-template-columns: 1fr;
 `
 
+export const TShirtUnavailableTooltip = styled.span<{ $disabled: boolean }>`
+    position: relative;
+    display: block;
+    opacity: ${props => props.$disabled ? 0.58 : 1};
+
+    &::after {
+        position: absolute;
+        z-index: 1;
+        bottom: calc(80%);
+        left: 50%;
+        width: max-content;
+        max-width: min(280px, 90vw);
+        padding: 8px 10px;
+        border-radius: 4px;
+        background: ${colors.OsogovoBlack};
+        color: white;
+        content: attr(data-tooltip);
+        font-family: 'Oswald', sans-serif;
+        font-size: 14px;
+        line-height: 1.25;
+        opacity: 0;
+        pointer-events: none;
+        text-align: center;
+        transform: translate(-50%, 4px);
+        transition: opacity 0.2s ease, transform 0.2s ease;
+        visibility: hidden;
+        white-space: normal;
+    }
+
+    &:hover::after,
+    &:focus-within::after {
+        opacity: ${props => props.$disabled ? 1 : 0};
+        transform: translate(-50%, 0);
+        visibility: ${props => props.$disabled ? 'visible' : 'hidden'};
+    }
+`;
+
 export const TShirtCardButton = styled.button<{ selected?: boolean; grayscale?: boolean }>`
     border: ${props => props.selected ? `2px solid ${colors.RuenOrange}` : '2px solid transparent'};
     border-radius: 12px;
@@ -262,6 +299,11 @@ export const TShirtCardButton = styled.button<{ selected?: boolean; grayscale?: 
     text-align: left;
     color: ${colors.OsogovoBlack};
     transition: border-color 0.2s ease;
+
+    &:disabled {
+        cursor: not-allowed;
+        opacity: 0.58;
+    }
 
     .cta {
         position: absolute;

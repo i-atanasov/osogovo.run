@@ -39,6 +39,7 @@ const registration = {
     terms: 'By submitting this registration, I declare that I agree with the rules and terms of each race and will follow them. I participate voluntarily and at my own risk, releasing the organizers from liability.',
     tShirt: {
         label: 'Add official Osogovo Run running T-shirt (optional)',
+        unavailableLabel: 'Ordering an official T-shirt is no longer available',
         imageAlt: 'Official T-shirt',
         add: 'Add T-shirt',
         remove: 'Remove T-shirt',
