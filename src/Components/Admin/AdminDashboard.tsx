@@ -1,18 +1,28 @@
 import React from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useAdminAuth } from "./AdminAuthContext";
 import { AdminDashboardCard, AdminNavButton, AdminNavList, AdminShell, AdminTitle, AdminUser, SignOutButton, AdminUserWrapper } from "./styles";
 import { HeaderComponent } from "../Header/Header";
 import AdminParticipants from "./AdminParticipants";
 import AdminTShirts from "./AdminTShirts";
 import AdminPayments from "./AdminPayments";
+import AdminTiming from "./AdminTiming";
 
 const AdminDashboard: React.FC = () => {
     const { admin, signOut } = useAdminAuth();
-    const [activeView, setActiveView] = React.useState<'participants' | 'tshirts' | 'payments' | 'timing' | null>('participants');
+    const location = useLocation();
+    const navigate = useNavigate();
+    const [activeView, setActiveView] = React.useState<'participants' | 'tshirts' | 'payments' | 'timing' | null>(
+        location.pathname === '/admin/timing' ? 'timing' : 'participants',
+    );
+
+    React.useEffect(() => {
+        setActiveView(location.pathname === '/admin/timing' ? 'timing' : 'participants');
+    }, [location.pathname]);
 
     return (
         <>
-            <HeaderComponent hideDate video='https://media.osogovo.run/media/osogovo-run-21-sec-low.mp4' />
+            <HeaderComponent hideDate />
             <AdminShell>
                 <AdminDashboardCard>
                     <AdminTitle>Админ табло</AdminTitle>
@@ -49,7 +59,7 @@ const AdminDashboard: React.FC = () => {
                         <AdminNavButton
                             type="button"
                             active={activeView === 'timing'}
-                            onClick={() => setActiveView('timing')}
+                            onClick={() => navigate('/admin/timing')}
                         >
                             Времеизмерване
                         </AdminNavButton>
@@ -57,7 +67,7 @@ const AdminDashboard: React.FC = () => {
                     {activeView === 'participants' && <AdminParticipants />}
                     {activeView === 'tshirts' && <AdminTShirts />}
                     {activeView === 'payments' && <AdminPayments />}
-                    {activeView === 'timing' && <p>timing</p>}
+                    {activeView === 'timing' && <AdminTiming />}
                 </AdminDashboardCard>
             </AdminShell>
         </>

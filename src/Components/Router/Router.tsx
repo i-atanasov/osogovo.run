@@ -102,6 +102,14 @@ const Router: React.FC = () => {
                         </ProtectedAdminRoute>
                     }
                 />
+                <Route
+                    path="/admin/timing"
+                    element={
+                        <ProtectedAdminRoute>
+                            <AdminDashboard />
+                        </ProtectedAdminRoute>
+                    }
+                />
             </Routes>
         </BrowserRouter>
     );

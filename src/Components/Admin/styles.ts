@@ -289,6 +289,136 @@ export const AdminDialogActions = styled.div`
     gap: 10px;
 `;
 
+export const TimingParticipantsGrid = styled.div`
+    display: grid;
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+    gap: 24px;
+    width: 100%;
+
+    @media (min-width: 800px) {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+`;
+
+export const AdminLabel = styled.label`
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 16px;
+    > input {
+        min-width: 250px;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 20px;
+        line-height: 24px;
+        font-family: 'Oswald', sans-serif;
+        color: #666666;
+        -webkit-transition: 0.5s;   
+        transition: 0.5s;
+        &::placeholder {
+            font-weight: 100;
+            color: #666;
+            font-family: 'Noto Sans', sans-serif;
+            opacity: 0.4;
+        }
+        &:focus {
+            border-color: ${colors.RuenOrange};
+            outline: none;
+        }
+    }
+`;
+
+export const TimingCheckpointMenu = styled.nav`
+    display: flex;
+    width: 100%;
+    gap: 8px;
+    overflow-x: auto;
+    padding: 4px;
+`;
+
+export const TimingCheckpointButton = styled.button<{ active: boolean }>`
+    flex: none;
+    min-height: 44px;
+    padding: 8px 12px;
+    border: 1px solid ${props => props.active ? colors.RuenOrange : 'rgba(48, 51, 47, 0.24)'};
+    border-radius: 4px;
+    background: ${props => props.active ? colors.RuenOrange : 'white'};
+    color: ${props => props.active ? 'white' : colors.OsogovoBlack};
+    font-family: inherit;
+    font-size: 15px;
+    text-align: left;
+
+    small {
+        display: block;
+        font-size: 12px;
+        font-weight: 300;
+    }
+`;
+
+export const TimingGroup = styled.section<{ color: 'orange' | 'black' }>`
+    border-top: 4px solid ${props => props.color === 'orange' ? colors.RuenOrange : colors.OsogovoBlack};
+    padding-top: 12px;
+`;
+
+export const TimingGroupTitle = styled.h2`
+    margin: 0 0 12px;
+    font-size: 24px;
+    text-transform: uppercase;
+`;
+
+export const TimingCheckpointDetails = styled.p`
+    margin: -6px 0 12px;
+    color: rgba(48, 51, 47, 0.7);
+    font-size: 14px;
+`;
+
+export const TimingParticipantButton = styled.button<{ color: 'orange' | 'black' }>`
+    width: 100%;
+    display: grid;
+    grid-template-columns: 48px minmax(0, 1fr);
+    gap: 4px 12px;
+    align-items: center;
+    padding: 12px;
+    border: 1px solid rgba(48, 51, 47, 0.2);
+    border-left: 4px solid ${props => props.color === 'orange' ? colors.RuenOrange : colors.OsogovoBlack};
+    border-radius: 4px;
+    background: white;
+    color: ${colors.OsogovoBlack};
+    font-family: inherit;
+    text-align: left;
+
+    & + & {
+        margin-top: 8px;
+    }
+
+    strong {
+        grid-row: span 2;
+        color: ${props => props.color === 'orange' ? colors.RuenOrange : colors.OsogovoBlack};
+        font-size: 20px;
+        text-align: center;
+    }
+
+    > span {
+        overflow: hidden;
+        font-size: 17px;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+`;
+
+export const TimingParticipantMeta = styled.div`
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    color: rgba(48, 51, 47, 0.72);
+    font-size: 14px;
+
+    time {
+        flex: none;
+    }
+`;
+
 export const AdminMetricsGrid = styled.div`
     display: grid;
     gap: 16px;
