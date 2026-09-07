@@ -1,5 +1,5 @@
 import React from 'react';
-import { Field, Form, Formik, FormikHelpers } from 'formik';
+import { Field, Form, Formik, FormikHelpers, useFormikContext } from 'formik';
 import { FormFields, FormSection, RegistrationFormWrapper, ImageBackground, FormWrapper, Price, IBANWrapper, TShirtCardButton, TShirtSelector, TShirtSizes, TShirtSizeButton, TShirtUnavailableTooltip } from './styles';
 import { useSearchParams } from 'react-router-dom';
 import { createValidateForm } from './validation';
@@ -65,6 +65,22 @@ const RegistrationForm = () => {
         setServerError(null);
     }
 
+    const handleEmailBlur = async (email: string, setFieldValue: (field: string, value: unknown) => void) => {
+        if (!apiUrl || !email || uniqueCode) return;
+        try {
+            const response = await axios.post(`${apiUrl}/check-email`, { email });
+            if (response.data?.eligible === true) {
+                setFieldValue('name', response.data.name ?? '');
+                setFieldValue('birth', String(response.data.birth ?? ''));
+                setFieldValue('gender', response.data.gender ?? '');
+                setFieldValue('team', response.data.team ?? '');
+                setDiscountPercent(response.data.longDistanceWinner ? 100 : 10);
+            }
+        } catch {
+            // not eligible or network error — no action needed
+        }
+    };
+
     React.useEffect(() => {
         const fetchDiscount = async () => {
             if (!uniqueCode || !apiUrl) {
@@ -100,6 +116,17 @@ const RegistrationForm = () => {
         if (image.src !== fallbackTShirtImage) {
             image.src = fallbackTShirtImage;
         }
+    };
+
+    const EmailParamEffect: React.FC = () => {
+        const { setFieldValue } = useFormikContext();
+        React.useEffect(() => {
+            if (emailParam) {
+                handleEmailBlur(emailParam, setFieldValue);
+            }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        }, []);
+        return null;
     };
 
     interface PaymentDetailsProps {
@@ -237,6 +264,7 @@ const RegistrationForm = () => {
 
                         return (
                         <Form onChange={resetServerError}>
+                            <EmailParamEffect />
                             <FormFields>
                                 <FormSection>
                                     <label htmlFor="distance">{t('registration:fields.distance')}</label>
@@ -265,6 +293,7 @@ const RegistrationForm = () => {
                                         minLength={4}
                                         onBlur={(e: React.FocusEvent<HTMLInputElement>) => {
                                             handleBlur(e);
+                                            handleEmailBlur(e.target.value.trim().toLowerCase(), setFieldValue);
                                         }}
                                     />
                                     {errors.email && touched.email && <div className="error">{errors.email}</div>}
