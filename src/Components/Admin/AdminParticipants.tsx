@@ -54,6 +54,7 @@ const AdminParticipants: React.FC = () => {
     const [genderFilter, setGenderFilter] = React.useState('');
     const [distanceFilter, setDistanceFilter] = React.useState('');
     const [ageFilter, setAgeFilter] = React.useState('');
+    const [paidFilter, setPaidFilter] = React.useState('');
     const [participantForBib, setParticipantForBib] = React.useState<AdminParticipant | null>(null);
     const [bib, setBib] = React.useState('');
     const [bibError, setBibError] = React.useState<string | null>(null);
@@ -95,6 +96,7 @@ const AdminParticipants: React.FC = () => {
         (!genderFilter || participant.gender === genderFilter)
         && (!distanceFilter || participant.distance === distanceFilter)
         && (!ageFilter || getAgeCategory(participant.birth) === ageFilter)
+        && (!paidFilter || participant.payment_status === 'paid')
     ));
 
     const openBibDialog = (participant: AdminParticipant) => {
@@ -195,12 +197,19 @@ const AdminParticipants: React.FC = () => {
                     </select>
                 </label>
                 <label>
-                    Възраст
+                    Категория
                     <select value={ageFilter} onChange={(event) => setAgeFilter(event.target.value)}>
                         <option value="">Всички</option>
                         <option value="sub20">До 20</option>
                         <option value="20-40">20-40</option>
                         <option value="over40">Над 40</option>
+                    </select>
+                </label>
+                <label>
+                    Плащане
+                    <select value={paidFilter} onChange={(event) => setPaidFilter(event.target.value)}>
+                        <option value="">Всички</option>
+                        <option value="paid">Само платени</option>
                     </select>
                 </label>
             </AdminFilters>
