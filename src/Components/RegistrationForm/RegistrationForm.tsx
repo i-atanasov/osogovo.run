@@ -24,6 +24,7 @@ export interface FormValues {
     withTShirt: boolean;
     tShirtSize: '' | 'XS' | 'S' | 'M' | 'L' | 'XL';
     paid: boolean;
+    discountCode: string;
 }
 
 const RegistrationForm = () => {
@@ -34,6 +35,7 @@ const RegistrationForm = () => {
     const [discountPercent, setDiscountPercent] = React.useState<number>(0);
     const [discountCodeChecked, setDiscountCodeChecked] = React.useState<boolean>(false);
     const [discountCodeInactive, setDiscountCodeInactive] = React.useState<boolean>(false);
+    const [discountLimitUses, setDiscountLimitUses] = React.useState<number | null>(null);
     const [distance, setDistance] = React.useState<Distance>(Number(searchParams.get('product')) as Distance || 26);
     const isTestMode = (searchParams.get('test') || '').toLowerCase().trim() === 'true';
     const uniqueCode = searchParams.get('uniqueCode') || '';
@@ -56,7 +58,8 @@ const RegistrationForm = () => {
         withTShirt: false,
         tShirtSize: '',
         phoneNumber: '',
-        paid: false
+        paid: false,
+        discountCode: uniqueCode
     };
     const apiUrl = process.env.REACT_APP_REGISTRATION_API_URL;
     const validateRegistrationForm = React.useMemo(() => createValidateForm(t), [t]);
@@ -81,34 +84,40 @@ const RegistrationForm = () => {
         }
     };
 
+    const fetchDiscountForCode = React.useCallback(async (code: string) => {
+        const trimmedCode = code.trim();
+        if (!trimmedCode || !apiUrl) {
+            setDiscountPercent(0);
+            setDiscountCodeInactive(false);
+            setDiscountCodeChecked(false);
+            setDiscountLimitUses(null);
+            return;
+        }
+
+        try {
+            const response = await axios.get(`${apiUrl}/discount-code`, {
+                params: { code: trimmedCode },
+            });
+            const isValid = response.data?.valid === true;
+            const isInactive = response.data?.inactive === true;
+            const discount = Number(response.data?.discount ?? 0);
+            const limitUses = response.data?.limitUses;
+            setDiscountPercent(isValid ? Math.max(0, Math.min(100, discount)) : 0);
+            setDiscountCodeInactive(isInactive);
+            setDiscountCodeChecked(true);
+            setDiscountLimitUses(limitUses === null || limitUses === undefined ? null : Number(limitUses));
+        } catch (error) {
+            console.error('Discount code validation failed:', error, trimmedCode);
+            setDiscountPercent(0);
+            setDiscountCodeInactive(false);
+            setDiscountCodeChecked(true);
+            setDiscountLimitUses(null);
+        }
+    }, [apiUrl]);
+
     React.useEffect(() => {
-        const fetchDiscount = async () => {
-            if (!uniqueCode || !apiUrl) {
-                setDiscountPercent(0);
-                setDiscountCodeInactive(false);
-                setDiscountCodeChecked(false);
-                return;
-            }
-
-            try {
-                const response = await axios.get(`${apiUrl}/discount-code`, {
-                    params: { code: uniqueCode },
-                });
-                const isValid = response.data?.valid === true;
-                const isInactive = response.data?.inactive === true;
-                const discount = Number(response.data?.discount ?? 0);
-                setDiscountPercent(isValid ? Math.max(0, Math.min(100, discount)) : 0);
-                setDiscountCodeInactive(isInactive);
-                setDiscountCodeChecked(true);
-            } catch (error) {
-                console.error('Discount code validation failed:', error, uniqueCode);
-                setDiscountPercent(0);
-                setDiscountCodeInactive(false);
-                setDiscountCodeChecked(true);
-            }
-        };
-
-        fetchDiscount();
+        fetchDiscountForCode(uniqueCode);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [apiUrl, uniqueCode]);
 
     const handleImageFallback = (event: React.SyntheticEvent<HTMLImageElement>) => {
@@ -186,9 +195,11 @@ const RegistrationForm = () => {
                 payload.observePointCode = observePointCode;
             }
 
-            if (uniqueCode.trim().length > 0) {
-                payload.uniqueCode = uniqueCode.trim();
+            const submittedCode = values.discountCode.trim();
+            if (submittedCode.length > 0) {
+                payload.uniqueCode = submittedCode;
             }
+            delete payload.discountCode;
 
             const response = await axios.post(`${apiUrl}/create-checkout-session`, {
                 data: payload,
@@ -327,6 +338,32 @@ const RegistrationForm = () => {
                                     {errors.birth && touched.birth && <div className="error">{errors.birth}</div>}
                                     <label htmlFor="team">{t('registration:fields.team')} <span>{t('registration:fields.optional')}</span></label>
                                     <Field id="team" name="team" placeholder={t('registration:fields.team')} />
+                                    <label htmlFor="discountCode">{t('registration:fields.discountCode')} <span>{t('registration:fields.optional')}</span></label>
+                                    <Field
+                                        id="discountCode"
+                                        name="discountCode"
+                                        placeholder={t('registration:fields.discountCodePlaceholder')}
+                                        onBlur={(e: React.FocusEvent<HTMLInputElement>) => {
+                                            handleBlur(e);
+                                            fetchDiscountForCode(e.target.value);
+                                        }}
+                                    />
+                                    {!isTestMode && values.discountCode && discountCodeChecked && discountPercent > 0 && (
+                                        <div className="error">{t('registration:notices.activeDiscount', { discountPercent })}</div>
+                                    )}
+                                    {!isTestMode && values.discountCode && discountCodeChecked && discountLimitUses !== null && (
+                                        <div className="error">
+                                            {discountLimitUses > 0
+                                                ? t('registration:notices.discountUsesLeft', { count: discountLimitUses })
+                                                : t('registration:notices.discountNoUsesLeft')}
+                                        </div>
+                                    )}
+                                    {!isTestMode && values.discountCode && discountCodeChecked && discountCodeInactive && (
+                                        <div className="error">{t('registration:notices.inactiveDiscount')}</div>
+                                    )}
+                                    {!isTestMode && values.discountCode && discountCodeChecked && !discountCodeInactive && discountPercent === 0 && (
+                                        <div className="error">{t('registration:notices.invalidDiscount')}</div>
+                                    )}
                                     <label className="checkbox-label" htmlFor="termsAndConditions">
                                         <Field
                                             type="checkbox"

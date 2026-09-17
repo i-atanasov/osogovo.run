@@ -9,6 +9,8 @@ const registration = {
         activeDiscount: 'Активен код за отстъпка от таксата за регистрация: {{discountPercent}}%',
         inactiveDiscount: 'Кодът за отстъпка вече не е активен.',
         invalidDiscount: 'Невалиден или неактивен код за отстъпка.',
+        discountUsesLeft: 'Остават {{count}} използвания за този код за отстъпка.',
+        discountNoUsesLeft: 'Този код за отстъпка няма оставащи използвания.',
         formHasErrors: 'Моля, попълнете всички задължителни полета. При проблем, моля свържетe се с info@osogovo.run',
     },
     countdown: {
@@ -33,6 +35,8 @@ const registration = {
         birth: 'Година на раждане',
         team: 'Отбор',
         optional: '(по желание)',
+        discountCode: 'Код за отстъпка',
+        discountCodePlaceholder: 'Въведете код за отстъпка',
         distance14: 'х.Осогово - 14км',
         distance26: 'вр.Руен - 26км',
     },

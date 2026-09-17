@@ -9,6 +9,8 @@ const registration = {
         activeDiscount: 'Active registration fee discount code: {{discountPercent}}%',
         inactiveDiscount: 'The discount code is no longer active.',
         invalidDiscount: 'Invalid or inactive discount code.',
+        discountUsesLeft: '{{count}} uses left for this discount code.',
+        discountNoUsesLeft: 'This discount code has no uses left.',
         formHasErrors: 'Please fill in all required fields. If you have trouble, contact info@osogovo.run',
     },
     countdown: {
@@ -33,6 +35,8 @@ const registration = {
         birth: 'Year of birth',
         team: 'Team',
         optional: '(optional)',
+        discountCode: 'Discount code',
+        discountCodePlaceholder: 'Enter a discount code',
         distance14: 'Osogovo Hut - 14 km',
         distance26: 'Ruen Peak - 26 km',
     },
