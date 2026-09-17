@@ -7,18 +7,19 @@ import AdminParticipants from "./AdminParticipants";
 import AdminTShirts from "./AdminTShirts";
 import AdminPayments from "./AdminPayments";
 import AdminTiming from "./AdminTiming";
+import AdminCheckpointTiming from "./AdminCheckpointTiming";
 
 const AdminDashboard: React.FC = () => {
     const { admin, signOut } = useAdminAuth();
     const location = useLocation();
     const navigate = useNavigate();
-    const [activeView, setActiveView] = React.useState<'participants' | 'tshirts' | 'payments' | 'timing' | null>(
-        location.pathname === '/admin/timing' ? 'timing' : 'participants',
-    );
-
-    React.useEffect(() => {
-        setActiveView(location.pathname === '/admin/timing' ? 'timing' : 'participants');
-    }, [location.pathname]);
+    const activeView = location.pathname.startsWith('/admin/timing')
+        ? 'timing'
+        : location.pathname === '/admin/tshirts'
+            ? 'tshirts'
+            : location.pathname === '/admin/payments'
+                ? 'payments'
+                : 'participants';
 
     return (
         <>
@@ -38,21 +39,21 @@ const AdminDashboard: React.FC = () => {
                         <AdminNavButton
                             type="button"
                             active={activeView === 'participants'}
-                            onClick={() => setActiveView('participants')}
+                            onClick={() => navigate('/admin')}
                         >
                             Участници
                         </AdminNavButton>
                         <AdminNavButton
                             type="button"
                             active={activeView === 'tshirts'}
-                            onClick={() => setActiveView('tshirts')}
+                            onClick={() => navigate('/admin/tshirts')}
                         >
                             Тениски
                         </AdminNavButton>
                         <AdminNavButton
                             type="button"
                             active={activeView === 'payments'}
-                            onClick={() => setActiveView('payments')}
+                            onClick={() => navigate('/admin/payments')}
                         >
                             Приходи
                         </AdminNavButton>
@@ -67,7 +68,9 @@ const AdminDashboard: React.FC = () => {
                     {activeView === 'participants' && <AdminParticipants />}
                     {activeView === 'tshirts' && <AdminTShirts />}
                     {activeView === 'payments' && <AdminPayments />}
-                    {activeView === 'timing' && <AdminTiming />}
+                    {activeView === 'timing' && (
+                        location.pathname === '/admin/timing' ? <AdminTiming /> : <AdminCheckpointTiming />
+                    )}
                 </AdminDashboardCard>
             </AdminShell>
         </>

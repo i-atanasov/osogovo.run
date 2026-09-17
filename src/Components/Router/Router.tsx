@@ -103,7 +103,31 @@ const Router: React.FC = () => {
                     }
                 />
                 <Route
+                    path="/admin/tshirts"
+                    element={
+                        <ProtectedAdminRoute>
+                            <AdminDashboard />
+                        </ProtectedAdminRoute>
+                    }
+                />
+                <Route
+                    path="/admin/payments"
+                    element={
+                        <ProtectedAdminRoute>
+                            <AdminDashboard />
+                        </ProtectedAdminRoute>
+                    }
+                />
+                <Route
                     path="/admin/timing"
+                    element={
+                        <ProtectedAdminRoute>
+                            <AdminDashboard />
+                        </ProtectedAdminRoute>
+                    }
+                />
+                <Route
+                    path="/admin/timing/:checkpointName"
                     element={
                         <ProtectedAdminRoute>
                             <AdminDashboard />

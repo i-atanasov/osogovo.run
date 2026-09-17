@@ -300,6 +300,13 @@ export const TimingParticipantsGrid = styled.div`
     }
 `;
 
+export const TimingDistanceColumn = styled.div`
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    min-width: 0;
+`;
+
 export const AdminLabel = styled.label`
     display: flex;
     flex-direction: column;
@@ -326,6 +333,80 @@ export const AdminLabel = styled.label`
             border-color: ${colors.RuenOrange};
             outline: none;
         }
+    }
+`;
+
+export const TimingRaceControls = styled.section`
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    width: 100%;
+    gap: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(48, 51, 47, 0.18);
+`;
+
+export const TimingStartButton = styled.button`
+    min-width: 220px;
+    min-height: 52px;
+    padding: 12px 20px;
+    margin: 10px 20px 10px 0;
+    border: 0;
+    border-radius: 4px;
+    background: ${colors.RuenOrange};
+    color: white;
+    font-family: inherit;
+    font-size: 19px;
+    font-weight: 600;
+    cursor: pointer;
+
+    &:disabled {
+        background: rgba(48, 51, 47, 0.18);
+        color: rgba(48, 51, 47, 0.68);
+        cursor: default;
+    }
+`;
+
+export const TimingManualStartButton = styled.button`
+    min-height: 52px;
+    padding: 12px 20px;
+    border: 1px solid rgba(48, 51, 47, 0.3);
+    border-radius: 4px;
+    background: white;
+    color: ${colors.OsogovoBlack};
+    font-family: inherit;
+    font-size: 17px;
+    cursor: pointer;
+
+    &:hover:not(:disabled) {
+        border-color: ${colors.RuenOrange};
+        color: ${colors.RuenOrange};
+    }
+
+    &:disabled {
+        opacity: 0.5;
+        cursor: default;
+    }
+`;
+
+export const TimingRaceClock = styled.div`
+    display: grid;
+    justify-items: end;
+    line-height: 1.2;
+
+    span,
+    small {
+        color: rgba(48, 51, 47, 0.68);
+    }
+
+    strong {
+        font-size: 32px;
+        font-variant-numeric: tabular-nums;
+    }
+
+    @media (max-width: 830px) {
+        justify-items: start;
     }
 `;
 
@@ -374,6 +455,7 @@ export const TimingCheckpointDetails = styled.p`
 `;
 
 export const TimingParticipantButton = styled.button<{ color: 'orange' | 'black' }>`
+    box-sizing: border-box;
     width: 100%;
     display: grid;
     grid-template-columns: 48px minmax(0, 1fr);
@@ -417,6 +499,129 @@ export const TimingParticipantMeta = styled.div`
     time {
         flex: none;
     }
+`;
+
+export const TimingEntryHeading = styled.header`
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    width: 100%;
+    border-bottom: 1px solid rgba(48, 51, 47, 0.18);
+    padding-bottom: 12px;
+
+    h2 {
+        margin: 0;
+        font-size: 30px;
+        text-transform: uppercase;
+    }
+
+    span {
+        color: ${colors.RuenOrange};
+        font-size: 20px;
+    }
+`;
+
+export const TimingEntrySection = styled.section`
+    min-width: 0;
+
+    > h3 {
+        margin: 0 0 16px;
+        border-top: 4px solid ${colors.OsogovoBlack};
+        padding-top: 10px;
+        font-size: 26px;
+    }
+
+    &:first-child > h3 {
+        border-color: ${colors.RuenOrange};
+    }
+`;
+
+export const TimingEntryGroup = styled.section`
+    margin-bottom: 24px;
+
+    h4 {
+        display: flex;
+        justify-content: space-between;
+        margin: 0 0 10px;
+        font-size: 19px;
+        text-transform: uppercase;
+    }
+
+    h4 span {
+        color: ${colors.RuenOrange};
+    }
+
+    h5 {
+        margin: 14px 0 6px;
+        color: rgba(48, 51, 47, 0.68);
+        font-size: 14px;
+        font-weight: 400;
+        text-transform: uppercase;
+    }
+`;
+
+export const TimingEntryParticipant = styled.button<{ passed: boolean }>`
+    display: grid;
+    grid-template-columns: 64px minmax(0, 1fr) auto auto;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    box-sizing: border-box;
+    min-height: 54px;
+    padding: 8px 12px;
+    border: 1px solid rgba(48, 51, 47, 0.16);
+    border-left: 4px solid ${props => props.passed ? colors.OsogovoBlack : colors.RuenOrange};
+    border-radius: 4px;
+    background: ${props => props.passed ? 'rgba(48, 51, 47, 0.05)' : 'white'};
+    color: ${colors.OsogovoBlack};
+    font-family: inherit;
+    text-align: left;
+    cursor: ${props => props.passed ? 'default' : 'pointer'};
+
+    & + & {
+        margin-top: 6px;
+    }
+
+    &:hover:not(:disabled) {
+        border-color: ${colors.RuenOrange};
+    }
+
+    &:disabled {
+        opacity: 0.55;
+        cursor: wait;
+    }
+
+    strong {
+        color: ${colors.RuenOrange};
+        font-size: 26px;
+        text-align: center;
+    }
+
+    span {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    span small {
+        display: block;
+        overflow: hidden;
+        color: rgba(48, 51, 47, 0.62);
+        font-size: 12px;
+        font-weight: 300;
+        text-overflow: ellipsis;
+    }
+
+    time {
+        color: rgba(48, 51, 47, 0.68);
+        font-variant-numeric: tabular-nums;
+    }
+`;
+
+export const TimingEntryActions = styled.div`
+    display: inline-flex;
+    gap: 4px;
 `;
 
 export const AdminMetricsGrid = styled.div`
