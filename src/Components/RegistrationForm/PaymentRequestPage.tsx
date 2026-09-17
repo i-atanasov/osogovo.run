@@ -13,6 +13,21 @@ const PaymentRequestPage = () => {
     const [email, setEmail] = React.useState('');
     const [isSubmitting, setIsSubmitting] = React.useState(false);
     const [submitted, setSubmitted] = React.useState(false);
+    const [isRegistrationFull, setIsRegistrationFull] = React.useState(false);
+
+    React.useEffect(() => {
+        const fetchParticipantsAvailability = async () => {
+            if (!apiUrl) return;
+            try {
+                const response = await axios.get(`${apiUrl}/get-participants-count`);
+                setIsRegistrationFull(response.data?.isFull === true);
+            } catch (error) {
+                console.error('Failed to fetch participants availability:', error);
+            }
+        };
+
+        fetchParticipantsAvailability();
+    }, [apiUrl]);
 
     const isValidEmail = (value: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
 
@@ -42,9 +57,12 @@ const PaymentRequestPage = () => {
             <FormWrapper success>
                 <FormResult>
                     <h2>{t('registration:paymentPages.request.title')}</h2>
+                    {isRegistrationFull && (
+                        <p>{t('registration:notices.registrationFull')}</p>
+                    )}
                     {!submitted ? (
                         <>
-                            <p>{t('registration:paymentPages.request.instructions')}</p>
+                            {!isRegistrationFull && <p>{t('registration:paymentPages.request.instructions')}</p>}
                             <label htmlFor="retry-payment-email">{t('registration:paymentPages.request.emailLabel')}</label>
                             <input
                                 id="retry-payment-email"
@@ -53,11 +71,12 @@ const PaymentRequestPage = () => {
                                 placeholder={t('registration:paymentPages.request.emailPlaceholder')}
                                 value={email}
                                 onChange={(event) => setEmail(event.target.value)}
+                                disabled={isRegistrationFull}
                             />
                             <Button
                                 label={isSubmitting ? t('registration:paymentPages.request.submitting') : t('registration:paymentPages.request.submit')}
                                 onClick={requestRetryEmail}
-                                disabled={isSubmitting || !isValidEmail(email) || !apiUrl}
+                                disabled={isSubmitting || !isValidEmail(email) || !apiUrl || isRegistrationFull}
                             />
                             {!apiUrl && (
                                 <p>{t('registration:paymentPages.request.missingApi')}</p>

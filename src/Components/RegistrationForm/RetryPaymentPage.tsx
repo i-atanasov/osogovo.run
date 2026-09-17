@@ -14,6 +14,7 @@ const RetryPaymentPage = () => {
     const [loading, setLoading] = React.useState(true);
     const [error, setError] = React.useState<string | null>(null);
     const [showTShirtUnavailablePopup, setShowTShirtUnavailablePopup] = React.useState(false);
+    const [isRegistrationFull, setIsRegistrationFull] = React.useState(false);
     const apiUrl = process.env.REACT_APP_REGISTRATION_API_URL;
     const email = searchParams.get('email');
 
@@ -39,6 +40,9 @@ const RetryPaymentPage = () => {
             console.error('Failed to create checkout session for retry:', requestError);
             if (axios.isAxiosError(requestError) && requestError.response?.data?.code === 'tshirt_unavailable') {
                 setShowTShirtUnavailablePopup(true);
+            } else if (axios.isAxiosError(requestError) && requestError.response?.data?.code === 'max_participants_reached') {
+                setIsRegistrationFull(true);
+                setError(requestError.response.data.error);
             } else if (axios.isAxiosError(requestError) && typeof requestError.response?.data?.error === 'string') {
                 setError(requestError.response.data.error);
             } else {
@@ -78,6 +82,7 @@ const RetryPaymentPage = () => {
                 <Button
                     label={t('registration:tShirt.proceedWithout')}
                     onClick={() => retryPayment(true)}
+                    disabled={isRegistrationFull}
                 />
             </PopUp>
         </RegistrationFormWrapper>

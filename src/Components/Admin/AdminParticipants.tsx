@@ -39,6 +39,13 @@ type AdminParticipant = {
 
 const apiUrl = process.env.REACT_APP_REGISTRATION_API_URL;
 
+const getAgeCategory = (birth: number): 'sub20' | '20-40' | 'over40' => {
+    const age = new Date().getFullYear() - birth;
+    if (age < 21) return 'sub20';
+    if (age > 39) return 'over40';
+    return '20-40';
+};
+
 const AdminParticipants: React.FC = () => {
     const [participants, setParticipants] = React.useState<AdminParticipant[]>([]);
     const [loading, setLoading] = React.useState(true);
@@ -46,6 +53,7 @@ const AdminParticipants: React.FC = () => {
     const [selectedEmail, setSelectedEmail] = React.useState<string | null>(null);
     const [genderFilter, setGenderFilter] = React.useState('');
     const [distanceFilter, setDistanceFilter] = React.useState('');
+    const [ageFilter, setAgeFilter] = React.useState('');
     const [participantForBib, setParticipantForBib] = React.useState<AdminParticipant | null>(null);
     const [bib, setBib] = React.useState('');
     const [bibError, setBibError] = React.useState<string | null>(null);
@@ -86,6 +94,7 @@ const AdminParticipants: React.FC = () => {
     const filteredParticipants = participants.filter((participant) => (
         (!genderFilter || participant.gender === genderFilter)
         && (!distanceFilter || participant.distance === distanceFilter)
+        && (!ageFilter || getAgeCategory(participant.birth) === ageFilter)
     ));
 
     const openBibDialog = (participant: AdminParticipant) => {
@@ -183,6 +192,15 @@ const AdminParticipants: React.FC = () => {
                         <option value="">Всички</option>
                         <option value="14">14 км</option>
                         <option value="26">26 км</option>
+                    </select>
+                </label>
+                <label>
+                    Възраст
+                    <select value={ageFilter} onChange={(event) => setAgeFilter(event.target.value)}>
+                        <option value="">Всички</option>
+                        <option value="sub20">До 20</option>
+                        <option value="20-40">20-40</option>
+                        <option value="over40">Над 40</option>
                     </select>
                 </label>
             </AdminFilters>

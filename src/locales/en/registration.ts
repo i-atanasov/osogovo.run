@@ -11,6 +11,8 @@ const registration = {
         invalidDiscount: 'Invalid or inactive discount code.',
         discountUsesLeft: '{{count}} uses left for this discount code.',
         discountNoUsesLeft: 'This discount code has no uses left.',
+        spacesLeft: '{{count}} registration spaces left.',
+        registrationFull: 'The maximum number of participants has been reached. Registration is closed.',
         formHasErrors: 'Please fill in all required fields. If you have trouble, contact info@osogovo.run',
     },
     countdown: {
@@ -134,6 +136,7 @@ const registration = {
         emailAlreadyPaid: 'This email is already registered with confirmed payment. Please contact info@osogovo.run for more information.',
         paymentPending: 'This email is already registered, but payment is not complete. <a href="{{retryUrl}}">Try payment again</a> or <a href="mailto:info@osogovo.run">contact us</a>.',
         checkoutRedirectFailed: 'There was a problem redirecting to payment. Please try again later or contact info@osogovo.run.',
+        registrationFull: 'The maximum number of participants has been reached. Registration is closed.',
     },
 };
 

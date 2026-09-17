@@ -36,6 +36,8 @@ const RegistrationForm = () => {
     const [discountCodeChecked, setDiscountCodeChecked] = React.useState<boolean>(false);
     const [discountCodeInactive, setDiscountCodeInactive] = React.useState<boolean>(false);
     const [discountLimitUses, setDiscountLimitUses] = React.useState<number | null>(null);
+    const [spacesLeft, setSpacesLeft] = React.useState<number | null>(null);
+    const [isRegistrationFull, setIsRegistrationFull] = React.useState<boolean>(false);
     const [distance, setDistance] = React.useState<Distance>(Number(searchParams.get('product')) as Distance || 26);
     const isTestMode = (searchParams.get('test') || '').toLowerCase().trim() === 'true';
     const uniqueCode = searchParams.get('uniqueCode') || '';
@@ -120,6 +122,21 @@ const RegistrationForm = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [apiUrl, uniqueCode]);
 
+    React.useEffect(() => {
+        const fetchParticipantsAvailability = async () => {
+            if (!apiUrl || isTestMode) return;
+            try {
+                const response = await axios.get(`${apiUrl}/get-participants-count`);
+                setSpacesLeft(Number(response.data?.spacesLeft ?? 0));
+                setIsRegistrationFull(response.data?.isFull === true);
+            } catch (error) {
+                console.error('Failed to fetch participants availability:', error);
+            }
+        };
+
+        fetchParticipantsAvailability();
+    }, [apiUrl, isTestMode]);
+
     const handleImageFallback = (event: React.SyntheticEvent<HTMLImageElement>) => {
         const image = event.currentTarget;
         if (image.src !== fallbackTShirtImage) {
@@ -178,6 +195,12 @@ const RegistrationForm = () => {
         values: FormValues,
         { setSubmitting }: FormikHelpers<FormValues>
     ) => {
+        if (isRegistrationFull) {
+            setServerError(t('registration:errors.registrationFull'));
+            setSubmitting(false);
+            return;
+        }
+
         if (typeof apiUrl !== 'string' || apiUrl.length === 0) {
             console.error('Registration API URL is not defined.');
             setServerError(t('registration:errors.missingPaymentConfiguration'));
@@ -223,6 +246,9 @@ const RegistrationForm = () => {
             } else if (axios.isAxiosError(error) && typeof error.response?.data?.error === 'string') {
                 console.error('Registration validation error:', error, values.email);
                 setServerError(error.response.data.error);
+                if (error.response?.data?.code === 'max_participants_reached') {
+                    setIsRegistrationFull(true);
+                }
             } else {
                 console.error('Registration error:', error, values.email);
                 setServerError(t('registration:errors.checkoutRedirectFailed'));
@@ -241,6 +267,18 @@ const RegistrationForm = () => {
                 {isTestMode && (
                     <div className="server error">{t('registration:notices.testMode')}</div>
                 )}
+                {!isTestMode && spacesLeft !== null && (
+                    <div className="server error">
+                        {isRegistrationFull
+                            ? t('registration:notices.registrationFull')
+                            : t('registration:notices.spacesLeft', { count: spacesLeft })}
+                    </div>
+                )}
+                <a href="/register/payment">{t('registration:links.payment')}</a><br /><br />
+                <a href="/participants">{t('registration:links.participants')}</a><br /><br />
+                <a href="/results?year=2025">{t('registration:links.results2025')}</a><br /><br />
+                {!isTestMode && isRegistrationFull ? null : (
+                <>
                 {!isTestMode && uniqueCode && discountCodeChecked && discountPercent > 0 && (
                     <div className="server error">{t('registration:notices.activeDiscount', { discountPercent })}</div>
                 )}
@@ -251,9 +289,6 @@ const RegistrationForm = () => {
                     <div className="server error">{t('registration:notices.invalidDiscount')}</div>
                 )}
                 <RaceCountdown />
-                <a href="/register/payment">{t('registration:links.payment')}</a><br /><br />
-                <a href="/participants">{t('registration:links.participants')}</a><br /><br />
-                <a href="/results?year=2025">{t('registration:links.results2025')}</a><br /><br />
                 <Formik
                     initialValues={ initialValues }
                     validate={ validateRegistrationForm }
@@ -455,11 +490,14 @@ const RegistrationForm = () => {
                             <Button
                                 label={isSubmitting ? t('registration:payment.redirecting') : (total === 0 ? t('registration:payment.finishFree') : t('registration:payment.payAmount', { amount: total }))}
                                 onClick={handleSubmit}
+                                disabled={isSubmitting || isRegistrationFull}
                             />
                         </Form>
                     );
                 }}
                 </Formik>
+                </>
+                )}
             </FormWrapper> 
   </RegistrationFormWrapper>
   );
