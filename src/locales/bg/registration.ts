@@ -118,6 +118,7 @@ const registration = {
             missingEmail: 'Липсва имейл адрес. Моля, опитайте отново.',
             failedInit: 'Възникна грешка при инициализиране на плащането. Моля, свържете се с info@osogovo.run.',
             loadingTitle: 'Пренасочваме Ви към плащането...',
+            loadingSubMessage: 'Регистрация с имейл адрес: ',
             loadingMessage: 'Моля, изчакайте.',
             errorTitle: 'Възникна проблем',
             toRegistered: 'Към регистрираните',

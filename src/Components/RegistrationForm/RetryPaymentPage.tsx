@@ -66,6 +66,7 @@ const RetryPaymentPage = () => {
                     {loading ? (
                         <>
                             <h2>{t('registration:paymentPages.retry.loadingTitle')}</h2>
+                            <p>{t('registration:paymentPages.retry.loadingSubMessage')}: {email}</p>
                             <p>{t('registration:paymentPages.retry.loadingMessage')}</p>
                         </>
                     ) : (

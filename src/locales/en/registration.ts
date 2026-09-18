@@ -118,6 +118,7 @@ const registration = {
             missingEmail: 'Email address is missing. Please try again.',
             failedInit: 'There was a problem initializing payment. Please contact info@osogovo.run.',
             loadingTitle: 'Redirecting you to payment...',
+            loadingSubMessage: 'Registration with an email address: ',
             loadingMessage: 'Please wait.',
             errorTitle: 'Something went wrong',
             toRegistered: 'Go to registered participants',

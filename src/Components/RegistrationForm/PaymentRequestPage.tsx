@@ -1,6 +1,6 @@
 import React from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import Button from '../Button/Button';
 import { HeaderComponent } from '../Header/Header';
@@ -8,9 +8,10 @@ import { FormResult, FormWrapper, ImageBackground, RegistrationFormWrapper } fro
 
 const PaymentRequestPage = () => {
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
     const { t } = useTranslation();
     const apiUrl = process.env.REACT_APP_REGISTRATION_API_URL;
-    const [email, setEmail] = React.useState('');
+    const [email, setEmail] = React.useState(searchParams.get('email') || '');
     const [isSubmitting, setIsSubmitting] = React.useState(false);
     const [submitted, setSubmitted] = React.useState(false);
     const [isRegistrationFull, setIsRegistrationFull] = React.useState(false);
