@@ -266,6 +266,15 @@ export const AdminDialog = styled.form`
         text-transform: uppercase;
     }
 
+    .lottery-number {
+        margin: 8px 0;
+        color: ${colors.RuenOrange};
+        font-size: 64px;
+        font-weight: 600;
+        line-height: 1;
+        text-align: center;
+    }
+
     label {
         display: flex;
         flex-direction: column;

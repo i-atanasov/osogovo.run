@@ -8,6 +8,7 @@ import AdminTShirts from "./AdminTShirts";
 import AdminPayments from "./AdminPayments";
 import AdminTiming from "./AdminTiming";
 import AdminCheckpointTiming from "./AdminCheckpointTiming";
+import AdminLottery from "./AdminLottery";
 
 const AdminDashboard: React.FC = () => {
     const { admin, signOut } = useAdminAuth();
@@ -15,6 +16,8 @@ const AdminDashboard: React.FC = () => {
     const navigate = useNavigate();
     const activeView = location.pathname.startsWith('/admin/timing')
         ? 'timing'
+        : location.pathname === '/admin/lottery'
+            ? 'lottery'
         : location.pathname === '/admin/tshirts'
             ? 'tshirts'
             : location.pathname === '/admin/payments'
@@ -64,6 +67,13 @@ const AdminDashboard: React.FC = () => {
                         >
                             Времеизмерване
                         </AdminNavButton>
+                        <AdminNavButton
+                            type="button"
+                            active={activeView === 'lottery'}
+                            onClick={() => navigate('/admin/lottery')}
+                        >
+                            Лотария
+                        </AdminNavButton>
                     </AdminNavList>
                     {activeView === 'participants' && <AdminParticipants />}
                     {activeView === 'tshirts' && <AdminTShirts />}
@@ -71,6 +81,7 @@ const AdminDashboard: React.FC = () => {
                     {activeView === 'timing' && (
                         location.pathname === '/admin/timing' ? <AdminTiming /> : <AdminCheckpointTiming />
                     )}
+                    {activeView === 'lottery' && <AdminLottery />}
                 </AdminDashboardCard>
             </AdminShell>
         </>

@@ -119,6 +119,14 @@ const Router: React.FC = () => {
                     }
                 />
                 <Route
+                    path="/admin/lottery"
+                    element={
+                        <ProtectedAdminRoute>
+                            <AdminDashboard />
+                        </ProtectedAdminRoute>
+                    }
+                />
+                <Route
                     path="/admin/timing"
                     element={
                         <ProtectedAdminRoute>
