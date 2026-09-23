@@ -15,3 +15,7 @@ export const toParticipantSlug = (name: string) => {
         .replace(/[^\p{L}\p{N}]+/gu, '-')
         .replace(/^-+|-+$/g, '');
 };
+
+export const getParticipantPath = (id: string) => {
+    return `/participant/${encodeURIComponent(id)}`;
+};

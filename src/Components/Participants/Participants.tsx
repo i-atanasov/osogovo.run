@@ -4,9 +4,10 @@ import { useTranslation } from "react-i18next";
 import { HomeContainer } from "../Home/styles";
 import { HeaderComponent } from "../Header/Header";
 import { Paid, ParticipantsWrapper, TableCellLink, TableRow } from "./styles";
-import { formatParticipantName, toParticipantSlug } from "./utils";
+import { formatParticipantName, getParticipantPath } from "./utils";
 
 type Participant = {
+    id: string;
     name: string;
     birth: string;
     paid: boolean;
@@ -79,7 +80,7 @@ export const Participants: React.FC = () => {
                     {participants.map((participant) => {
                         const category = getCategory(participant);
                         const final = participant.distance === '14' ? 'osogovo' : 'ruen';
-                        const participantPath = `/participant/${toParticipantSlug(participant.name)}`;
+                        const participantPath = getParticipantPath(participant.id);
                         position++; // Increment position for each participant
                         return (
                             (categoryFilter && !category.includes(categoryFilter)) ? null : 

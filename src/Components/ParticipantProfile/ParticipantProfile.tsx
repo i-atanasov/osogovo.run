@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import axios from "axios";
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { HomeContainer } from "../Home/styles";
 import { HeaderComponent } from "../Header/Header";
@@ -37,7 +37,9 @@ const getFinishTime = (participation: Participation) => {
 
 export const ParticipantProfile: React.FC = () => {
     const { t } = useTranslation();
-    const { name } = useParams<{ name: string }>();
+    const { id } = useParams<{ id: string }>();
+    const [searchParams] = useSearchParams();
+    const email = searchParams.get('email') ?? '';
     const [profile, setProfile] = React.useState<ParticipantProfileResponse | null>(null);
     const [loading, setLoading] = React.useState(true);
     const [error, setError] = React.useState<string | null>(null);
@@ -51,7 +53,9 @@ export const ParticipantProfile: React.FC = () => {
             setError(null);
 
             try {
-                const response = await axios.get(`${apiUrl}/participant/${name}`);
+                const response = await axios.get(`${apiUrl}/participant/${id}`, {
+                    params: id ? { id } : email ? { email } : undefined,
+                });
                 setProfile(response.data);
             } catch (err) {
                 setError(t('participants:profile.errors.loadFailed'));
@@ -60,10 +64,10 @@ export const ParticipantProfile: React.FC = () => {
             }
         };
 
-        if (name) {
+        if (id) {
             fetchParticipantProfile();
         }
-    }, [apiUrl, name, t]);
+    }, [apiUrl, email, id, t]);
 
     const renderParticipationsTable = (participations: Participation[]) => (
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>

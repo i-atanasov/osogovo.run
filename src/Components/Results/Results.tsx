@@ -5,9 +5,10 @@ import { useTranslation } from "react-i18next";
 import { HomeContainer } from "../Home/styles";
 import { HeaderComponent } from "../Header/Header";
 import { ParticipantsWrapper, TableCellLink, TableRow } from "../Participants/styles";
-import { toParticipantSlug } from "../Participants/utils";
+import { getParticipantPath } from "../Participants/utils";
 
 type Result = {
+    id: string;
     name: string;
     birth: string;
     distance: string;
@@ -90,7 +91,7 @@ export const Results: React.FC = () => {
                     {filtered.map((result) => {
                         const finishTime = result.distance === '14' ? result.osogovo : result.ruen;
                         const category = getCategory(result, year);
-                        const participantPath = `/participant/${toParticipantSlug(result.name)}`;
+                        const participantPath = getParticipantPath(result.id);
 
                         return (
                             <TableRow key={result.bib} highlighted={false}>

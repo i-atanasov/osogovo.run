@@ -75,7 +75,7 @@ const Router: React.FC = () => {
                     element={<Participants />}
                 />
                 <Route
-                    path="/participant/:name"
+                    path="/participant/:id"
                     element={<ParticipantProfile />}
                 />
                 <Route
