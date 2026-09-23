@@ -9,7 +9,7 @@ import VolunteerForm from "../VolunteerForm/VolunteerForm";
 import Home from "../Home/Home";
 import { Participants } from "../Participants/Participants";
 import RaceDay from "../RaceDay/RaceDay";
-import Results from "../Results/Results";
+import Results2025 from "../Results/Results_2025";
 import { IframeFeedback } from "../FeedbackPage/FeedbackPage";
 import AdminLogin from "../Admin/AdminLogin";
 import AdminDashboard from "../Admin/AdminDashboard";
@@ -74,17 +74,21 @@ const Router: React.FC = () => {
                     path="/participants"
                     element={<Participants />}
                 />
-                <Route
+                {/* <Route
                     path="/participant/:id"
                     element={<ParticipantProfile />}
-                />
+                /> */}
                 <Route
                     path="/race-day"
                     element={<RaceDay />}
                 />
                 <Route
+                    path="/results?year=2025"
+                    element={<Results2025 />}
+                />
+                <Route
                     path="/results"
-                    element={<Results />}
+                    element={<div><>test</></div>}
                 />
                 <Route
                     path="/feedback"
