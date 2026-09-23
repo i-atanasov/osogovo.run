@@ -497,7 +497,7 @@ export const TimingParticipantButton = styled.button<{ color: 'orange' | 'black'
     box-sizing: border-box;
     width: 100%;
     display: grid;
-    grid-template-columns: 48px minmax(0, 1fr);
+    grid-template-columns: 48px minmax(0, 1fr) auto auto;
     gap: 4px 12px;
     align-items: center;
     padding: 12px;
@@ -526,9 +526,44 @@ export const TimingParticipantButton = styled.button<{ color: 'orange' | 'black'
         text-overflow: ellipsis;
         white-space: nowrap;
     }
+
+    .participant-phone {
+        grid-column: 3;
+        grid-row: 1 / span 2;
+        align-self: center;
+        width: auto;
+        padding: 10px;
+        margin: 0 10px;
+        border: 0;
+        background: transparent;
+        font-size: 15px;
+        font-weight: 400;
+        text-transform: none;
+        text-decoration: none;
+        background: ${colors.RuenOrange};
+        color: white;
+        border-radius: 10px;
+        white-space: nowrap;
+        transition: none;
+
+        &:hover {
+            color: ${colors.OsogovoBlack};
+            filter: brightness(1);
+        }
+    }
+
+    .participant-result {
+        grid-column: 4;
+        grid-row: 1 / span 2;
+        align-self: center;
+        color: rgba(48, 51, 47, 0.72);
+        font-variant-numeric: tabular-nums;
+        white-space: nowrap;
+    }
 `;
 
 export const TimingParticipantMeta = styled.div`
+    grid-column: 2;
     display: flex;
     justify-content: space-between;
     gap: 12px;

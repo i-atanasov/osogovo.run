@@ -25,16 +25,18 @@ import {
     AdminLabel,
     SignOutButton,
 } from "./styles";
+import Button from "../Button/Button";
 
 type TimingParticipant = {
     email: string;
     name: string;
+    phone_number: string | null;
     distance: string;
     bib: number;
-    checkpoint_id: number;
-    checkpoint_name_bg: string;
-    checkpoint_distance: number;
-    passed_at: string;
+    checkpoint_id: number | null;
+    checkpoint_name_bg: string | null;
+    checkpoint_distance: number | null;
+    passed_at: string | null;
 };
 
 type Checkpoint = {
@@ -211,6 +213,25 @@ const AdminTiming: React.FC = () => {
     const filteredParticipants = participants.filter((participant) => (
         !bibFilter || participant.bib.toString().includes(bibFilter)
     ));
+    const participantsWithResults = new Set(
+        filteredParticipants
+            .filter((participant) => participant.checkpoint_id !== null && participant.passed_at !== null)
+            .map((participant) => participant.email),
+    );
+    const participantsWithoutResults = filteredParticipants
+        .filter((participant) => !participantsWithResults.has(participant.email))
+        .sort((first, second) => first.bib - second.bib);
+    const latestCheckpointByParticipant = new Map<string, TimingParticipant>();
+    filteredParticipants
+        .filter((participant) => participant.checkpoint_id !== null && participant.passed_at !== null)
+        .forEach((participant) => {
+            const currentLatest = latestCheckpointByParticipant.get(participant.email);
+            if (!currentLatest || (
+                (participant.checkpoint_distance ?? -1) > (currentLatest.checkpoint_distance ?? -1)
+            )) {
+                latestCheckpointByParticipant.set(participant.email, participant);
+            }
+        });
     const selectedCheckpoint = checkpoints.find((checkpoint) => checkpoint.id === selectedCheckpointId) ?? null;
     const raceStartTime = raceStart ? new Date(raceStart.started_at).getTime() : null;
     const raceStartsInFuture = raceStartTime !== null && raceStartTime > now;
@@ -410,25 +431,28 @@ const AdminTiming: React.FC = () => {
             <TimingParticipantsGrid>
                 {["26", "14"].map((distance) => {
                     const distanceParticipants = filteredParticipants.filter((participant) => participant.distance === distance);
-
                     return (
                     <TimingDistanceColumn key={distance}>
                         {[...checkpoints]
                             .filter((checkpoint) => checkpoint.checkpoint_for.split("|").includes(distance))
                             .sort((first, second) => (
-                                first.checkpoint_distance - second.checkpoint_distance || first.id - second.id
+                                second.checkpoint_distance - first.checkpoint_distance || second.id - first.id
                             ))
-                            .map((checkpoint, checkpointIndex) => {
+                            .map((checkpoint) => {
                             const checkpointParticipants = distanceParticipants
-                                .filter((participant) => participant.checkpoint_id === checkpoint.id)
+                                .filter((participant) => (
+                                    participant.checkpoint_id === checkpoint.id
+                                    && participant.passed_at !== null
+                                    && latestCheckpointByParticipant.get(participant.email)?.checkpoint_id === checkpoint.id
+                                ))
                                 .sort((first, second) => (
-                                    new Date(first.passed_at).getTime() - new Date(second.passed_at).getTime()
+                                    new Date(first.passed_at as string).getTime() - new Date(second.passed_at as string).getTime()
                                 ));
 
                             return (
                                 <TimingGroup
                                     key={checkpoint.id}
-                                    color={checkpointIndex % 2 === 0 ? "orange" : "black"}
+                                    color={distance === "26" ? "black" : "orange"}
                                 >
                                     <TimingGroupTitle>{checkpoint.checkpoint_name_bg}</TimingGroupTitle>
                                     <TimingCheckpointDetails>
@@ -443,14 +467,23 @@ const AdminTiming: React.FC = () => {
                                         <TimingParticipantButton
                                             as="div"
                                             key={`${checkpoint.id}-${participant.email}`}
-                                            color={checkpointIndex % 2 === 0 ? "orange" : "black"}
+                                            color={distance === "26" ? "black" : "orange"}
                                         >
                                             <strong>{participant.bib}</strong>
                                             <span>{participant.name}</span>
+                                            {participant.phone_number ? (
+                                                <Button
+                                                    className="participant-phone"
+                                                    href={`tel:${participant.phone_number}`}
+                                                    label={participant.phone_number}
+                                                />
+                                            ) : (
+                                                <span className="participant-phone">-</span>
+                                            )}
                                             <TimingParticipantMeta>
                                                 <span>{participant.distance} км</span>
-                                                <time>{formatResultTime(participant.passed_at)}</time>
                                             </TimingParticipantMeta>
+                                            <time className="participant-result">{formatResultTime(participant.passed_at as string)}</time>
                                         </TimingParticipantButton>
                                     ))}
                                 </TimingGroup>
@@ -460,6 +493,48 @@ const AdminTiming: React.FC = () => {
                     );
                 })}
             </TimingParticipantsGrid>
+            {participantsWithoutResults.length > 0 && (
+                <TimingParticipantsGrid>
+                    {["26", "14"].map((distance) => {
+                        const distanceParticipantsWithoutResults = participantsWithoutResults
+                            .filter((participant) => participant.distance === distance);
+
+                        return (
+                            <TimingDistanceColumn key={`without-result-${distance}`}>
+                                <TimingGroup color={distance === "26" ? "black" : "orange"}>
+                                    <TimingGroupTitle>{distance} км без отчетен резултат</TimingGroupTitle>
+                                    {distanceParticipantsWithoutResults.length === 0 && (
+                                        <AdminStatusText>Няма участници.</AdminStatusText>
+                                    )}
+                                    {distanceParticipantsWithoutResults.map((participant) => (
+                                        <TimingParticipantButton
+                                            as="div"
+                                            key={`without-result-${participant.email}`}
+                                            color={distance === "26" ? "black" : "orange"}
+                                        >
+                                            <strong>{participant.bib}</strong>
+                                            <span>{participant.name}</span>
+                                            {participant.phone_number ? (
+                                                <Button
+                                                    className="participant-phone"
+                                                    href={`tel:${participant.phone_number}`}
+                                                    label={participant.phone_number}
+                                                />
+                                            ) : (
+                                                <span className="participant-phone">-</span>
+                                            )}
+                                            <TimingParticipantMeta>
+                                                <span>{participant.distance} км</span>
+                                            </TimingParticipantMeta>
+                                            <time className="participant-result">-</time>
+                                        </TimingParticipantButton>
+                                    ))}
+                                </TimingGroup>
+                            </TimingDistanceColumn>
+                        );
+                    })}
+                </TimingParticipantsGrid>
+            )}
         </>
     );
 };

@@ -7,11 +7,20 @@ export interface ButtonProps {
     onClick?: () => void;
     label: string;
     disabled?: boolean;
+    href?: string;
+    className?: string;
 }
 
-const Button: React.FC<ButtonProps> = ({ highlight, onClick, label, disabled }) => {
+const Button: React.FC<ButtonProps> = ({ highlight, onClick, label, disabled, href, className }) => {
     return (
-        <ButtonWrapper highlight={highlight} onClick={onClick} disabled={disabled}>
+        <ButtonWrapper
+            as={href ? "a" : "button"}
+            className={className}
+            disabled={disabled}
+            href={href}
+            highlight={highlight}
+            onClick={onClick}
+        >
             {label}
         </ButtonWrapper>
     );

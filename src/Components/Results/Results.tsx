@@ -29,7 +29,7 @@ export const Results: React.FC = () => {
     const apiUrl = process.env.REACT_APP_REGISTRATION_API_URL;
 
     const year = searchParams.get('year') ?? String(new Date().getFullYear());
-    console.log('Current year:', year);
+
     useEffect(() => {
         const fetchResults = async () => {
             if (year > new Date().getFullYear().toString()) {
@@ -41,9 +41,7 @@ export const Results: React.FC = () => {
             setLoading(true);
             setError(null);
             try {
-                console.log('Fetching results for year:', year);
                 const response = await axios.get(`${apiUrl}/results`, { params: { year } });
-                console.log('Received response:', response.data);
                 const data: Result[] = response.data;
                 data.sort((a, b) => {
                     const timeA = a.distance === '14' ? (a.osogovo ?? '') : (a.ruen ?? '');
@@ -115,7 +113,7 @@ export const Results: React.FC = () => {
             <HeaderComponent hideDate video='http://www.osogovo.run/media/osogovo-run-21-sec-low.mp4' />
             <ParticipantsWrapper>
                 <a href="/participants">{t('results:links.participants')}</a>
-                <h1>{t('results:title', { year })}</h1>
+                <h2>{t('results:title', { year })}</h2>
                 {loading && <p>{t('results:loading')}</p>}
                 {error && <p style={{ color: 'red' }}>{error}</p>}
                 {!loading && !error && (
@@ -124,25 +122,25 @@ export const Results: React.FC = () => {
                         {renderTable(undefined, "14")}
                         <h2>{t('results:sections.overall', { distance: 26 })}</h2>
                         {renderTable(undefined, "26")}
-                        <h1>{t('results:sections.women', { distance: 14 })}</h1>
+                        <h2>{t('results:sections.women', { distance: 14 })}</h2>
                         {renderTable('Ж', "14")}
-                        <h1>{t('results:sections.women', { distance: 26 })}</h1>
+                        <h2>{t('results:sections.women', { distance: 26 })}</h2>
                         {renderTable('Ж', "26")}
-                        <h1>{t('results:sections.women40', { distance: 14 })}</h1>
+                        <h2>{t('results:sections.women40', { distance: 14 })}</h2>
                         {renderTable('Ж40', "14")}
-                        <h1>{t('results:sections.women40', { distance: 26 })}</h1>
+                        <h2>{t('results:sections.women40', { distance: 26 })}</h2>
                         {renderTable('Ж40', "26")}
-                        <h1>{t('results:sections.men40', { distance: 14 })}</h1>
+                        <h2>{t('results:sections.men40', { distance: 14 })}</h2>
                         {renderTable('М40', "14")}
-                        <h1>{t('results:sections.men40', { distance: 26 })}</h1>
+                        <h2>{t('results:sections.men40', { distance: 26 })}</h2>
                         {renderTable('М40', "26")}
-                        <h1>{t('results:sections.men20', { distance: 14 })}</h1>
+                        <h2>{t('results:sections.men20', { distance: 14 })}</h2>
                         {renderTable('М20', "14")}
-                        <h1>{t('results:sections.men20', { distance: 26 })}</h1>
+                        <h2>{t('results:sections.men20', { distance: 26 })}</h2>
                         {renderTable('М20', "26")}
-                        <h1>{t('results:sections.women20', { distance: 14 })}</h1>
+                        <h2>{t('results:sections.women20', { distance: 14 })}</h2>
                         {renderTable('Ж20', "14")}
-                        <h1>{t('results:sections.women20', { distance: 26 })}</h1>
+                        <h2>{t('results:sections.women20', { distance: 26 })}</h2>
                         {renderTable('Ж20', "26")}
                     </>
                 )}
