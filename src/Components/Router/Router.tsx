@@ -1,5 +1,5 @@
 import React, { useEffect } from "react"
-import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation, useSearchParams } from "react-router-dom";
 import RegistrationForm from "../RegistrationForm/RegistrationForm";
 import PaymentSuccessPage from "../RegistrationForm/PaymentSuccessPage";
 import PaymentCancelPage from "../RegistrationForm/PaymentCancelPage";
@@ -10,6 +10,7 @@ import Home from "../Home/Home";
 import { Participants } from "../Participants/Participants";
 import RaceDay from "../RaceDay/RaceDay";
 import Results2025 from "../Results/Results_2025";
+import { Results } from "../Results/Results";
 import { IframeFeedback } from "../FeedbackPage/FeedbackPage";
 import AdminLogin from "../Admin/AdminLogin";
 import AdminDashboard from "../Admin/AdminDashboard";
@@ -33,6 +34,12 @@ const HashScroller: React.FC = () => {
     }, [location.hash, location.pathname]);
 
     return null;
+};
+
+const ResultsRoute: React.FC = () => {
+    const [searchParams] = useSearchParams();
+
+    return searchParams.get('year') === '2025' ? <Results2025 /> : <Results />;
 };
 
 const Router: React.FC = () => {
@@ -83,12 +90,8 @@ const Router: React.FC = () => {
                     element={<RaceDay />}
                 />
                 <Route
-                    path="/results?year=2025"
-                    element={<Results2025 />}
-                />
-                <Route
                     path="/results"
-                    element={<div><>test</></div>}
+                    element={<ResultsRoute />}
                 />
                 <Route
                     path="/feedback"
