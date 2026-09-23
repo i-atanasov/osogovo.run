@@ -218,6 +218,36 @@ export const AdminBibValue = styled.span`
     gap: 6px;
 `;
 
+export const AdminNoteCell = styled.div`
+    display: grid;
+    grid-template-columns: minmax(180px, 260px) auto auto;
+    align-items: start;
+    gap: 6px;
+
+    textarea {
+        min-height: 64px;
+        resize: vertical;
+        box-sizing: border-box;
+        border: 1px solid rgba(48, 51, 47, 0.24);
+        border-radius: 4px;
+        color: ${colors.OsogovoBlack};
+        font: inherit;
+        padding: 8px;
+        white-space: normal;
+
+        &:disabled {
+            background: rgba(48, 51, 47, 0.08);
+            color: rgba(48, 51, 47, 0.68);
+        }
+    }
+
+    small {
+        grid-column: 1 / -1;
+        color: rgba(48, 51, 47, 0.62);
+        white-space: normal;
+    }
+`;
+
 export const AdminIconButton = styled.button`
     width: 32px;
     height: 32px;

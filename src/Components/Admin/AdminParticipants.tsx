@@ -10,6 +10,7 @@ import {
     AdminErrorText,
     AdminFilters,
     AdminIconButton,
+    AdminNoteCell,
     AdminStatusText,
     AdminTable,
     AdminTableRow,
@@ -34,6 +35,17 @@ type AdminParticipant = {
     currency?: string | null;
     discount_code_used?: string | null;
     created_at: string;
+    updated_at: string;
+    note?: string | null;
+    note_completed: boolean;
+    note_updated_by?: string | null;
+    note_updated_at?: string | null;
+};
+
+type NoteResponse = {
+    note: string;
+    completed: boolean;
+    updated_by: string;
     updated_at: string;
 };
 
@@ -60,6 +72,9 @@ const AdminParticipants: React.FC = () => {
     const [bibError, setBibError] = React.useState<string | null>(null);
     const [savingBib, setSavingBib] = React.useState(false);
     const [confirmingBib, setConfirmingBib] = React.useState<number | null>(null);
+    const [savingNoteEmail, setSavingNoteEmail] = React.useState<string | null>(null);
+    const [noteErrorEmail, setNoteErrorEmail] = React.useState<string | null>(null);
+    const [openNoteEditors, setOpenNoteEditors] = React.useState<Set<string>>(() => new Set());
 
     React.useEffect(() => {
         const fetchParticipants = async () => {
@@ -177,6 +192,54 @@ const AdminParticipants: React.FC = () => {
         }
     };
 
+    const updateNoteText = (email: string, note: string) => {
+        setParticipants((currentParticipants) => currentParticipants.map((participant) => (
+            participant.email === email ? { ...participant, note } : participant
+        )));
+    };
+
+    const openNoteEditor = (email: string) => {
+        setOpenNoteEditors((currentEditors) => new Set(currentEditors).add(email));
+    };
+
+    const saveNote = async (participant: AdminParticipant, completed = participant.note_completed) => {
+        if (!apiUrl || savingNoteEmail) {
+            return;
+        }
+
+        try {
+            setSavingNoteEmail(participant.email);
+            setNoteErrorEmail(null);
+            const response = await axios.patch<NoteResponse>(
+                `${apiUrl}/admin/participants/${encodeURIComponent(participant.email)}/note`,
+                { note: participant.note ?? '', completed },
+                { withCredentials: true },
+            );
+            setParticipants((currentParticipants) => currentParticipants.map((currentParticipant) => (
+                currentParticipant.email === participant.email
+                    ? {
+                        ...currentParticipant,
+                        note: response.data.note,
+                        note_completed: response.data.completed,
+                        note_updated_by: response.data.updated_by,
+                        note_updated_at: response.data.updated_at,
+                    }
+                    : currentParticipant
+            )));
+            if (!response.data.note.trim()) {
+                setOpenNoteEditors((currentEditors) => {
+                    const nextEditors = new Set(currentEditors);
+                    nextEditors.delete(participant.email);
+                    return nextEditors;
+                });
+            }
+        } catch {
+            setNoteErrorEmail(participant.email);
+        } finally {
+            setSavingNoteEmail(null);
+        }
+    };
+
     return (
         <AdminTableWrapper>
             <AdminFilters>
@@ -219,6 +282,7 @@ const AdminParticipants: React.FC = () => {
                     <tr>
                         <th>Стартов номер</th>
                         <th>Име</th>
+                        <th>Бележки</th>
                         <th>Имейл</th>
                         <th>Телефон</th>
                         <th>Дистанция</th>
@@ -241,6 +305,9 @@ const AdminParticipants: React.FC = () => {
                             tabIndex={0}
                             onClick={() => setSelectedEmail(participant.email)}
                             onKeyDown={(event) => {
+                                if (event.target !== event.currentTarget) {
+                                    return;
+                                }
                                 if (event.key === 'Enter' || event.key === ' ') {
                                     event.preventDefault();
                                     setSelectedEmail(participant.email);
@@ -276,6 +343,61 @@ const AdminParticipants: React.FC = () => {
                                 )}
                             </td>
                             <td>{participant.name}</td>
+                            <td onClick={(event) => event.stopPropagation()}>
+                                {participant.note?.trim() || openNoteEditors.has(participant.email) ? (
+                                    <AdminNoteCell>
+                                        <textarea
+                                            aria-label={`Бележка за ${participant.name}`}
+                                            disabled={participant.note_completed}
+                                            onChange={(event) => updateNoteText(participant.email, event.target.value)}
+                                            placeholder="Бележка"
+                                            value={participant.note ?? ''}
+                                        />
+                                        {participant.note_completed ? (
+                                            <AdminBibButton
+                                                type="button"
+                                                disabled={savingNoteEmail !== null}
+                                                onClick={() => saveNote(participant, false)}
+                                            >
+                                                {savingNoteEmail === participant.email ? 'Запазване...' : 'Добави'}
+                                            </AdminBibButton>
+                                        ) : (
+                                            <>
+                                                <AdminBibButton
+                                                    type="button"
+                                                    disabled={savingNoteEmail !== null}
+                                                    onClick={() => saveNote(participant)}
+                                                >
+                                                    {savingNoteEmail === participant.email ? 'Запазване...' : 'Запази'}
+                                                </AdminBibButton>
+                                                {participant.note?.trim() && participant.note_updated_at && (
+                                                    <AdminBibButton
+                                                        type="button"
+                                                        disabled={savingNoteEmail !== null}
+                                                        onClick={() => saveNote(participant, true)}
+                                                    >
+                                                        Завърши
+                                                    </AdminBibButton>
+                                                )}
+                                            </>
+                                        )}
+                                        {noteErrorEmail === participant.email ? (
+                                            <small>Бележката не можа да бъде запазена.</small>
+                                        ) : participant.note_updated_by && participant.note_updated_at ? (
+                                            <small>
+                                                {participant.note_updated_by}, {new Date(participant.note_updated_at).toLocaleString()}
+                                            </small>
+                                        ) : null}
+                                    </AdminNoteCell>
+                                ) : (
+                                    <AdminBibButton
+                                        type="button"
+                                        onClick={() => openNoteEditor(participant.email)}
+                                    >
+                                        Добави бележка
+                                    </AdminBibButton>
+                                )}
+                            </td>
                             <td>{participant.email}</td>
                             <td>{participant.phone_number ?? '-'}</td>
                             <td>{participant.distance} km</td>
