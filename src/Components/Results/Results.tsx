@@ -29,10 +29,10 @@ export const Results: React.FC = () => {
     const apiUrl = process.env.REACT_APP_REGISTRATION_API_URL;
 
     const year = searchParams.get('year') ?? String(new Date().getFullYear());
-
+    console.log('Current year:', year);
     useEffect(() => {
         const fetchResults = async () => {
-            if (year === new Date().getFullYear().toString()) {
+            if (year > new Date().getFullYear().toString()) {
                 setError(t('results:errors.unavailableForYear', { year }));
                 setLoading(false);
                 return;
@@ -41,7 +41,9 @@ export const Results: React.FC = () => {
             setLoading(true);
             setError(null);
             try {
+                console.log('Fetching results for year:', year);
                 const response = await axios.get(`${apiUrl}/results`, { params: { year } });
+                console.log('Received response:', response.data);
                 const data: Result[] = response.data;
                 data.sort((a, b) => {
                     const timeA = a.distance === '14' ? (a.osogovo ?? '') : (a.ruen ?? '');

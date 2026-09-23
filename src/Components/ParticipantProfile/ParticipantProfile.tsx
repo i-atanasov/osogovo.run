@@ -20,6 +20,15 @@ type Participation = {
     osogovo?: string | null;
     ruen?: string | null;
     dns?: boolean | null;
+    checkpointResults: CheckpointResult[];
+};
+
+type CheckpointResult = {
+    checkpoint_name: string;
+    checkpoint_name_bg: string;
+    checkpoint_distance: number;
+    checkpoint_final?: string | null;
+    passed_at: string | null;
 };
 
 type ParticipantProfileResponse = {
@@ -34,6 +43,10 @@ const getFinishTime = (participation: Participation) => {
 
     return participation.distance === '14' ? participation.osogovo : participation.ruen;
 };
+
+const formatCheckpointTime = (passedAt: string | null) => (
+    passedAt ? new Date(passedAt).toLocaleString() : '-'
+);
 
 export const ParticipantProfile: React.FC = () => {
     const { t } = useTranslation();
@@ -70,30 +83,67 @@ export const ParticipantProfile: React.FC = () => {
     }, [apiUrl, email, id, t]);
 
     const renderParticipationsTable = (participations: Participation[]) => (
-        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-            <thead>
-                <tr>
-                    <th>{t('participants:profile.table.year')}</th>
-                    <th>{t('participants:table.distance')}</th>
-                    <th>{t('participants:table.team')}</th>
-                    <th>{t('participants:table.finish')}</th>
-                </tr>
-            </thead>
-            <tbody>
-                {participations.map((participation) => {
-                    const finishTime = getFinishTime(participation);
+        <>
+            {participations.map((participation) => {
+                const finishTime = getFinishTime(participation);
+                const participationKey = `${participation.status}-${participation.year}-${participation.distance}-${participation.bib ?? participation.name}`;
 
-                    return (
-                        <TableRow key={`${participation.status}-${participation.year}-${participation.distance}-${participation.bib ?? participation.name}`} highlighted={false}>
-                            <td>{participation.year}</td>
-                            <td>{participation.distance}</td>
-                            <td>{participation.team}</td>
-                            <td>{finishTime ?? '-'}</td>
-                        </TableRow>
-                    );
-                })}
-            </tbody>
-        </table>
+                return (
+                    <section key={participationKey}>
+                        <h3>{participation.year} / {participation.distance} км</h3>
+                        <table style={{ width: '100%', borderCollapse: 'collapse', tableLayout: 'fixed', textAlign: 'left' }}>
+                            <colgroup>
+                                <col style={{ width: '15%' }} />
+                                <col style={{ width: '15%' }} />
+                                <col style={{ width: '25%' }} />
+                                <col style={{ width: '30%' }} />
+                            </colgroup>
+                            <thead>
+                                <tr>
+                                    <th>{t('participants:profile.table.year')}</th>
+                                    <th>{t('participants:table.distance')}</th>
+                                    <th>{t('participants:table.team')}</th>
+                                    <th>{t('participants:table.finish')}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <TableRow key={participationKey} highlighted={false}>
+                                    <td>{participation.year}</td>
+                                    <td>{participation.distance}</td>
+                                    <td>{participation.team}</td>
+                                    <td>{finishTime ?? '-'}</td>
+                                </TableRow>
+                            </tbody>
+                        </table>
+                        {participation.checkpointResults.length > 0 && (
+                            <table style={{ width: '100%', borderCollapse: 'collapse', tableLayout: 'fixed', textAlign: 'left' }}>
+                                <colgroup>
+                                    <col style={{ width: '45%' }} />
+                                    <col style={{ width: '20%' }} />
+                                    <col style={{ width: '35%' }} />
+                                </colgroup>
+                                <thead>
+                                    <tr>
+                                        <th>{t('participants:profile.table.checkpoint')}</th>
+                                        <th>{t('participants:profile.table.distance')}</th>
+                                        <th>{t('participants:profile.table.result')}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {participation.checkpointResults.map((checkpoint) => (
+                                        <TableRow key={`${participationKey}-${checkpoint.checkpoint_name}`} highlighted={false}>
+                                            <td>{checkpoint.checkpoint_name_bg || checkpoint.checkpoint_name}</td>
+                                            <td>{checkpoint.checkpoint_distance} км</td>
+                                            <td>{formatCheckpointTime(checkpoint.passed_at)}</td>
+                                        </TableRow>
+                                    ))}
+                                </tbody>
+                            </table>
+                        )}
+                    </section>
+                );
+            })}
+        </>
     );
 
     return (

@@ -36,6 +36,9 @@ const participants = {
         table: {
             year: 'Година',
             status: 'Тип',
+            checkpoint: 'Контролен пункт',
+            distance: 'Дистанция',
+            result: 'Резултат',
         },
         status: {
             incoming: 'Предстоящо',
