@@ -40,7 +40,15 @@ export const Paid = styled.td<{ paid: boolean }>`
 export const TableRow = styled.tr<{ highlighted: boolean }>`
     background-color: ${props => props.highlighted ? colors.RuenOrange : "transparent"};
     color: ${props => props.highlighted ? "white" : colors.OsogovoBlack};
-
+    > td {
+        padding: 2px;
+    }
+    > td:nth-child(1) {
+        font-weight: bold;
+    }
+    > td:nth-child(3) {
+        width: 150px;
+    }
     a {
         color: inherit;
     }
@@ -49,7 +57,10 @@ export const TableRow = styled.tr<{ highlighted: boolean }>`
         background-color: ${colors.RuenOrange};
         color: white;
         cursor: pointer;
-
+        > td {
+            background-color: ${colors.RuenOrange};
+            color: white;
+        }
         ${Paid} {
             color: white;
         }

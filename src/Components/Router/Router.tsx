@@ -94,6 +94,10 @@ const Router: React.FC = () => {
                     element={<ResultsRoute />}
                 />
                 <Route
+                    path="/live-results"
+                    element={<ResultsRoute />}
+                />
+                <Route
                     path="/feedback"
                     element={<IframeFeedback />}
                 />

@@ -31,17 +31,22 @@ export const Results2025: React.FC = () => {
     const year = searchParams.get('year') ?? String(new Date().getFullYear());
 
     useEffect(() => {
-        const fetchResults = async () => {
+        const fetchResults = async (initialLoad = false) => {
             if (year > new Date().getFullYear().toString()) {
                 setError(t('results:errors.unavailableForYear', { year }));
                 setLoading(false);
                 return;
             }
 
-            setLoading(true);
-            setError(null);
+            if (initialLoad) {
+                setLoading(true);
+                setError(null);
+            }
             try {
-                const response = await axios.get(`${apiUrl}/results`, { params: { year } });
+                const response = await axios.get(`${apiUrl}/results`, {
+                    params: { year, _ts: Date.now() },
+                    headers: { 'Cache-Control': 'no-cache' },
+                });
                 const data: Result[] = response.data;
                 data.sort((a, b) => {
                     const timeA = a.distance === '14' ? (a.osogovo ?? '') : (a.ruen ?? '');
@@ -50,12 +55,19 @@ export const Results2025: React.FC = () => {
                 });
                 setResults(data);
             } catch (err) {
-                setError(t('results:errors.loadFailed'));
+                if (initialLoad) {
+                    setError(t('results:errors.loadFailed'));
+                }
             } finally {
-                setLoading(false);
+                if (initialLoad) {
+                    setLoading(false);
+                }
             }
         };
-        fetchResults();
+        fetchResults(true);
+        const refreshInterval = window.setInterval(() => fetchResults(), 5000);
+
+        return () => window.clearInterval(refreshInterval);
     }, [apiUrl, year, t]);
 
     const getCategory = (result: Result, year?: string) => {
