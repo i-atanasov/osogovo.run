@@ -81,10 +81,10 @@ const Router: React.FC = () => {
                     path="/participants"
                     element={<Participants />}
                 />
-                {/* <Route
+                <Route
                     path="/participant/:id"
                     element={<ParticipantProfile />}
-                /> */}
+                />
                 <Route
                     path="/race-day"
                     element={<RaceDay />}

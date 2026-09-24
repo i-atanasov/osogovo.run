@@ -88,6 +88,7 @@ type QueuedResult = {
 };
 
 type QueuedResultResponse = { passedAt: string | null; recordedByName: string };
+type SyncedResult = { id: string; bib: number };
 
 const PENDING_RESULTS_STORAGE_KEY = "osogovo-admin-timing-pending-results";
 
@@ -120,12 +121,16 @@ const AdminCheckpointTiming: React.FC = () => {
     const [loading, setLoading] = React.useState(true);
     const [savingBib, setSavingBib] = React.useState<number | null>(null);
     const [error, setError] = React.useState<string | null>(null);
+    const [entryError, setEntryError] = React.useState<string | null>(null);
+    const [errorCloseCountdown, setErrorCloseCountdown] = React.useState<number | null>(null);
     const [bibFilter, setBibFilter] = React.useState("");
     const [confirmingParticipant, setConfirmingParticipant] = React.useState<CheckpointParticipant | null>(null);
     const [editingParticipant, setEditingParticipant] = React.useState<CheckpointParticipant | null>(null);
     const [manualPassedDate, setManualPassedDate] = React.useState("");
     const [manualPassedTime, setManualPassedTime] = React.useState("");
     const [pendingCount, setPendingCount] = React.useState(() => readPendingQueue().length);
+    const [flushingQueue, setFlushingQueue] = React.useState(false);
+    const [syncedResults, setSyncedResults] = React.useState<SyncedResult[]>([]);
     const [now, setNow] = React.useState(Date.now());
     const raceStartTime = raceStartAt ? new Date(raceStartAt).getTime() : null;
     const raceFinished = raceStartTime !== null && now >= raceStartTime + RACE_DURATION_MILLISECONDS;
@@ -152,6 +157,7 @@ const AdminCheckpointTiming: React.FC = () => {
                 ]);
                 setData(timingResponse.data);
                 setRaceStartAt(raceStartResponse.data.raceStart?.started_at ?? null);
+                await flushPendingQueue();
             } catch {
                 setError("Данните за контролния пункт не можаха да бъдат заредени.");
             } finally {
@@ -160,12 +166,6 @@ const AdminCheckpointTiming: React.FC = () => {
         };
 
         loadTiming();
-    }, [checkpointName]);
-
-    // Retry anything left over from a previous session (e.g. the tab was closed while offline).
-    React.useEffect(() => {
-        flushPendingQueue();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [checkpointName]);
 
     React.useEffect(() => {
@@ -178,6 +178,29 @@ const AdminCheckpointTiming: React.FC = () => {
         const interval = window.setInterval(updateNow, 1000);
         return () => window.clearInterval(interval);
     }, [raceStartAt]);
+
+    React.useEffect(() => {
+        if (!entryError) {
+            setErrorCloseCountdown(null);
+            return;
+        }
+
+        let remainingSeconds = 5;
+        setErrorCloseCountdown(remainingSeconds);
+        const interval = window.setInterval(() => {
+            remainingSeconds -= 1;
+            setErrorCloseCountdown(remainingSeconds);
+
+            if (remainingSeconds <= 0) {
+                window.clearInterval(interval);
+                setEntryError(null);
+                setConfirmingParticipant(null);
+                setEditingParticipant(null);
+            }
+        }, 1000);
+
+        return () => window.clearInterval(interval);
+    }, [entryError]);
 
     const applyResultToParticipant = (checkpointOfResult: string, bib: number, response: QueuedResultResponse) => {
         if (checkpointOfResult !== checkpointName) {
@@ -212,6 +235,11 @@ const AdminCheckpointTiming: React.FC = () => {
                 );
                 outcomes[entry.id] = response.data;
                 applyResultToParticipant(entry.checkpointName, entry.bib, response.data);
+                setSyncedResults((current) => (
+                    current.some((syncedResult) => syncedResult.id === entry.id)
+                        ? current
+                        : [...current, { id: entry.id, bib: entry.bib }]
+                ));
             } catch (requestError) {
                 const responseStatus = axios.isAxiosError(requestError) ? requestError.response?.status : undefined;
                 const isRejectedByServer = responseStatus !== undefined && responseStatus >= 400 && responseStatus < 500;
@@ -238,7 +266,7 @@ const AdminCheckpointTiming: React.FC = () => {
             return false;
         }
 
-        setError(null);
+        setEntryError(null);
         setSavingBib(participant.bib);
 
         const requestId = generateRequestId();
@@ -253,12 +281,12 @@ const AdminCheckpointTiming: React.FC = () => {
 
             if (outcome === undefined) {
                 // Still queued (network failure); the entry is safely persisted and will retry on the next save or reload.
-                setError(`Няма връзка. Резултатът за номер ${participant.bib} е запазен и ще бъде изпратен автоматично.`);
+                setEntryError(`Няма връзка. Резултатът за номер ${participant.bib} е запазен и ще бъде изпратен автоматично.`);
                 return false;
             }
 
             if ("rejectedStatus" in outcome) {
-                setError(outcome.rejectedStatus === 409
+                setEntryError(outcome.rejectedStatus === 409
                     ? "Състезанието не е активно. Въвеждането на времена е изключено."
                     : `Резултатът за номер ${participant.bib} не можа да бъде записан.`);
                 return false;
@@ -305,6 +333,13 @@ const AdminCheckpointTiming: React.FC = () => {
         }
     };
 
+    const closeEntryDialog = () => {
+        setEntryError(null);
+        setErrorCloseCountdown(null);
+        setConfirmingParticipant(null);
+        setEditingParticipant(null);
+    };
+
     if (loading) {
         return <AdminStatusText>Зареждане на контролния пункт...</AdminStatusText>;
     }
@@ -313,6 +348,13 @@ const AdminCheckpointTiming: React.FC = () => {
         return <AdminErrorText>{error ?? "Контролният пункт не е намерен."}</AdminErrorText>;
     }
 
+    const syncedParticipantNames = Array.from(new Set(
+        syncedResults
+            .map(({ bib }) => data.participants.find((participant) => participant.bib === bib)?.name)
+            .filter((name): name is string => Boolean(name)),
+    ));
+    console.log('syncedParticipantNames', syncedParticipantNames);
+    console.log('syncedResults', syncedResults);
     return (
         <>
             <AdminBibButton type="button" onClick={() => navigate("/admin/timing")}>
@@ -331,7 +373,27 @@ const AdminCheckpointTiming: React.FC = () => {
             </AdminStatusText>
             {pendingCount > 0 && (
                 <AdminStatusText>
-                    Изчакват изпращане: {pendingCount}. Ще бъдат опитани отново автоматично.
+                    Изчакват изпращане: {pendingCount} {pendingCount === 1 ? "резултат" : `резултата`}. Ще бъдат изпратени отново автоматично. &nbsp;
+                    <AdminBibButton
+                        disabled={flushingQueue}
+                        type="button"
+                        onClick={async () => {
+                            setFlushingQueue(true);
+                            try {
+                                await flushPendingQueue();
+                            } finally {
+                                setFlushingQueue(false);
+                            }
+                        }}
+                    >
+                        {flushingQueue ? "Опит..." : "Опитай отново"}
+                    </AdminBibButton>
+                </AdminStatusText>
+            )}
+            {syncedResults.length > 0 && (
+                <AdminStatusText style={{ color: "#8a5a00" }} role="status">
+                    Синхронизирани резултати: {syncedResults.length}.
+                    {syncedParticipantNames.length > 0 && ` Участници: ${syncedParticipantNames.join(", ")}.`}
                 </AdminStatusText>
             )}
             <AdminLabel>
@@ -344,13 +406,34 @@ const AdminCheckpointTiming: React.FC = () => {
                     value={bibFilter}
                 />
             </AdminLabel>
+            {bibFilter && (
+                <div style={{ display: "flex", flexWrap: "wrap", gap: "8px", width: "100%" }}>
+                    {data.participants
+                        .filter((participant) => participant.bib.toString().includes(bibFilter))
+                        .map((participant) => {
+                            const passed = Boolean(participant.passed_at);
+                            return (
+                                <TimingEntryParticipant
+                                    as={passed ? "div" : "button"}
+                                    disabled={passed ? undefined : savingBib !== null || (!raceIsLive && !raceFinished)}
+                                    key={`bib-match-${participant.email}`}
+                                    passed={passed}
+                                    type={passed ? undefined : "button"}
+                                    style={{ width: "auto", minWidth: "220px" }}
+                                    onClick={() => passed ? openManualEdit(participant) : recordPassage(participant)}
+                                >
+                                    <strong>{participant.bib}</strong>
+                                    <span>{participant.name}</span>
+                                </TimingEntryParticipant>
+                            );
+                        })}
+                </div>
+            )}
             {error && <AdminErrorText>{error}</AdminErrorText>}
             <TimingParticipantsGrid>
                 {DISTANCES.map((distance) => {
                     const appliesToDistance = data.checkpoint.checkpoint_for.split("|").includes(distance);
-                    const participants = data.participants.filter((participant) => (
-                        participant.distance === distance && participant.bib.toString().includes(bibFilter)
-                    ));
+                    const participants = data.participants.filter((participant) => participant.distance === distance);
                     const passed = participants.filter((participant) => participant.passed_at).sort(byPassageTime);
                     const incoming = participants.filter((participant) => !participant.passed_at);
                     const incomingGroups = Array.from(new Map(incoming.map((participant) => [
@@ -437,7 +520,7 @@ const AdminCheckpointTiming: React.FC = () => {
                 })}
             </TimingParticipantsGrid>
             {confirmingParticipant && createPortal(
-                <AdminDialogBackdrop onMouseDown={() => savingBib === null && setConfirmingParticipant(null)}>
+                <AdminDialogBackdrop onMouseDown={() => savingBib === null && closeEntryDialog()}>
                     <AdminDialog
                         onSubmit={async (event) => {
                             event.preventDefault();
@@ -452,40 +535,46 @@ const AdminCheckpointTiming: React.FC = () => {
                         <p>
                             Потвърдете преминаването на номер {confirmingParticipant.bib}, {confirmingParticipant.name}.
                         </p>
+                        {entryError && <AdminErrorText>{entryError}</AdminErrorText>}
                         <AdminDialogActions>
                             <AdminBibButton
                                 disabled={savingBib !== null}
                                 type="button"
-                                onClick={() => setConfirmingParticipant(null)}
+                                onClick={closeEntryDialog}
                             >
-                                Отказ
+                                {entryError ? `Затвори (${errorCloseCountdown ?? 0})` : "Отказ"}
                             </AdminBibButton>
-                            <AdminBibButton
-                                disabled={savingBib !== null || !raceIsLive}
-                                type="button"
-                                onClick={() => {
-                                    const participant = confirmingParticipant;
-                                    setConfirmingParticipant(null);
-                                    openManualEdit(participant);
-                                }}
-                            >
-                                Ръчно време
-                            </AdminBibButton>
-                            <SignOutButton autoFocus disabled={savingBib !== null || !raceIsLive} type="submit">
-                                {savingBib !== null ? "Записване..." : "Потвърди сега"}
-                            </SignOutButton>
+                            {!entryError && (
+                                <>
+                                    <AdminBibButton
+                                        disabled={savingBib !== null || !raceIsLive}
+                                        type="button"
+                                        onClick={() => {
+                                            const participant = confirmingParticipant;
+                                            setConfirmingParticipant(null);
+                                            openManualEdit(participant);
+                                        }}
+                                    >
+                                        Ръчно време
+                                    </AdminBibButton>
+                                    <SignOutButton autoFocus disabled={savingBib !== null || !raceIsLive} type="submit">
+                                        {savingBib !== null ? "Записване..." : "Потвърди сега"}
+                                    </SignOutButton>
+                                </>
+                            )}
                         </AdminDialogActions>
                     </AdminDialog>
                 </AdminDialogBackdrop>,
                 document.body,
             )}
             {editingParticipant && createPortal(
-                <AdminDialogBackdrop onMouseDown={() => savingBib === null && setEditingParticipant(null)}>
+                <AdminDialogBackdrop onMouseDown={() => savingBib === null && closeEntryDialog()}>
                     <AdminDialog onSubmit={submitManualEdit} onMouseDown={(event) => event.stopPropagation()}>
                         <h2>Ръчно време</h2>
                         <p>
                             Въведете точната дата и час за номер {editingParticipant.bib}, {editingParticipant.name}.
                         </p>
+                        {entryError && <AdminErrorText>{entryError}</AdminErrorText>}
                         <label htmlFor="manual-checkpoint-date">
                             Дата
                             <input
@@ -512,16 +601,18 @@ const AdminCheckpointTiming: React.FC = () => {
                             <AdminBibButton
                                 disabled={savingBib !== null}
                                 type="button"
-                                onClick={() => setEditingParticipant(null)}
+                                onClick={closeEntryDialog}
                             >
-                                Отказ
+                                {entryError ? `Затвори (${errorCloseCountdown ?? 0})` : "Отказ"}
                             </AdminBibButton>
-                            <SignOutButton
-                                disabled={savingBib !== null || !manualPassedDate || !manualPassedTime}
-                                type="submit"
-                            >
-                                {savingBib !== null ? "Записване..." : "Запиши време"}
-                            </SignOutButton>
+                            {!entryError && (
+                                <SignOutButton
+                                    disabled={savingBib !== null || !manualPassedDate || !manualPassedTime}
+                                    type="submit"
+                                >
+                                    {savingBib !== null ? "Записване..." : "Запиши време"}
+                                </SignOutButton>
+                            )}
                         </AdminDialogActions>
                     </AdminDialog>
                 </AdminDialogBackdrop>,

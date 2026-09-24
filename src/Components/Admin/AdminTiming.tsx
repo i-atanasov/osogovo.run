@@ -374,9 +374,6 @@ const AdminTiming: React.FC = () => {
                             .map((checkpoint) => (
                             <TimingCheckpointButton
                                 key={checkpoint.id}
-                                active={checkpoint.id === selectedCheckpointId}
-                                type="button"
-                                onClick={() => setSelectedCheckpointId(checkpoint.id)}
                             >
                                 {checkpoint.checkpoint_name_bg}
                                 <small>
@@ -384,17 +381,20 @@ const AdminTiming: React.FC = () => {
                                         ? `Финал ${checkpoint.checkpoint_final} км`
                                         : `${checkpoint.checkpoint_distance} км / ${checkpoint.checkpoint_elevation} м`}
                                 </small>
+                                <TimingStartButton
+                                    type="button"
+                                    onClick={(event) => {
+                                        event.stopPropagation();
+                                        setSelectedCheckpointId(checkpoint.id);
+                                        setCheckpointConfirmationOpen(true);
+                                    }}
+                                >
+                                    Поеми съдийство
+                                </TimingStartButton>
                             </TimingCheckpointButton>
                             ))}
                     </TimingCheckpointMenu>
-                    {selectedCheckpoint && (
-                        <TimingStartButton
-                            type="button"
-                            onClick={() => setCheckpointConfirmationOpen(true)}
-                        >
-                            Въведи резултат за {selectedCheckpoint.checkpoint_name_bg}
-                        </TimingStartButton>
-                    )}
+                    
                 </>
             )}
             {checkpointConfirmationOpen && selectedCheckpoint && createPortal(

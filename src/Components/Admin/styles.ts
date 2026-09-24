@@ -457,14 +457,14 @@ export const TimingCheckpointMenu = styled.nav`
     padding: 4px;
 `;
 
-export const TimingCheckpointButton = styled.button<{ active: boolean }>`
+export const TimingCheckpointButton = styled.div`
     flex: none;
     min-height: 44px;
     padding: 8px 12px;
-    border: 1px solid ${props => props.active ? colors.RuenOrange : 'rgba(48, 51, 47, 0.24)'};
+    border: 1px solid rgba(48, 51, 47, 0.24);
     border-radius: 4px;
-    background: ${props => props.active ? colors.RuenOrange : 'white'};
-    color: ${props => props.active ? 'white' : colors.OsogovoBlack};
+    background: white;
+    color: ${colors.OsogovoBlack};
     font-family: inherit;
     font-size: 15px;
     text-align: left;

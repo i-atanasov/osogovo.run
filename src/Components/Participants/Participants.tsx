@@ -80,7 +80,7 @@ export const Participants: React.FC = () => {
                     {participants.map((participant) => {
                         const category = getCategory(participant);
                         const final = participant.distance === '14' ? 'osogovo' : 'ruen';
-                        const participantPath = '/participants' //getParticipantPath(participant.id);
+                        const participantPath = getParticipantPath(participant.id);
                         position++; // Increment position for each participant
                         return (
                             (categoryFilter && !category.includes(categoryFilter)) ? null : 

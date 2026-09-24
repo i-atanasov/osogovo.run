@@ -103,7 +103,7 @@ export const Results2025: React.FC = () => {
                     {filtered.map((result) => {
                         const finishTime = result.distance === '14' ? result.osogovo : result.ruen;
                         const category = getCategory(result, year);
-                        const participantPath = '/results?year=2025' //getParticipantPath(result.id);
+                        const participantPath = getParticipantPath(result.id);
 
                         return (
                             <TableRow key={result.bib} highlighted={false}>
