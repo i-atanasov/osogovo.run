@@ -8,6 +8,7 @@ export type CachedAdminParticipant = {
 
 const PARTICIPANTS_CACHE_KEY = "osogovo-admin-participants";
 const CHECKPOINTS_CACHE_KEY = "osogovo-admin-checkpoints";
+const RACE_START_CACHE_KEY = "osogovo-admin-race-start";
 
 export const readCachedParticipants = <T extends CachedAdminParticipant>(): T[] => {
     try {
@@ -38,6 +39,25 @@ export const readCachedCheckpoints = <T>(): T[] => {
 export const writeCachedCheckpoints = (checkpoints: unknown[]) => {
     try {
         window.localStorage.setItem(CHECKPOINTS_CACHE_KEY, JSON.stringify(checkpoints));
+    } catch {
+        // Storage may be unavailable; live network loading still works.
+    }
+};
+
+export const readCachedRaceStart = <T>(): T | null => {
+    try {
+        const raw = window.localStorage.getItem(RACE_START_CACHE_KEY);
+        return raw ? JSON.parse(raw) as T : null;
+    } catch {
+        return null;
+    }
+};
+
+export const writeCachedRaceStart = (raceStart: unknown | null) => {
+    try {
+        if (raceStart) {
+            window.localStorage.setItem(RACE_START_CACHE_KEY, JSON.stringify(raceStart));
+        }
     } catch {
         // Storage may be unavailable; live network loading still works.
     }

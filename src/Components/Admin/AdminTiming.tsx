@@ -26,7 +26,7 @@ import {
     SignOutButton,
 } from "./styles";
 import Button from "../Button/Button";
-import { readCachedCheckpoints, readCachedParticipants, writeCachedCheckpoints, writeCachedParticipants } from "./participantCache";
+import { readCachedCheckpoints, readCachedParticipants, readCachedRaceStart, writeCachedCheckpoints, writeCachedParticipants, writeCachedRaceStart } from "./participantCache";
 
 type TimingParticipant = {
     email: string;
@@ -92,6 +92,7 @@ const AdminTiming: React.FC = () => {
     React.useEffect(() => {
         const cachedParticipants = readCachedParticipants();
         const cachedCheckpoints = readCachedCheckpoints<Checkpoint>();
+        const cachedRaceStart = readCachedRaceStart<RaceStart>();
         if (cachedParticipants.length > 0) {
             setParticipants(cachedParticipants
                 .filter((participant) => participant.bib !== null && participant.bib !== undefined)
@@ -110,6 +111,9 @@ const AdminTiming: React.FC = () => {
         }
         if (cachedCheckpoints.length > 0) {
             setCheckpoints(cachedCheckpoints);
+        }
+        if (cachedRaceStart) {
+            setRaceStart(cachedRaceStart);
         }
 
         const fetchParticipants = async () => {
@@ -130,6 +134,7 @@ const AdminTiming: React.FC = () => {
                 setCheckpoints(checkpointsResponse.data);
                 writeCachedCheckpoints(checkpointsResponse.data);
                 setRaceStart(raceStartResponse.data.raceStart);
+                writeCachedRaceStart(raceStartResponse.data.raceStart);
             } catch {
                 if (readCachedParticipants().length === 0 && readCachedCheckpoints<Checkpoint>().length === 0) {
                     setError("Could not load timing data.");
