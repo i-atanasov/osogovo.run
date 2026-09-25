@@ -20,6 +20,7 @@ import {
     TimingEntrySection,
     TimingParticipantsGrid,
 } from "./styles";
+import { readCachedParticipants } from "./participantCache";
 
 type Checkpoint = {
     checkpoint_name: string;
@@ -52,6 +53,7 @@ type RaceStart = {
 const apiUrl = process.env.REACT_APP_REGISTRATION_API_URL;
 const DISTANCES = ["26", "14"];
 const RACE_DURATION_MILLISECONDS = 7 * 60 * 60 * 1000;
+const PARTICIPANT_CACHE_PREFIX = "osogovo-admin-checkpoint-participants:";
 
 const byPassageTime = (first: CheckpointParticipant, second: CheckpointParticipant) => (
     new Date(first.passed_at ?? first.previous_checkpoint_time ?? 0).getTime()
@@ -109,6 +111,23 @@ const writePendingQueue = (queue: QueuedResult[]) => {
     }
 };
 
+const readCachedTiming = (checkpointName: string): CheckpointTimingResponse | null => {
+    try {
+        const raw = window.localStorage.getItem(`${PARTICIPANT_CACHE_PREFIX}${checkpointName}`);
+        return raw ? JSON.parse(raw) as CheckpointTimingResponse : null;
+    } catch {
+        return null;
+    }
+};
+
+const writeCachedTiming = (checkpointName: string, data: CheckpointTimingResponse) => {
+    try {
+        window.localStorage.setItem(`${PARTICIPANT_CACHE_PREFIX}${checkpointName}`, JSON.stringify(data));
+    } catch {
+        // Storage may be unavailable; live network loading still works.
+    }
+};
+
 const generateRequestId = () => (
     window.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random().toString(36).slice(2)}`
 );
@@ -145,7 +164,7 @@ const AdminCheckpointTiming: React.FC = () => {
             }
 
             try {
-                const [timingResponse, raceStartResponse] = await Promise.all([
+                const [timingResponse, raceStartResponse] = await Promise.allSettled([
                     axios.get<CheckpointTimingResponse>(
                         `${apiUrl}/admin/timing/${encodeURIComponent(checkpointName)}`,
                         { withCredentials: true },
@@ -155,8 +174,59 @@ const AdminCheckpointTiming: React.FC = () => {
                         { withCredentials: true },
                     ),
                 ]);
-                setData(timingResponse.data);
-                setRaceStartAt(raceStartResponse.data.raceStart?.started_at ?? null);
+                const cachedTiming = readCachedTiming(checkpointName);
+
+                if (timingResponse.status === "fulfilled") {
+                    const liveTiming = timingResponse.value.data;
+                    const cachedParticipants = readCachedParticipants();
+                    const timingParticipants = cachedParticipants.length > 0
+                        ? cachedParticipants
+                            .filter((participant) => participant.bib !== null && participant.bib !== undefined)
+                            .map((participant) => {
+                                const timingParticipant = liveTiming.participants.find((item) => item.email === participant.email);
+                                return timingParticipant ?? {
+                                    email: participant.email,
+                                    name: participant.name,
+                                    distance: participant.distance,
+                                    bib: participant.bib as number,
+                                    passed_at: null,
+                                    recorded_by_name: null,
+                                    previous_checkpoint_name: null,
+                                    previous_checkpoint_distance: null,
+                                    previous_checkpoint_time: null,
+                                };
+                            })
+                        : liveTiming.participants;
+                    const mergedTiming = { ...liveTiming, participants: timingParticipants };
+                    setData(mergedTiming);
+                    writeCachedTiming(checkpointName, mergedTiming);
+                } else if (cachedTiming) {
+                    const cachedParticipants = readCachedParticipants();
+                    setData(cachedParticipants.length > 0
+                        ? {
+                            ...cachedTiming,
+                            participants: cachedParticipants
+                                .filter((participant) => participant.bib !== null && participant.bib !== undefined)
+                                .map((participant) => cachedTiming.participants.find((item) => item.email === participant.email) ?? {
+                                    email: participant.email,
+                                    name: participant.name,
+                                    distance: participant.distance,
+                                    bib: participant.bib as number,
+                                    passed_at: null,
+                                    recorded_by_name: null,
+                                    previous_checkpoint_name: null,
+                                    previous_checkpoint_distance: null,
+                                    previous_checkpoint_time: null,
+                                }),
+                        }
+                        : cachedTiming);
+                } else {
+                    throw timingResponse.reason;
+                }
+
+                if (raceStartResponse.status === "fulfilled") {
+                    setRaceStartAt(raceStartResponse.value.data.raceStart?.started_at ?? null);
+                }
                 await flushPendingQueue();
             } catch {
                 setError("Данните за контролния пункт не можаха да бъдат заредени.");

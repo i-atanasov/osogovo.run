@@ -17,6 +17,7 @@ import {
     AdminTableWrapper,
     SignOutButton,
 } from "./styles";
+import { readCachedParticipants, writeCachedParticipants } from "./participantCache";
 
 type AdminParticipant = {
     email: string;
@@ -77,6 +78,14 @@ const AdminParticipants: React.FC = () => {
     const [openNoteEditors, setOpenNoteEditors] = React.useState<Set<string>>(() => new Set());
 
     React.useEffect(() => {
+        const cachedParticipants = readCachedParticipants<AdminParticipant>();
+        if (cachedParticipants.length > 0) {
+            setParticipants(cachedParticipants);
+            setLoading(false);
+        }
+    }, []);
+
+    React.useEffect(() => {
         const fetchParticipants = async () => {
             if (!apiUrl) {
                 setError('Missing API URL configuration');
@@ -89,6 +98,7 @@ const AdminParticipants: React.FC = () => {
                     withCredentials: true,
                 });
                 setParticipants(response.data);
+                writeCachedParticipants(response.data);
             } catch {
                 setError('Could not load participant data.');
             } finally {
