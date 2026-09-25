@@ -26,6 +26,7 @@ import {
     SignOutButton,
 } from "./styles";
 import Button from "../Button/Button";
+import { readCachedParticipants, writeCachedParticipants } from "./participantCache";
 
 type TimingParticipant = {
     email: string;
@@ -89,6 +90,24 @@ const AdminTiming: React.FC = () => {
     const [now, setNow] = React.useState(Date.now());
 
     React.useEffect(() => {
+        const cachedParticipants = readCachedParticipants();
+        if (cachedParticipants.length > 0) {
+            setParticipants(cachedParticipants
+                .filter((participant) => participant.bib !== null && participant.bib !== undefined)
+                .map((participant) => ({
+                    email: participant.email,
+                    name: participant.name,
+                    phone_number: participant.phone_number ?? null,
+                    distance: participant.distance,
+                    bib: participant.bib as number,
+                    checkpoint_id: null,
+                    checkpoint_name_bg: null,
+                    checkpoint_distance: null,
+                    passed_at: null,
+                })));
+            setLoading(false);
+        }
+
         const fetchParticipants = async () => {
             if (!apiUrl) {
                 setError("Missing API URL configuration");
@@ -103,10 +122,13 @@ const AdminTiming: React.FC = () => {
                     axios.get<{ raceStart: RaceStart | null }>(`${apiUrl}/admin/race-start`, { withCredentials: true }),
                 ]);
                 setParticipants(participantsResponse.data);
+                writeCachedParticipants(participantsResponse.data);
                 setCheckpoints(checkpointsResponse.data);
                 setRaceStart(raceStartResponse.data.raceStart);
             } catch {
-                setError("Could not load timing data.");
+                if (readCachedParticipants().length === 0) {
+                    setError("Could not load timing data.");
+                }
             } finally {
                 setLoading(false);
             }
