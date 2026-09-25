@@ -89,6 +89,7 @@ const AdminParticipants: React.FC = () => {
     const [savingBib, setSavingBib] = React.useState(false);
     const [confirmingBib, setConfirmingBib] = React.useState<number | null>(null);
     const [savingNoteEmail, setSavingNoteEmail] = React.useState<string | null>(null);
+    const [savingPaidEmail, setSavingPaidEmail] = React.useState<string | null>(null);
     const [noteErrorEmail, setNoteErrorEmail] = React.useState<string | null>(null);
     const [openNoteEditors, setOpenNoteEditors] = React.useState<Set<string>>(() => new Set());
     const [registrationOpen, setRegistrationOpen] = React.useState(false);
@@ -222,6 +223,32 @@ const AdminParticipants: React.FC = () => {
             }
         } finally {
             setSavingBib(false);
+        }
+    };
+
+    const markParticipantPaid = async (participant: AdminParticipant) => {
+        if (!apiUrl || savingPaidEmail) return;
+
+        try {
+            setSavingPaidEmail(participant.email);
+            const response = await axios.patch<{ paid: boolean; payment_status: string; updated_at: string }>(
+                `${apiUrl}/admin/participants/${encodeURIComponent(participant.email)}/mark-paid`,
+                undefined,
+                { withCredentials: true },
+            );
+            setParticipants((currentParticipants) => {
+                const updated = currentParticipants.map((currentParticipant) => (
+                    currentParticipant.email === participant.email
+                        ? { ...currentParticipant, paid: response.data.paid, payment_status: response.data.payment_status, updated_at: response.data.updated_at }
+                        : currentParticipant
+                ));
+                writeCachedParticipants(updated);
+                return updated;
+            });
+        } catch {
+            setError('Неуспешно отбелязване на плащането.');
+        } finally {
+            setSavingPaidEmail(null);
         }
     };
 
@@ -417,7 +444,21 @@ const AdminParticipants: React.FC = () => {
                                     </AdminBibValue>
                                 )}
                             </td>
-                            <td>{participant.name}</td>
+                            <td>
+                                {participant.name} &nbsp;
+                                {!participant.paid && (
+                                    <AdminBibButton
+                                        type="button"
+                                        disabled={savingPaidEmail !== null}
+                                        onClick={(event) => {
+                                            event.stopPropagation();
+                                            markParticipantPaid(participant);
+                                        }}
+                                    >
+                                        {savingPaidEmail === participant.email ? 'Запазване...' : 'Отбележи плащане'}
+                                    </AdminBibButton>
+                                )}
+                            </td>
                             <td onClick={(event) => event.stopPropagation()}>
                                 {participant.note?.trim() || openNoteEditors.has(participant.email) ? (
                                     <AdminNoteCell>
