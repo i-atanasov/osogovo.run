@@ -133,7 +133,7 @@ export const AdminFilters = styled.div`
     display: flex;
     flex-wrap: wrap;
     gap: 16px;
-    margin-bottom: 16px;
+    margin: 16px 0;
 
     label {
         color: ${colors.OsogovoBlack};
@@ -143,7 +143,7 @@ export const AdminFilters = styled.div`
         gap: 6px;
     }
 
-    select {
+    select, input {
         background: white;
         border: 1px solid rgba(48, 51, 47, 0.24);
         border-radius: 4px;
@@ -312,7 +312,7 @@ export const AdminDialog = styled.form`
         font-size: 16px;
     }
 
-    input {
+    input, select {
         min-height: 42px;
         box-sizing: border-box;
         border: 1px solid rgba(48, 51, 47, 0.24);

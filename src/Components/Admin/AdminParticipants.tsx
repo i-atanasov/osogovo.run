@@ -50,6 +50,20 @@ type NoteResponse = {
     updated_at: string;
 };
 
+type AdminRegistrationForm = {
+    email: string;
+    name: string;
+    distance: '14' | '26';
+    gender: 'male' | 'female' | '';
+    birth: string;
+    team: string;
+    phoneNumber: string;
+    discountCode: string;
+    withTShirt: boolean;
+    tShirtSize: string;
+    termsAndConditions: boolean;
+};
+
 const apiUrl = process.env.REACT_APP_REGISTRATION_API_URL;
 
 const getAgeCategory = (birth: number): 'sub20' | '20-40' | 'over40' => {
@@ -65,6 +79,7 @@ const AdminParticipants: React.FC = () => {
     const [error, setError] = React.useState<string | null>(null);
     const [selectedEmail, setSelectedEmail] = React.useState<string | null>(null);
     const [genderFilter, setGenderFilter] = React.useState('');
+    const [nameFilter, setNameFilter] = React.useState('');
     const [distanceFilter, setDistanceFilter] = React.useState('');
     const [ageFilter, setAgeFilter] = React.useState('');
     const [paidFilter, setPaidFilter] = React.useState('');
@@ -76,6 +91,13 @@ const AdminParticipants: React.FC = () => {
     const [savingNoteEmail, setSavingNoteEmail] = React.useState<string | null>(null);
     const [noteErrorEmail, setNoteErrorEmail] = React.useState<string | null>(null);
     const [openNoteEditors, setOpenNoteEditors] = React.useState<Set<string>>(() => new Set());
+    const [registrationOpen, setRegistrationOpen] = React.useState(false);
+    const [registrationSaving, setRegistrationSaving] = React.useState(false);
+    const [registrationError, setRegistrationError] = React.useState<string | null>(null);
+    const [registrationForm, setRegistrationForm] = React.useState<AdminRegistrationForm>({
+        email: '', name: '', distance: '26', gender: '', birth: '', team: '', phoneNumber: '',
+        discountCode: '', withTShirt: false, tShirtSize: '', termsAndConditions: true,
+    });
 
     React.useEffect(() => {
         const cachedParticipants = readCachedParticipants<AdminParticipant>();
@@ -118,7 +140,8 @@ const AdminParticipants: React.FC = () => {
     }
 
     const filteredParticipants = participants.filter((participant) => (
-        (!genderFilter || participant.gender === genderFilter)
+        (!nameFilter || participant.name.toLocaleLowerCase('bg-BG').includes(nameFilter.trim().toLocaleLowerCase('bg-BG')))
+        && (!genderFilter || participant.gender === genderFilter)
         && (!distanceFilter || participant.distance === distanceFilter)
         && (!ageFilter || getAgeCategory(participant.birth) === ageFilter)
         && (!paidFilter || participant.payment_status === 'paid')
@@ -250,9 +273,50 @@ const AdminParticipants: React.FC = () => {
         }
     };
 
+    const updateRegistrationField = <K extends keyof AdminRegistrationForm>(field: K, value: AdminRegistrationForm[K]) => {
+        setRegistrationForm((current) => ({ ...current, [field]: value }));
+    };
+
+    const submitAdminRegistration = async (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        if (!apiUrl) return;
+
+        try {
+            setRegistrationSaving(true);
+            setRegistrationError(null);
+            const response = await axios.post<AdminParticipant>(`${apiUrl}/admin/participants/register`, {
+                ...registrationForm,
+                birth: Number(registrationForm.birth),
+                paid: true,
+            }, { withCredentials: true });
+            setParticipants((current) => [response.data, ...current.filter((participant) => participant.email !== response.data.email)]);
+            writeCachedParticipants([response.data, ...participants.filter((participant) => participant.email !== response.data.email)]);
+            setRegistrationOpen(false);
+            setRegistrationForm({ email: '', name: '', distance: '26', gender: '', birth: '', team: '', phoneNumber: '', discountCode: '', withTShirt: false, tShirtSize: '', termsAndConditions: true });
+        } catch (requestError) {
+            setRegistrationError(axios.isAxiosError(requestError) && typeof requestError.response?.data?.error === 'string'
+                ? requestError.response.data.error
+                : 'Регистрацията не можа да бъде запазена.');
+        } finally {
+            setRegistrationSaving(false);
+        }
+    };
+
     return (
         <AdminTableWrapper>
+            <AdminBibButton type="button" onClick={() => { setRegistrationError(null); setRegistrationOpen(true); }}>
+                Регистрирай участник на място
+            </AdminBibButton>
             <AdminFilters>
+                <label>
+                    Име
+                    <input
+                        onChange={(event) => setNameFilter(event.target.value)}
+                        placeholder="Търсене по име"
+                        type="search"
+                        value={nameFilter}
+                    />
+                </label>
                 <label>
                     Пол
                     <select value={genderFilter} onChange={(event) => setGenderFilter(event.target.value)}>
@@ -286,6 +350,7 @@ const AdminParticipants: React.FC = () => {
                     </select>
                 </label>
             </AdminFilters>
+
             <AdminStatusText>{filteredParticipants.length} участници. Общо платени: {filteredParticipants.filter((participant) => participant.payment_status === 'paid').length}</AdminStatusText>
             <AdminTable>
                 <thead>
@@ -474,6 +539,30 @@ const AdminParticipants: React.FC = () => {
                             </AdminDialog>
                         </AdminDialogBackdrop>
                     )}
+                </AdminDialogBackdrop>
+            )}
+            {registrationOpen && (
+                <AdminDialogBackdrop
+                    onMouseDown={() => !registrationSaving && setRegistrationOpen(false)}
+                    style={{ alignItems: 'start', justifyItems: 'center', padding: '88px 32px 24px' }}
+                >
+                    <AdminDialog
+                        onSubmit={submitAdminRegistration}
+                        onMouseDown={(event) => event.stopPropagation()}
+                        style={{ maxHeight: 'calc(100vh - 112px)', overflowY: 'auto' }}
+                    >
+                        <h2>Регистрация на място</h2>
+                        <label>Дистанция<select value={registrationForm.distance} onChange={(event) => updateRegistrationField('distance', event.target.value as '14' | '26')}><option value="14">14 км</option><option value="26">26 км</option></select></label>
+                        <label>Имейл<input required type="email" value={registrationForm.email} onChange={(event) => updateRegistrationField('email', event.target.value)} /></label>
+                        <label>Имена<input required value={registrationForm.name} onChange={(event) => updateRegistrationField('name', event.target.value)} /></label>
+                        <label>Пол<select required value={registrationForm.gender} onChange={(event) => updateRegistrationField('gender', event.target.value as 'male' | 'female')}><option value="">Избери</option><option value="female">Жена</option><option value="male">Мъж</option></select></label>
+                        <label>Година на раждане<input required type="number" value={registrationForm.birth} onChange={(event) => updateRegistrationField('birth', event.target.value)} /></label>
+                        <label>Телефон<input value={registrationForm.phoneNumber} onChange={(event) => updateRegistrationField('phoneNumber', event.target.value)} /></label>
+                        <label>Отбор<input value={registrationForm.team} onChange={(event) => updateRegistrationField('team', event.target.value)} /></label>
+                        <label><input required type="checkbox" checked={registrationForm.termsAndConditions} onChange={(event) => updateRegistrationField('termsAndConditions', event.target.checked)} /> Съгласие с условията</label>
+                        {registrationError && <AdminErrorText>{registrationError}</AdminErrorText>}
+                        <AdminDialogActions><AdminBibButton type="button" disabled={registrationSaving} onClick={() => setRegistrationOpen(false)}>Отказ</AdminBibButton><SignOutButton type="submit" disabled={registrationSaving}>{registrationSaving ? 'Запазване...' : 'Потвърди платена регистрация'}</SignOutButton></AdminDialogActions>
+                    </AdminDialog>
                 </AdminDialogBackdrop>
             )}
         </AdminTableWrapper>
