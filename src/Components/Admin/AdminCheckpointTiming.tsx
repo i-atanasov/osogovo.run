@@ -20,7 +20,7 @@ import {
     TimingEntrySection,
     TimingParticipantsGrid,
 } from "./styles";
-import { readCachedParticipants } from "./participantCache";
+import { readCachedCheckpoints, readCachedParticipants, readCachedRaceStart } from "./participantCache";
 
 type Checkpoint = {
     checkpoint_name: string;
@@ -175,6 +175,10 @@ const AdminCheckpointTiming: React.FC = () => {
                     ),
                 ]);
                 const cachedTiming = readCachedTiming(checkpointName);
+                const cachedParticipants = readCachedParticipants();
+                const cachedCheckpoint = readCachedCheckpoints<Checkpoint>()
+                    .find((checkpoint) => checkpoint.checkpoint_name === checkpointName);
+                const cachedRaceStart = readCachedRaceStart<RaceStart>();
 
                 if (timingResponse.status === "fulfilled") {
                     const liveTiming = timingResponse.value.data;
@@ -201,7 +205,6 @@ const AdminCheckpointTiming: React.FC = () => {
                     setData(mergedTiming);
                     writeCachedTiming(checkpointName, mergedTiming);
                 } else if (cachedTiming) {
-                    const cachedParticipants = readCachedParticipants();
                     setData(cachedParticipants.length > 0
                         ? {
                             ...cachedTiming,
@@ -220,12 +223,29 @@ const AdminCheckpointTiming: React.FC = () => {
                                 }),
                         }
                         : cachedTiming);
+                } else if (cachedCheckpoint && cachedParticipants.length > 0) {
+                    const checkpointParticipants: CheckpointParticipant[] = cachedParticipants
+                        .filter((participant) => participant.bib !== null && participant.bib !== undefined)
+                        .map((participant) => ({
+                            email: participant.email,
+                            name: participant.name,
+                            distance: participant.distance,
+                            bib: participant.bib as number,
+                            passed_at: null,
+                            recorded_by_name: null,
+                            previous_checkpoint_name: null,
+                            previous_checkpoint_distance: null,
+                            previous_checkpoint_time: null,
+                        }));
+                    setData({ checkpoint: cachedCheckpoint, participants: checkpointParticipants });
                 } else {
                     throw timingResponse.reason;
                 }
 
                 if (raceStartResponse.status === "fulfilled") {
                     setRaceStartAt(raceStartResponse.value.data.raceStart?.started_at ?? null);
+                } else if (cachedRaceStart) {
+                    setRaceStartAt(cachedRaceStart.started_at);
                 }
                 await flushPendingQueue();
             } catch {

@@ -193,6 +193,16 @@ export const AdminTableRow = styled.tr<{ selected: boolean }>`
     &:focus-visible {
         box-shadow: inset 3px 0 0 ${colors.OsogovoBlack};
     }
+    select {
+        background: white;
+        border: 2px solid ${colors.RuenOrange};
+        border-radius: 4px;
+        color: ${colors.OsogovoBlack};
+        font-family: inherit;
+        font-size: 16px;
+        min-height: 20px;
+        padding: 0 10px;
+    }
 `;
 
 export const AdminBibButton = styled.button`

@@ -32,9 +32,10 @@ export const ParticipantsWrapper = styled.div`
         color: ${colors.RuenOrange};
     }
     h2 {
-        border: 4px solid ${colors.RuenOrange};
+        border: 3px solid ${colors.RuenOrange};
+        border-radius: 15px;
         color: black;
-        padding: 5px;
+        padding: 5px 10px;
         margin: 40px 0 10px;
         width: fit-content;
     }

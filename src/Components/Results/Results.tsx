@@ -23,6 +23,7 @@ type Result = {
     birth: string;
     distance: string;
     gender: string;
+    team?: string | null;
     bib: number;
     race_start_at: string | null;
     checkpoint_results: CheckpointResult[];
@@ -127,6 +128,7 @@ export const Results: React.FC = () => {
                     <tr>
                         <th>{t("results:table.name")}</th>
                         <th>{t("results:table.bib")}</th>
+                        <th>{t("results:table.team")}</th>
                         <th>{t("results:table.result")}</th>
                     </tr>
                 </thead>
@@ -146,7 +148,7 @@ export const Results: React.FC = () => {
                             <React.Fragment key={checkpoint.checkpointId}>
                                 <tr>
                                     <th
-                                        colSpan={3}
+                                        colSpan={4}
                                         style={isFinish
                                             ? {
                                                 background: colors.OsogovoBlack,
@@ -190,13 +192,14 @@ export const Results: React.FC = () => {
                                             >
                                                 <td>{position}. {result.name}</td>
                                                 <td>{result.bib}</td>
+                                                <td>{result.team || "-"}</td>
                                                 <td style={isFinish ? { fontWeight: 700 } : undefined}>
                                                     {formatTime(passage.passedAt)}
                                                 </td>
                                             </TableRow>
                                             {isExpanded && (
                                                 <tr>
-                                                    <td colSpan={3} style={{ padding: "8px 12px", background: "#f5f5f5" }}>
+                                                    <td colSpan={4} style={{ padding: "8px 12px", background: "#f5f5f5" }}>
                                                         {previousCheckpoints.map((previousCheckpoint) => (
                                                             <div key={previousCheckpoint.checkpointId}>
                                                                 {previousCheckpoint.checkpointNameBg}: {formatTime(previousCheckpoint.passedAt)}

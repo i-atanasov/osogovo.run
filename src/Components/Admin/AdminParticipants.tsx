@@ -84,9 +84,12 @@ const AdminParticipants: React.FC = () => {
     const [ageFilter, setAgeFilter] = React.useState('');
     const [paidFilter, setPaidFilter] = React.useState('');
     const [participantForBib, setParticipantForBib] = React.useState<AdminParticipant | null>(null);
+    const [distanceChange, setDistanceChange] = React.useState<{ email: string; distance: '14' | '26' } | null>(null);
     const [bib, setBib] = React.useState('');
     const [bibError, setBibError] = React.useState<string | null>(null);
     const [savingBib, setSavingBib] = React.useState(false);
+    const [savingDistanceEmail, setSavingDistanceEmail] = React.useState<string | null>(null);
+    const [distanceError, setDistanceError] = React.useState<string | null>(null);
     const [confirmingBib, setConfirmingBib] = React.useState<number | null>(null);
     const [savingNoteEmail, setSavingNoteEmail] = React.useState<string | null>(null);
     const [savingPaidEmail, setSavingPaidEmail] = React.useState<string | null>(null);
@@ -249,6 +252,34 @@ const AdminParticipants: React.FC = () => {
             setError('Неуспешно отбелязване на плащането.');
         } finally {
             setSavingPaidEmail(null);
+        }
+    };
+
+    const updateParticipantDistance = async (participant: AdminParticipant, distance: '14' | '26') => {
+        if (!apiUrl || savingDistanceEmail) return;
+
+        try {
+            setSavingDistanceEmail(participant.email);
+            setDistanceError(null);
+            const response = await axios.patch<{ distance: string; updated_at: string }>(
+                `${apiUrl}/admin/participants/${encodeURIComponent(participant.email)}/distance`,
+                { distance },
+                { withCredentials: true },
+            );
+            setParticipants((currentParticipants) => {
+                const updated = currentParticipants.map((currentParticipant) => currentParticipant.email === participant.email
+                    ? { ...currentParticipant, distance: response.data.distance, updated_at: response.data.updated_at }
+                    : currentParticipant);
+                writeCachedParticipants(updated);
+                return updated;
+            });
+            setDistanceChange(null);
+        } catch (requestError) {
+            setDistanceError(axios.isAxiosError(requestError) && typeof requestError.response?.data?.error === 'string'
+                ? requestError.response.data.error
+                : 'Неуспешна промяна на дистанцията.');
+        } finally {
+            setSavingDistanceEmail(null);
         }
     };
 
@@ -516,7 +547,44 @@ const AdminParticipants: React.FC = () => {
                             </td>
                             <td>{participant.email}</td>
                             <td>{participant.phone_number ?? '-'}</td>
-                            <td>{participant.distance} km</td>
+                            <td onClick={(event) => event.stopPropagation()}>
+                                <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 6 }}>
+                                    <select
+                                        aria-label={`Дистанция за ${participant.name}`}
+                                        disabled={savingDistanceEmail !== null}
+                                        value={distanceChange?.email === participant.email ? distanceChange.distance : participant.distance}
+                                        onChange={(event) => {
+                                            const nextDistance = event.target.value as '14' | '26';
+                                            setDistanceError(null);
+                                            setDistanceChange(nextDistance === participant.distance
+                                                ? null
+                                                : { email: participant.email, distance: nextDistance });
+                                        }}
+                                    >
+                                        <option value="14">14 км</option>
+                                        <option value="26">26 км</option>
+                                    </select>
+                                    {distanceChange?.email === participant.email && (
+                                        <>
+                                            <AdminBibButton
+                                                type="button"
+                                                disabled={savingDistanceEmail !== null}
+                                                onClick={() => updateParticipantDistance(participant, distanceChange.distance)}
+                                            >
+                                                {savingDistanceEmail === participant.email ? 'Запазване...' : 'Потвърди'}
+                                            </AdminBibButton>
+                                            <AdminBibButton
+                                                type="button"
+                                                disabled={savingDistanceEmail !== null}
+                                                onClick={() => { setDistanceChange(null); setDistanceError(null); }}
+                                            >
+                                                Отказ
+                                            </AdminBibButton>
+                                        </>
+                                    )}
+                                    {distanceError && distanceChange?.email === participant.email && <AdminErrorText>{distanceError}</AdminErrorText>}
+                                </div>
+                            </td>
                             <td>{participant.gender}</td>
                             <td>{participant.birth}</td>
                             <td>{participant.team ?? '-'}</td>
