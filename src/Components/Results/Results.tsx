@@ -32,6 +32,8 @@ type Result = {
     checkpoint_results: CheckpointResult[];
 };
 
+const RACE_DURATION_MILLISECONDS = 7 * 60 * 60 * 1000;
+
 export const Results: React.FC = () => {
     const { t } = useTranslation();
     const [searchParams] = useSearchParams();
@@ -39,6 +41,7 @@ export const Results: React.FC = () => {
     const [loading, setLoading] = React.useState(true);
     const [error, setError] = React.useState<string | null>(null);
     const [raceStartAt, setRaceStartAt] = React.useState<string | null>(null);
+    const [now, setNow] = React.useState(Date.now());
     const [expandedParticipantIds, setExpandedParticipantIds] = React.useState<Set<string>>(new Set());
     const apiUrl = process.env.REACT_APP_REGISTRATION_API_URL;
     const year = searchParams.get("year") ?? String(new Date().getFullYear());
@@ -73,6 +76,13 @@ export const Results: React.FC = () => {
         return () => window.clearInterval(refreshInterval);
     }, [apiUrl, t, year]);
 
+    useEffect(() => {
+        if (!raceStartAt) return;
+
+        const interval = window.setInterval(() => setNow(Date.now()), 1000);
+        return () => window.clearInterval(interval);
+    }, [raceStartAt]);
+
     const getLatestCheckpoint = (result: Result) => {
         const checkpoints = result.checkpoint_results ?? [];
         return checkpoints.reduce<CheckpointResult | null>((furthest, checkpoint) => (
@@ -83,6 +93,15 @@ export const Results: React.FC = () => {
     };
 
     const getAge = (result: Result) => Number(year) - Number(result.birth);
+    const raceElapsedMilliseconds = raceStartAt ? now - new Date(raceStartAt).getTime() : -1;
+    const raceIsActive = raceElapsedMilliseconds >= 0 && raceElapsedMilliseconds < RACE_DURATION_MILLISECONDS;
+    const formatRaceElapsed = (elapsedMilliseconds: number) => {
+        const elapsedSeconds = Math.floor(elapsedMilliseconds / 1000);
+        const hours = Math.floor(elapsedSeconds / 3600);
+        const minutes = Math.floor((elapsedSeconds % 3600) / 60);
+        const seconds = elapsedSeconds % 60;
+        return [hours, minutes, seconds].map((part) => part.toString().padStart(2, "0")).join(":");
+    };
     const isDns = (result: Result) => result.did_not_start || (result.paid && result.bib === null);
     const participantsWithoutResults = results
         .filter((result) => (result.checkpoint_results?.length ?? 0) === 0 && (isDns(result) || result.bib !== null))
@@ -267,7 +286,17 @@ export const Results: React.FC = () => {
             <HeaderComponent hideDate video="http://www.osogovo.run/media/osogovo-run-21-sec-low.mp4" />
             <ParticipantsWrapper>
                 <a href="/participants">{t("results:links.participants")}</a>
-                <h1>{t("results:title", { year })}</h1>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 16, flexWrap: "wrap" }}>
+                    <h1>{t("results:title", { year })}</h1>
+                    {raceIsActive && (
+                        <output
+                            aria-label="Време от старта"
+                            style={{ fontVariantNumeric: "tabular-nums", fontWeight: 700, whiteSpace: "nowrap", fontSize: "1.5rem" }}
+                        >
+                            {formatRaceElapsed(raceElapsedMilliseconds)}
+                        </output>
+                    )}
+                </div>
                 {loading && <p>{t("results:loading")}</p>}
                 {error && <p style={{ color: "red" }}>{error}</p>}
                 {!loading && !error && (
