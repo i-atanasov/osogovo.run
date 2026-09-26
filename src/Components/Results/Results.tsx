@@ -139,8 +139,8 @@ export const Results: React.FC = () => {
                                     - new Date(second.checkpoint.passedAt).getTime();
                                 return timeDifference || first.result.bib - second.result.bib;
                             });
-                        const isFinish = checkpoint.checkpointFinal === distance
-                            || checkpoint.checkpointDistance === Math.max(...checkpointGroups.map((group) => group.checkpointDistance));
+                        const isFinish = checkpoint.checkpointFinal !== null
+                            && Number(checkpoint.checkpointFinal) === Number(distance);
 
                         return (
                             <React.Fragment key={checkpoint.checkpointId}>

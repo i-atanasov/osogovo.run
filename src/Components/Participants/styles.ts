@@ -31,6 +31,13 @@ export const ParticipantsWrapper = styled.div`
         text-decoration: none;
         color: ${colors.RuenOrange};
     }
+    h2 {
+        border: 4px solid ${colors.RuenOrange};
+        color: black;
+        padding: 5px;
+        margin: 40px 0 10px;
+        width: fit-content;
+    }
 `;
 
 export const Paid = styled.td<{ paid: boolean }>`
