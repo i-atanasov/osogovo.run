@@ -648,7 +648,7 @@ const AdminCheckpointTiming: React.FC = () => {
                                                 {groupParticipants.map((participant) => (
                                                     <TimingEntryParticipant
                                                         key={participant.email}
-                                                        disabled={participant.did_not_finish || savingBib !== null || (!raceIsLive && !raceFinished)}
+                                                        disabled={savingBib !== null || (!raceIsLive && !raceFinished)}
                                                         passed={false}
                                                         type="button"
                                                         onClick={() => recordPassage(participant)}
