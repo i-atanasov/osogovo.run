@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, useLocation, useSearchParams } from "reac
 import RegistrationForm from "../RegistrationForm/RegistrationForm";
 import PaymentSuccessPage from "../RegistrationForm/PaymentSuccessPage";
 import PaymentCancelPage from "../RegistrationForm/PaymentCancelPage";
+import RaceDay2026 from '../RaceDay/RaceDay2026';
 import PaymentRequestPage from "../RegistrationForm/PaymentRequestPage";
 import RetryPaymentPage from "../RegistrationForm/RetryPaymentPage";
 import VolunteerForm from "../VolunteerForm/VolunteerForm";
@@ -86,8 +87,8 @@ const Router: React.FC = () => {
                     element={<ParticipantProfile />}
                 />
                 <Route
-                    path="/race-day"
-                    element={<RaceDay />}
+                    path="/race-day-2026"
+                    element={<RaceDay2026 />}
                 />
                 <Route
                     path="/results"
