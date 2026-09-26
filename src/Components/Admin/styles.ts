@@ -208,6 +208,7 @@ export const AdminTableRow = styled.tr<{ selected: boolean }>`
 export const AdminBibButton = styled.button`
     min-height: 32px;
     padding: 0 10px;
+    margin: 0 2px;
     border: 1px solid ${colors.RuenOrange};
     border-radius: 4px;
     background: transparent;

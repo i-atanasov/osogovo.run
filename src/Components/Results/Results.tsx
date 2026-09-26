@@ -24,7 +24,10 @@ type Result = {
     distance: string;
     gender: string;
     team?: string | null;
-    bib: number;
+    bib: number | null;
+    paid: boolean;
+    did_not_start: boolean;
+    did_not_finish: boolean;
     race_start_at: string | null;
     checkpoint_results: CheckpointResult[];
 };
@@ -80,6 +83,10 @@ export const Results: React.FC = () => {
     };
 
     const getAge = (result: Result) => Number(year) - Number(result.birth);
+    const isDns = (result: Result) => result.did_not_start || (result.paid && result.bib === null);
+    const participantsWithoutResults = results
+        .filter((result) => (result.checkpoint_results?.length ?? 0) === 0 && (isDns(result) || result.bib !== null))
+        .sort((first, second) => (first.bib ?? Number.MAX_SAFE_INTEGER) - (second.bib ?? Number.MAX_SAFE_INTEGER));
 
     const formatTime = (value: string | null) => {
         if (!value || !raceStartAt) {
@@ -104,16 +111,20 @@ export const Results: React.FC = () => {
     ) => {
         const latestResults = results
             .filter((result) => result.distance === distance && predicate(result))
+            .filter((result) => !isDns(result) && result.bib !== null)
             .map((result) => ({ result, checkpoint: getLatestCheckpoint(result) }))
             .filter((entry): entry is { result: Result; checkpoint: CheckpointResult } => entry.checkpoint !== null);
         const classifiedResults = [...latestResults]
             .sort((first, second) => {
                 const checkpointProgress = second.checkpoint.checkpointDistance - first.checkpoint.checkpointDistance;
                 if (checkpointProgress !== 0) return checkpointProgress;
+                if (first.result.did_not_finish !== second.result.did_not_finish) {
+                    return first.result.did_not_finish ? 1 : -1;
+                }
 
                 const timeDifference = new Date(first.checkpoint.passedAt).getTime()
                     - new Date(second.checkpoint.passedAt).getTime();
-                return timeDifference || first.result.bib - second.result.bib;
+                return timeDifference || (first.result.bib ?? 0) - (second.result.bib ?? 0);
             })
             .map((entry, index) => ({ ...entry, position: index + 1 }));
         const checkpointGroups = Array.from(
@@ -121,6 +132,10 @@ export const Results: React.FC = () => {
                 classifiedResults.map((entry) => [entry.checkpoint.checkpointId, entry.checkpoint]),
             ).values(),
         ).sort((first, second) => second.checkpointDistance - first.checkpointDistance);
+
+        if (checkpointGroups.length === 0) {
+            return null;
+        }
 
         return (
             <table style={{ width: "100%", borderCollapse: "collapse" }}>
@@ -137,9 +152,12 @@ export const Results: React.FC = () => {
                         const checkpointRows = classifiedResults
                             .filter((entry) => entry.checkpoint.checkpointId === checkpoint.checkpointId)
                             .sort((first, second) => {
+                                if (first.result.did_not_finish !== second.result.did_not_finish) {
+                                    return first.result.did_not_finish ? 1 : -1;
+                                }
                                 const timeDifference = new Date(first.checkpoint.passedAt).getTime()
                                     - new Date(second.checkpoint.passedAt).getTime();
-                                return timeDifference || first.result.bib - second.result.bib;
+                                return timeDifference || (first.result.bib ?? 0) - (second.result.bib ?? 0);
                             });
                         const isFinish = checkpoint.checkpointFinal !== null
                             && Number(checkpoint.checkpointFinal) === Number(distance);
@@ -194,7 +212,7 @@ export const Results: React.FC = () => {
                                                 <td>{result.bib}</td>
                                                 <td>{result.team || "-"}</td>
                                                 <td style={isFinish ? { fontWeight: 700 } : undefined}>
-                                                    {formatTime(passage.passedAt)}
+                                                    {result.did_not_finish ? t("results:table.dnf") : formatTime(passage.passedAt)}
                                                 </td>
                                             </TableRow>
                                             {isExpanded && (
@@ -219,12 +237,28 @@ export const Results: React.FC = () => {
         );
     };
 
-    const renderDistanceSections = (titleKey: string, predicate?: (result: Result) => boolean) => (
+    const renderDistanceSections = (titleKey: string, predicate: (result: Result) => boolean = () => true) => (
         <>
-            <h2>{t("results:sections.distanceTitle", { title: t(`results:sections.${titleKey}`), distance: 26 })}</h2>
-            {renderTablesByCheckpoint("26", `${titleKey}-26`, predicate)}
-            <h2>{t("results:sections.distanceTitle", { title: t(`results:sections.${titleKey}`), distance: 14 })}</h2>
-            {renderTablesByCheckpoint("14", `${titleKey}-14`, predicate)}
+            {(["26", "14"] as const).map((distance) => {
+                const hasResults = results.some((result) => (
+                    result.distance === distance
+                    && predicate(result)
+                    && !isDns(result)
+                    && result.bib !== null
+                    && getLatestCheckpoint(result) !== null
+                ));
+
+                if (!hasResults) {
+                    return null;
+                }
+
+                return (
+                    <React.Fragment key={`${titleKey}-${distance}`}>
+                        <h2>{t("results:sections.distanceTitle", { title: t(`results:sections.${titleKey}`), distance })}</h2>
+                        {renderTablesByCheckpoint(distance, `${titleKey}-${distance}`, predicate)}
+                    </React.Fragment>
+                );
+            })}
         </>
     );
 
@@ -245,6 +279,31 @@ export const Results: React.FC = () => {
                         {renderDistanceSections("womenUnder20", (result) => result.gender === "female" && getAge(result) < 20)}
                         {renderDistanceSections("menOver40", (result) => result.gender === "male" && getAge(result) > 40)}
                         {renderDistanceSections("womenOver40", (result) => result.gender === "female" && getAge(result) > 40)}
+                        {participantsWithoutResults.length > 0 && (
+                            <section>
+                                <h2>{t("results:sections.noRecordedResults")}</h2>
+                                <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                                    <thead>
+                                        <tr>
+                                            <th>{t("results:table.name")}</th>
+                                            <th>{t("results:table.bib")}</th>
+                                            <th>{t("results:table.team")}</th>
+                                            <th>{t("results:table.distance")}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {participantsWithoutResults.map((result) => (
+                                            <TableRow key={result.id} highlighted={false}>
+                                                <td>{result.name}</td>
+                                                <td>{result.did_not_finish ? t("results:table.dnf") : isDns(result) ? "DNS" : result.bib ?? "-"}</td>
+                                                <td>{result.team || "-"}</td>
+                                                <td>{result.distance} км</td>
+                                            </TableRow>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </section>
+                        )}
                     </>
                 )}
             </ParticipantsWrapper>

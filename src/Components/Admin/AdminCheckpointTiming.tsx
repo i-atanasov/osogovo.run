@@ -34,6 +34,7 @@ type CheckpointParticipant = {
     name: string;
     distance: string;
     bib: number;
+    did_not_finish: boolean;
     passed_at: string | null;
     recorded_by_name: string | null;
     previous_checkpoint_name: string | null;
@@ -59,6 +60,17 @@ const byPassageTime = (first: CheckpointParticipant, second: CheckpointParticipa
     new Date(first.passed_at ?? first.previous_checkpoint_time ?? 0).getTime()
     - new Date(second.passed_at ?? second.previous_checkpoint_time ?? 0).getTime()
 );
+
+const uniqueParticipantsByEmail = (participants: CheckpointParticipant[]) => {
+    const participantsByEmail = new Map<string, CheckpointParticipant>();
+    participants.forEach((participant) => {
+        const existing = participantsByEmail.get(participant.email);
+        if (!existing || (!existing.passed_at && participant.passed_at)) {
+            participantsByEmail.set(participant.email, participant);
+        }
+    });
+    return Array.from(participantsByEmail.values());
+};
 
 const formatElapsedTime = (value: string | null, raceStartAt: string | null) => {
     if (!value || !raceStartAt) {
@@ -193,6 +205,7 @@ const AdminCheckpointTiming: React.FC = () => {
                                     name: participant.name,
                                     distance: participant.distance,
                                     bib: participant.bib as number,
+                                    did_not_finish: false,
                                     passed_at: null,
                                     recorded_by_name: null,
                                     previous_checkpoint_name: null,
@@ -201,42 +214,55 @@ const AdminCheckpointTiming: React.FC = () => {
                                 };
                             })
                         : liveTiming.participants;
-                    const mergedTiming = { ...liveTiming, participants: timingParticipants };
+                    const mergedTiming = { ...liveTiming, participants: uniqueParticipantsByEmail(timingParticipants) };
                     setData(mergedTiming);
                     writeCachedTiming(checkpointName, mergedTiming);
                 } else if (cachedTiming) {
                     setData(cachedParticipants.length > 0
                         ? {
                             ...cachedTiming,
-                            participants: cachedParticipants
+                            participants: uniqueParticipantsByEmail(cachedParticipants
                                 .filter((participant) => participant.bib !== null && participant.bib !== undefined)
-                                .map((participant) => cachedTiming.participants.find((item) => item.email === participant.email) ?? {
-                                    email: participant.email,
-                                    name: participant.name,
-                                    distance: participant.distance,
-                                    bib: participant.bib as number,
-                                    passed_at: null,
-                                    recorded_by_name: null,
-                                    previous_checkpoint_name: null,
-                                    previous_checkpoint_distance: null,
-                                    previous_checkpoint_time: null,
-                                }),
+                                .map((participant) => {
+                                    const cachedParticipant = cachedTiming.participants.find((item) => item.email === participant.email);
+                                    return cachedParticipant
+                                        ? { ...cachedParticipant, did_not_finish: cachedParticipant.did_not_finish ?? false }
+                                        : {
+                                            email: participant.email,
+                                            name: participant.name,
+                                            distance: participant.distance,
+                                            bib: participant.bib as number,
+                                            did_not_finish: false,
+                                            passed_at: null,
+                                            recorded_by_name: null,
+                                            previous_checkpoint_name: null,
+                                            previous_checkpoint_distance: null,
+                                            previous_checkpoint_time: null,
+                                        };
+                                })),
                         }
-                        : cachedTiming);
+                        : {
+                            ...cachedTiming,
+                            participants: uniqueParticipantsByEmail(cachedTiming.participants.map((participant) => ({
+                                ...participant,
+                                did_not_finish: participant.did_not_finish ?? false,
+                            }))),
+                        });
                 } else if (cachedCheckpoint && cachedParticipants.length > 0) {
-                    const checkpointParticipants: CheckpointParticipant[] = cachedParticipants
+                    const checkpointParticipants: CheckpointParticipant[] = uniqueParticipantsByEmail(cachedParticipants
                         .filter((participant) => participant.bib !== null && participant.bib !== undefined)
                         .map((participant) => ({
                             email: participant.email,
                             name: participant.name,
                             distance: participant.distance,
                             bib: participant.bib as number,
+                            did_not_finish: false,
                             passed_at: null,
                             recorded_by_name: null,
                             previous_checkpoint_name: null,
                             previous_checkpoint_distance: null,
                             previous_checkpoint_time: null,
-                        }));
+                        })));
                     setData({ checkpoint: cachedCheckpoint, participants: checkpointParticipants });
                 } else {
                     throw timingResponse.reason;
@@ -383,6 +409,36 @@ const AdminCheckpointTiming: React.FC = () => {
             }
 
             return true;
+        } finally {
+            setSavingBib(null);
+        }
+    };
+
+    const setParticipantDidNotFinish = async (participant: CheckpointParticipant, didNotFinish: boolean) => {
+        if (!apiUrl || savingBib !== null) return;
+
+        try {
+            setSavingBib(participant.bib);
+            setEntryError(null);
+            await axios.patch(
+                `${apiUrl}/admin/participants/${encodeURIComponent(participant.email)}/did-not-finish`,
+                { didNotFinish },
+                { withCredentials: true },
+            );
+            setData((current) => {
+                if (!current) return current;
+                const updated = {
+                    ...current,
+                    participants: current.participants.map((item) => item.email === participant.email
+                        ? { ...item, did_not_finish: didNotFinish }
+                        : item),
+                };
+                if (checkpointName) writeCachedTiming(checkpointName, updated);
+                return updated;
+            });
+            closeEntryDialog();
+        } catch {
+            setEntryError(`DNF статусът за номер ${participant.bib} не можа да бъде променен.`);
         } finally {
             setSavingBib(null);
         }
@@ -555,7 +611,11 @@ const AdminCheckpointTiming: React.FC = () => {
                                                         <small>Отчетен от {participant.recorded_by_name}</small>
                                                     )}
                                                 </span>
-                                                <time>{formatElapsedTime(participant.passed_at, raceStartAt)}</time>
+                                                <time>
+                                                    {participant.did_not_finish
+                                                        ? "DNF"
+                                                        : formatElapsedTime(participant.passed_at, raceStartAt)}
+                                                </time>
                                                 <TimingEntryActions>
                                                     <AdminIconButton
                                                         aria-label={`Редактирай резултата на номер ${participant.bib}`}
@@ -588,7 +648,7 @@ const AdminCheckpointTiming: React.FC = () => {
                                                 {groupParticipants.map((participant) => (
                                                     <TimingEntryParticipant
                                                         key={participant.email}
-                                                        disabled={savingBib !== null || (!raceIsLive && !raceFinished)}
+                                                        disabled={participant.did_not_finish || savingBib !== null || (!raceIsLive && !raceFinished)}
                                                         passed={false}
                                                         type="button"
                                                         onClick={() => recordPassage(participant)}
@@ -596,7 +656,9 @@ const AdminCheckpointTiming: React.FC = () => {
                                                         <strong>{participant.bib}</strong>
                                                         <span>{participant.name}</span>
                                                         <time>
-                                                            {formatElapsedTime(participant.previous_checkpoint_time, raceStartAt)}
+                                                            {participant.did_not_finish
+                                                                ? "DNF"
+                                                                : formatElapsedTime(participant.previous_checkpoint_time, raceStartAt)}
                                                         </time>
                                                     </TimingEntryParticipant>
                                                 ))}
@@ -636,6 +698,13 @@ const AdminCheckpointTiming: React.FC = () => {
                             </AdminBibButton>
                             {!entryError && (
                                 <>
+                                    <AdminBibButton
+                                        disabled={savingBib !== null}
+                                        type="button"
+                                        onClick={() => setParticipantDidNotFinish(confirmingParticipant, !confirmingParticipant.did_not_finish)}
+                                    >
+                                        {confirmingParticipant.did_not_finish ? "Отмени DNF" : "DNF"}
+                                    </AdminBibButton>
                                     <AdminBibButton
                                         disabled={savingBib !== null || !raceIsLive}
                                         type="button"
@@ -696,12 +765,21 @@ const AdminCheckpointTiming: React.FC = () => {
                                 {entryError ? `Затвори (${errorCloseCountdown ?? 0})` : "Отказ"}
                             </AdminBibButton>
                             {!entryError && (
-                                <SignOutButton
-                                    disabled={savingBib !== null || !manualPassedDate || !manualPassedTime}
-                                    type="submit"
-                                >
-                                    {savingBib !== null ? "Записване..." : "Запиши време"}
-                                </SignOutButton>
+                                <>
+                                    <AdminBibButton
+                                        disabled={savingBib !== null}
+                                        type="button"
+                                        onClick={() => setParticipantDidNotFinish(editingParticipant, !editingParticipant.did_not_finish)}
+                                    >
+                                        {editingParticipant.did_not_finish ? "Отмени DNF" : "DNF"}
+                                    </AdminBibButton>
+                                    <SignOutButton
+                                        disabled={savingBib !== null || !manualPassedDate || !manualPassedTime}
+                                        type="submit"
+                                    >
+                                        {savingBib !== null ? "Записване..." : "Запиши време"}
+                                    </SignOutButton>
+                                </>
                             )}
                         </AdminDialogActions>
                     </AdminDialog>

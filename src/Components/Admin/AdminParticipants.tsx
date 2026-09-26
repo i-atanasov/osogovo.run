@@ -32,6 +32,7 @@ type AdminParticipant = {
     paid: boolean;
     payment_status: string;
     bib?: number | null;
+    did_not_start?: boolean;
     amount?: number | null;
     currency?: string | null;
     discount_code_used?: string | null;
@@ -93,6 +94,7 @@ const AdminParticipants: React.FC = () => {
     const [confirmingBib, setConfirmingBib] = React.useState<number | null>(null);
     const [savingNoteEmail, setSavingNoteEmail] = React.useState<string | null>(null);
     const [savingPaidEmail, setSavingPaidEmail] = React.useState<string | null>(null);
+    const [savingDnsEmail, setSavingDnsEmail] = React.useState<string | null>(null);
     const [noteErrorEmail, setNoteErrorEmail] = React.useState<string | null>(null);
     const [openNoteEditors, setOpenNoteEditors] = React.useState<Set<string>>(() => new Set());
     const [registrationOpen, setRegistrationOpen] = React.useState(false);
@@ -206,14 +208,14 @@ const AdminParticipants: React.FC = () => {
         try {
             setSavingBib(true);
             setBibError(null);
-            const response = await axios.patch<{ bib: number }>(
+            const response = await axios.patch<{ bib: number; did_not_start: boolean }>(
                 `${apiUrl}/admin/participants/${encodeURIComponent(participantForBib.email)}`,
                 { bib: confirmingBib },
                 { withCredentials: true },
             );
             setParticipants((currentParticipants) => currentParticipants.map((participant) => (
                 participant.email === participantForBib.email
-                    ? { ...participant, bib: response.data.bib }
+                    ? { ...participant, bib: response.data.bib, did_not_start: response.data.did_not_start }
                     : participant
             )));
             setParticipantForBib(null);
@@ -252,6 +254,30 @@ const AdminParticipants: React.FC = () => {
             setError('Неуспешно отбелязване на плащането.');
         } finally {
             setSavingPaidEmail(null);
+        }
+    };
+
+    const markParticipantDidNotStart = async (participant: AdminParticipant) => {
+        if (!apiUrl || savingDnsEmail) return;
+
+        try {
+            setSavingDnsEmail(participant.email);
+            const response = await axios.patch<{ bib: number | null; did_not_start: boolean; updated_at: string }>(
+                `${apiUrl}/admin/participants/${encodeURIComponent(participant.email)}/did-not-start`,
+                undefined,
+                { withCredentials: true },
+            );
+            setParticipants((currentParticipants) => {
+                const updated = currentParticipants.map((currentParticipant) => currentParticipant.email === participant.email
+                    ? { ...currentParticipant, bib: response.data.bib, did_not_start: response.data.did_not_start, updated_at: response.data.updated_at }
+                    : currentParticipant);
+                writeCachedParticipants(updated);
+                return updated;
+            });
+        } catch {
+            setError('Неуспешно отбелязване на DNS.');
+        } finally {
+            setSavingDnsEmail(null);
         }
     };
 
@@ -449,15 +475,18 @@ const AdminParticipants: React.FC = () => {
                         >
                             <td>
                                 {participant.bib === null || participant.bib === undefined ? (
-                                    <AdminBibButton
-                                        type="button"
-                                        onClick={(event) => {
-                                            event.stopPropagation();
-                                            openBibDialog(participant);
-                                        }}
-                                    >
-                                        Дай номер
-                                    </AdminBibButton>
+                                    <AdminBibValue>
+                                        {participant.did_not_start && <strong>DNS</strong>}
+                                        <AdminBibButton
+                                            type="button"
+                                            onClick={(event) => {
+                                                event.stopPropagation();
+                                                openBibDialog(participant);
+                                            }}
+                                        >
+                                            Добави номер
+                                        </AdminBibButton>
+                                    </AdminBibValue>
                                 ) : (
                                     <AdminBibValue>
                                         {participant.bib}
@@ -473,6 +502,18 @@ const AdminParticipants: React.FC = () => {
                                             <Pencil aria-hidden="true" size={16} />
                                         </AdminIconButton>
                                     </AdminBibValue>
+                                )}
+                                {!participant.did_not_start && (
+                                    <AdminBibButton
+                                        type="button"
+                                        disabled={savingDnsEmail !== null}
+                                        onClick={(event) => {
+                                            event.stopPropagation();
+                                            markParticipantDidNotStart(participant);
+                                        }}
+                                    >
+                                        {savingDnsEmail === participant.email ? 'Запазване...' : 'DNS'}
+                                    </AdminBibButton>
                                 )}
                             </td>
                             <td>
