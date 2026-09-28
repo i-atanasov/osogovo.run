@@ -6,6 +6,7 @@ import { HomeContainer } from "../Home/styles";
 import { HeaderComponent } from "../Header/Header";
 import { ParticipantsWrapper, TableRow } from "../Participants/styles";
 import { formatParticipantName } from "../Participants/utils";
+import { ResultTableWrapper } from "./styles";
 
 type Participation = {
     year: number;
@@ -20,6 +21,7 @@ type Participation = {
     osogovo?: string | null;
     ruen?: string | null;
     dns?: boolean | null;
+    raceStartAt?: string | null;
     checkpointResults: CheckpointResult[];
 };
 
@@ -36,17 +38,39 @@ type ParticipantProfileResponse = {
     participations: Participation[];
 };
 
+const formatCheckpointTime = (passedAt: string | null, raceStartAt?: string | null) => {
+    if (!passedAt || !raceStartAt) {
+        return '-';
+    }
+
+    const elapsedSeconds = Math.floor((new Date(passedAt).getTime() - new Date(raceStartAt).getTime()) / 1000);
+    if (elapsedSeconds < 0) {
+        return '-';
+    }
+
+    const hours = Math.floor(elapsedSeconds / 3600);
+    const minutes = Math.floor((elapsedSeconds % 3600) / 60);
+    const seconds = elapsedSeconds % 60;
+    return [hours, minutes, seconds].map((part) => part.toString().padStart(2, '0')).join(':');
+};
+
 const getFinishTime = (participation: Participation) => {
     if (participation.dns) {
         return 'DNS';
     }
 
-    return participation.distance === '14' ? participation.osogovo : participation.ruen;
-};
+    const legacyFinishTime = participation.distance === '14' ? participation.osogovo : participation.ruen;
+    if (legacyFinishTime) {
+        return legacyFinishTime;
+    }
 
-const formatCheckpointTime = (passedAt: string | null) => (
-    passedAt ? new Date(passedAt).toLocaleString() : '-'
-);
+    const finishCheckpoint = participation.checkpointResults.find(
+        (checkpoint) => Number(checkpoint.checkpoint_distance) === Number(participation.distance),
+    );
+    return finishCheckpoint?.passed_at
+        ? formatCheckpointTime(finishCheckpoint.passed_at, participation.raceStartAt)
+        : null;
+};
 
 export const ParticipantProfile: React.FC = () => {
     const { t } = useTranslation();
@@ -89,32 +113,34 @@ export const ParticipantProfile: React.FC = () => {
                 const participationKey = `${participation.status}-${participation.year}-${participation.distance}-${participation.bib ?? participation.name}`;
 
                 return (
-                    <section key={participationKey}>
-                        <h3>{participation.year} / {participation.distance} км</h3>
-                        <table style={{ width: '100%', borderCollapse: 'collapse', tableLayout: 'fixed', textAlign: 'left' }}>
-                            <colgroup>
-                                <col style={{ width: '15%' }} />
-                                <col style={{ width: '15%' }} />
-                                <col style={{ width: '25%' }} />
-                                <col style={{ width: '30%' }} />
-                            </colgroup>
-                            <thead>
-                                <tr>
-                                    <th>{t('participants:profile.table.year')}</th>
-                                    <th>{t('participants:table.distance')}</th>
-                                    <th>{t('participants:table.team')}</th>
-                                    <th>{t('participants:table.finish')}</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <TableRow key={participationKey} highlighted={false}>
-                                    <td>{participation.year}</td>
-                                    <td>{participation.distance}</td>
-                                    <td>{participation.team}</td>
-                                    <td>{finishTime ?? '-'}</td>
-                                </TableRow>
-                            </tbody>
-                        </table>
+                    <section>
+                        <ResultTableWrapper>
+                            <h3>{participation.year} / {participation.distance} км</h3>
+                            <table style={{ width: '100%', borderCollapse: 'collapse', tableLayout: 'fixed', textAlign: 'left' }}>
+                                <colgroup>
+                                    <col style={{ width: '15%' }} />
+                                    <col style={{ width: '15%' }} />
+                                    <col style={{ width: '25%' }} />
+                                    <col style={{ width: '30%' }} />
+                                </colgroup>
+                                <thead>
+                                    <tr>
+                                        <th>{t('participants:profile.table.year')}</th>
+                                        <th>{t('participants:table.distance')}</th>
+                                        <th>{t('participants:table.team')}</th>
+                                        <th>{t('participants:table.finish')}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <TableRow key={participationKey} highlighted={false}>
+                                        <td>{participation.year}</td>
+                                        <td>{participation.distance}</td>
+                                        <td>{participation.team}</td>
+                                        <td>{finishTime ?? '-'}</td>
+                                    </TableRow>
+                                </tbody>
+                            </table>    
+                        </ResultTableWrapper>
                         {participation.checkpointResults.length > 0 && (
                             <table style={{ width: '100%', borderCollapse: 'collapse', tableLayout: 'fixed', textAlign: 'left' }}>
                                 <colgroup>
@@ -134,7 +160,7 @@ export const ParticipantProfile: React.FC = () => {
                                         <TableRow key={`${participationKey}-${checkpoint.checkpoint_name}`} highlighted={false}>
                                             <td>{checkpoint.checkpoint_name_bg || checkpoint.checkpoint_name}</td>
                                             <td>{checkpoint.checkpoint_distance} км</td>
-                                            <td>{formatCheckpointTime(checkpoint.passed_at)}</td>
+                                            <td>{formatCheckpointTime(checkpoint.passed_at, participation.raceStartAt)}</td>
                                         </TableRow>
                                     ))}
                                 </tbody>
