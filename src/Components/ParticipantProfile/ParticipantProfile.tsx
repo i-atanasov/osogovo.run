@@ -21,6 +21,9 @@ type Participation = {
     osogovo?: string | null;
     ruen?: string | null;
     dns?: boolean | null;
+    dnf?: boolean | null;
+    did_not_start?: boolean | null;
+    did_not_finish?: boolean | null;
     raceStartAt?: string | null;
     checkpointResults: CheckpointResult[];
 };
@@ -55,8 +58,11 @@ const formatCheckpointTime = (passedAt: string | null, raceStartAt?: string | nu
 };
 
 const getFinishTime = (participation: Participation) => {
-    if (participation.dns) {
+    if (participation.dns || participation.did_not_start) {
         return 'DNS';
+    }
+    if (participation.dnf || participation.did_not_finish) {
+        return 'DNF';
     }
 
     const legacyFinishTime = participation.distance === '14' ? participation.osogovo : participation.ruen;
