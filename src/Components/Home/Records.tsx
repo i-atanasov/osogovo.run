@@ -7,12 +7,12 @@ const records = [
         key: 'female',
         holder: 'Десислава Санданска',
         time: '03:12:11',
-        bonus: '100 eur',
+        bonus: '200 eur',
     },
     {
         key: 'male',
         holder: 'Никола Кондарев',
-        time: '02:21:00',
+        time: '02:17:18',
         bonus: '100 eur',
     },
 ];
