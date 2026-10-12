@@ -2,7 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { CountdownGrid, CountdownHeader, CountdownUnit, RaceCountdownWrapper } from './styles';
 
-const RACE_START_AT = new Date('2026-09-27T09:00:00+03:00').getTime();
+const RACE_START_AT = new Date('2027-09-26T09:00:00+03:00').getTime();
 const SECOND = 1000;
 const MINUTE = SECOND * 60;
 const HOUR = MINUTE * 60;

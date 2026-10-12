@@ -15,6 +15,14 @@ const registration = {
         registrationFull: 'The maximum number of participants has been reached. Registration is closed.',
         formHasErrors: 'Please fill in all required fields. If you have trouble, contact info@osogovo.run',
     },
+    tiers: {
+        title: 'Registration fee tiers',
+        range: 'Participants {{from}}–{{to}}',
+        fee: 'Fee: €{{amount}}',
+        tShirt: 'T-shirt: €{{amount}}',
+        tShirtUnavailable: 'T-shirt not available',
+        current: '{{count}} registered',
+    },
     countdown: {
         title: 'Race starts in',
         started: 'The race has started',

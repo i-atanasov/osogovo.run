@@ -15,6 +15,14 @@ const registration = {
         registrationFull: 'Достигнат е максималният брой участници. Регистрацията е затворена.',
         formHasErrors: 'Моля, попълнете всички задължителни полета. При проблем, моля свържетe се с info@osogovo.run',
     },
+    tiers: {
+        title: 'Нива на таксата за регистрация',
+        range: 'Участници {{from}}–{{to}}',
+        fee: 'Такса: €{{amount}}',
+        tShirt: 'Тениска: €{{amount}}',
+        tShirtUnavailable: 'Без тениска',
+        current: '{{count}} регистрирани',
+    },
     countdown: {
         title: 'Стартът е след',
         started: 'Състезанието започна',

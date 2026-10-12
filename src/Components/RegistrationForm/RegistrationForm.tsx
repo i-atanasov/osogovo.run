@@ -9,6 +9,7 @@ import axios from 'axios';
 import { euConversionRate, products, tShirtImages } from '../../config/constants';
 import { useTranslation } from 'react-i18next';
 import RaceCountdown from '../RaceCountdown/RaceCountdown';
+import TierProgress, { ParticipationTier } from './TierProgress';
 
 type Distance = 14 | 26;
 
@@ -38,6 +39,9 @@ const RegistrationForm = () => {
     const [discountLimitUses, setDiscountLimitUses] = React.useState<number | null>(null);
     const [spacesLeft, setSpacesLeft] = React.useState<number | null>(null);
     const [isRegistrationFull, setIsRegistrationFull] = React.useState<boolean>(false);
+    const [tierPricing, setTierPricing] = React.useState<{ fees: Record<Distance, number>; tshirt: number } | null>(null);
+    const [tiers, setTiers] = React.useState<ParticipationTier[]>([]);
+    const [currentCount, setCurrentCount] = React.useState<number>(0);
     const [distance, setDistance] = React.useState<Distance>(Number(searchParams.get('product')) as Distance || 26);
     const isTestMode = (searchParams.get('test') || '').toLowerCase().trim() === 'true';
     const uniqueCode = searchParams.get('uniqueCode') || '';
@@ -46,9 +50,9 @@ const RegistrationForm = () => {
     const selectedProduct = products.find(product => product.distance === distance);
     const price = isTestMode
         ? (selectedProduct?.testProductPrice || selectedProduct?.price || 0)
-        : (selectedProduct?.price || 0);
+        : (tierPricing?.fees[distance] ?? selectedProduct?.price ?? 0);
 
-    const tShirtPrice = selectedProduct?.tShirtPrice || 0;
+    const tShirtPrice = tierPricing ? tierPricing.tshirt : (selectedProduct?.tShirtPrice || 0);
     const initialValues: FormValues = {
         email: emailParam,
         name: '',
@@ -129,6 +133,9 @@ const RegistrationForm = () => {
                 const response = await axios.get(`${apiUrl}/get-participants-count`);
                 setSpacesLeft(Number(response.data?.spacesLeft ?? 0));
                 setIsRegistrationFull(response.data?.isFull === true);
+                setTierPricing(response.data?.pricing ?? null);
+                setTiers(Array.isArray(response.data?.tiers) ? response.data.tiers : []);
+                setCurrentCount(Number(response.data?.currentCount ?? 0));
             } catch (error) {
                 console.error('Failed to fetch participants availability:', error);
             }
@@ -273,6 +280,9 @@ const RegistrationForm = () => {
                             ? t('registration:notices.registrationFull')
                             : t('registration:notices.spacesLeft', { count: spacesLeft })}
                     </div>
+                )}
+                {!isTestMode && tiers.length > 0 && (
+                    <TierProgress tiers={tiers} currentCount={currentCount} distance={distance} />
                 )}
                 <a href="/register/payment">{t('registration:links.payment')}</a><br /><br />
                 <a href="/participants">{t('registration:links.participants')}</a><br /><br />
