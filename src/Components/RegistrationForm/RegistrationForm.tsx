@@ -42,6 +42,8 @@ const RegistrationForm = () => {
     const [tierPricing, setTierPricing] = React.useState<{ fees: Record<Distance, number>; tshirt: number } | null>(null);
     const [tiers, setTiers] = React.useState<ParticipationTier[]>([]);
     const [currentCount, setCurrentCount] = React.useState<number>(0);
+    const [registrationOpeningTime, setRegistrationOpeningTime] = React.useState<Date | null>(null);
+    const [isRegistrationOpeningTimeLoaded, setIsRegistrationOpeningTimeLoaded] = React.useState<boolean>(false);
     const [distance, setDistance] = React.useState<Distance>(Number(searchParams.get('product')) as Distance || 26);
     const isTestMode = (searchParams.get('test') || '').toLowerCase().trim() === 'true';
     const uniqueCode = searchParams.get('uniqueCode') || '';
@@ -51,6 +53,11 @@ const RegistrationForm = () => {
     const price = isTestMode
         ? (selectedProduct?.testProductPrice || selectedProduct?.price || 0)
         : (tierPricing?.fees[distance] ?? selectedProduct?.price ?? 0);
+    const isRegistrationOpeningTimeInFuture = registrationOpeningTime !== null
+        && registrationOpeningTime.getTime() > Date.now();
+    const formattedRegistrationOpeningDate = registrationOpeningTime
+        ? `${String(registrationOpeningTime.getDate()).padStart(2, '0')}.${String(registrationOpeningTime.getMonth() + 1).padStart(2, '0')}.${registrationOpeningTime.getFullYear()}`
+        : '';
 
     const tShirtPrice = tierPricing ? tierPricing.tshirt : (selectedProduct?.tShirtPrice || 0);
     const initialValues: FormValues = {
@@ -143,6 +150,42 @@ const RegistrationForm = () => {
 
         fetchParticipantsAvailability();
     }, [apiUrl, isTestMode]);
+
+    React.useEffect(() => {
+        setRegistrationOpeningTime(null);
+        setIsRegistrationOpeningTimeLoaded(false);
+        if (!apiUrl) {
+            setIsRegistrationOpeningTimeLoaded(true);
+            return;
+        }
+
+        let isActive = true;
+        const fetchRegistrationOpeningTime = async () => {
+            try {
+                const response = await axios.get(`${apiUrl}/registration-open-date`);
+                const dateValue = response.data?.registrationOpenDate;
+                if (typeof dateValue !== 'string') return;
+
+                const openingTime = new Date(
+                    /^\d{4}-\d{2}-\d{2}$/.test(dateValue) ? `${dateValue}T00:00:00` : dateValue
+                );
+                if (isActive && !Number.isNaN(openingTime.getTime())) {
+                    setRegistrationOpeningTime(openingTime);
+                }
+            } catch (error) {
+                console.error('Failed to fetch registration opening date:', error);
+            } finally {
+                if (isActive) {
+                    setIsRegistrationOpeningTimeLoaded(true);
+                }
+            }
+        };
+
+        fetchRegistrationOpeningTime();
+        return () => {
+            isActive = false;
+        };
+    }, [apiUrl]);
 
     const handleImageFallback = (event: React.SyntheticEvent<HTMLImageElement>) => {
         const image = event.currentTarget;
@@ -286,8 +329,14 @@ const RegistrationForm = () => {
                 )}
                 <a href="/register/payment">{t('registration:links.payment')}</a><br /><br />
                 <a href="/participants">{t('registration:links.participants')}</a><br /><br />
-                <a href="/results?year=2025">{t('registration:links.results2025')}</a><br /><br />
-                {!isTestMode && isRegistrationFull ? null : (
+                <a href="/results?year=2026">{t('registration:links.results2026')}</a><br /><br />
+                {!isTestMode && !isRegistrationOpeningTimeLoaded ? (
+                    <div className="server error">{t('registration:notices.checkingOpeningDate')}</div>
+                ) : isRegistrationOpeningTimeInFuture ? (
+                    <div className="server error">
+                        {t('registration:notices.registrationOpensOn', { date: formattedRegistrationOpeningDate })}
+                    </div>
+                ) : !isTestMode && isRegistrationFull ? null : (
                 <>
                 {!isTestMode && uniqueCode && discountCodeChecked && discountPercent > 0 && (
                     <div className="server error">{t('registration:notices.activeDiscount', { discountPercent })}</div>

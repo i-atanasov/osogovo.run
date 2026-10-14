@@ -3,6 +3,7 @@ const registration = {
         payment: 'Payment for already registered participants',
         participants: 'View registered participants',
         results2025: 'View 2025 results',
+        results2026: 'View 2026 results',
     },
     notices: {
         testMode: 'TEST MODE: Payment uses a test price.',
@@ -12,6 +13,8 @@ const registration = {
         discountUsesLeft: '{{count}} uses left for this discount code.',
         discountNoUsesLeft: 'This discount code has no uses left.',
         spacesLeft: '{{count}} registration spaces left.',
+        checkingOpeningDate: 'Checking when registration opens...',
+        registrationOpensOn: 'Registration will open on {{date}}.',
         registrationFull: 'The maximum number of participants has been reached. Registration is closed.',
         formHasErrors: 'Please fill in all required fields. If you have trouble, contact info@osogovo.run',
     },
