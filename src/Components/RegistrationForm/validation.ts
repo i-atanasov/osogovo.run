@@ -3,6 +3,8 @@ import { FormValues } from "./RegistrationForm";
 
 type Translate = (key: string, options?: Record<string, unknown>) => string;
 
+const LATIN_NAME_PATTERN = /^[\p{Script=Latin}][\p{Script=Latin}\p{M}]*(?:[ '\u2019-][\p{Script=Latin}][\p{Script=Latin}\p{M}]*)*$/u;
+
 export const createValidateForm = (t: Translate) => (values: FormValues) => {
     const errors: FormikErrors<FormikValues> = {};
     if (!values.email) {
@@ -27,8 +29,10 @@ export const createValidateForm = (t: Translate) => (values: FormValues) => {
         errors.name = t('registration:errors.required');
     } else if (values.name.length < 4) {
         errors.name = t('registration:errors.nameTooShort');
+    } else if (!LATIN_NAME_PATTERN.test(values.name.trim())) {
+        errors.name = t('registration:errors.nameLatinOnly');
     } else  {
-        const nameParts = values.name.split(' ');
+        const nameParts = values.name.trim().split(/\s+/);
         if (nameParts.length < 2) {
             errors.name = t('registration:errors.fullNameRequired');
         }

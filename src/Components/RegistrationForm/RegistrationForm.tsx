@@ -6,6 +6,7 @@ import { createValidateForm } from './validation';
 import { HeaderComponent } from '../Header/Header';
 import Button from '../Button/Button';
 import axios from 'axios';
+import { getData } from 'country-list';
 import { euConversionRate, products, tShirtImages } from '../../config/constants';
 import { useTranslation } from 'react-i18next';
 import RaceCountdown from '../RaceCountdown/RaceCountdown';
@@ -20,7 +21,9 @@ export interface FormValues {
     gender: string;
     termsAndConditions: boolean;
     birth: string;
+    country: string;
     team?: string;
+    itraId?: string;
     phoneNumber: string;
     withTShirt: boolean;
     tShirtSize: '' | 'XS' | 'S' | 'M' | 'L' | 'XL';
@@ -30,7 +33,7 @@ export interface FormValues {
 
 const RegistrationForm = () => {
     React.useEffect(() => { window.scrollTo(0, 0); }, []);
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const [searchParams] = useSearchParams();
     const [serverError, setServerError] = React.useState<string | null>(null);
     const [discountPercent, setDiscountPercent] = React.useState<number>(0);
@@ -67,7 +70,9 @@ const RegistrationForm = () => {
         gender: '',
         termsAndConditions: false,
         birth: '',
+        country: 'BG',
         team: '',
+        itraId: '',
         withTShirt: false,
         tShirtSize: '',
         phoneNumber: '',
@@ -76,6 +81,12 @@ const RegistrationForm = () => {
     };
     const apiUrl = process.env.REACT_APP_REGISTRATION_API_URL;
     const validateRegistrationForm = React.useMemo(() => createValidateForm(t), [t]);
+    const countries = React.useMemo(() => {
+        const displayNames = new Intl.DisplayNames([i18n.resolvedLanguage ?? i18n.language], { type: 'region' });
+        return getData()
+            .map(({ code, name }) => ({ code, name: displayNames.of(code) ?? name }))
+            .sort((first, second) => first.name.localeCompare(second.name, i18n.language));
+    }, [i18n.language, i18n.resolvedLanguage]);
     const fallbackTShirtImage = 'https://pvmolqp98bhv9my7.public.blob.vercel-storage.com/product-box-image.png';
     const resetServerError = () => {
         setServerError(null);
@@ -163,7 +174,7 @@ const RegistrationForm = () => {
         const fetchRegistrationOpeningTime = async () => {
             try {
                 const response = await axios.get(`${apiUrl}/registration-open-date`);
-                const dateValue = response.data?.registrationOpenDate;
+                const dateValue = process.env.REACT_APP_REGISTRATION_OPEN_DATE ?? response.data?.registrationOpenDate;
                 if (typeof dateValue !== 'string') return;
 
                 const openingTime = new Date(
@@ -422,16 +433,18 @@ const RegistrationForm = () => {
                                     </Field>
                                     {errors.gender && touched.gender && <div className="error">{errors.gender}</div>}
                                     <label htmlFor="birth">{t('registration:fields.birth')}</label>
-                                    <Field className='year-option' as="select" id="birth" name="birth" required placeholder={t('registration:fields.birth')} >
-                                        <option value="" hidden></option>
-                                        {Array.from({ length: 60 }, (_, i) => {
-                                            const year = new Date().getFullYear() - i - 15; // 15 is the minimum age
-                                            return <option key={year} value={year}>{year}</option>;
-                                        })}
-                                    </Field>
+                                    <Field id="birth" name="birth" type="date" required />
                                     {errors.birth && touched.birth && <div className="error">{errors.birth}</div>}
+                                    <label htmlFor="country">{t('registration:fields.country')}</label>
+                                    <Field as="select" id="country" name="country" required>
+                                        {countries.map(({ code, name }) => (
+                                            <option key={code} value={code}>{name}</option>
+                                        ))}
+                                    </Field>
                                     <label htmlFor="team">{t('registration:fields.team')} <span>{t('registration:fields.optional')}</span></label>
                                     <Field id="team" name="team" placeholder={t('registration:fields.team')} />
+                                    <label htmlFor="itraId">{t('registration:fields.itraId')} <span>{t('registration:fields.optional')}</span></label>
+                                    <Field id="itraId" name="itraId" maxLength={50} />
                                     <label htmlFor="discountCode">{t('registration:fields.discountCode')} <span>{t('registration:fields.optional')}</span></label>
                                     <Field
                                         id="discountCode"
@@ -472,7 +485,7 @@ const RegistrationForm = () => {
                                         <div className="error">{errors.termsAndConditions}</div>
                                     )}
                                 </FormSection>
-                                <FormSection>
+                                {/* <FormSection>
                                     <label>
                                         {t(tShirtPrice === 0 ? 'registration:tShirt.unavailableLabel' : 'registration:tShirt.label')}
                                     </label>
@@ -530,7 +543,7 @@ const RegistrationForm = () => {
                                         </>
                                     )}
                                     <Price>{t('registration:payment.currentTotal', { amount: total })}</Price>
-                                </FormSection>
+                                </FormSection> */}
                             </FormFields>
                             {serverError && (
                                 <div className="server error" dangerouslySetInnerHTML={{ __html: serverError }} />

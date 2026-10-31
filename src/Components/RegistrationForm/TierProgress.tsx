@@ -61,12 +61,7 @@ const TierProgress: React.FC<TierProgressProps> = ({ tiers, currentCount, distan
                         <TierLegendItem key={tier.upTo} $active={index === activeIndex}>
                             <strong>{getLabel(tier)}</strong>
                             <span>{t('registration:tiers.range', { from: from + 1, to: tier.upTo })}</span>
-                            <span>{t('registration:tiers.fee', { amount: tier.fees[distance] })}</span>
-                            <span>
-                                {tier.tshirt > 0
-                                    ? t('registration:tiers.tShirt', { amount: tier.tshirt })
-                                    : t('registration:tiers.tShirtUnavailable')}
-                            </span>
+                            <span>{t('registration:tiers.fee', { distance, amount: tier.fees[distance] })}</span>
                         </TierLegendItem>
                     );
                 })}
