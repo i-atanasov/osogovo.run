@@ -3,6 +3,7 @@ import axios from "axios";
 import { ArrowLeft, Eraser, Pencil } from "lucide-react";
 import { createPortal } from "react-dom";
 import { useNavigate, useParams } from "react-router-dom";
+import { getDistanceLabel } from "../../utils/distance";
 import {
     AdminBibButton,
     AdminDialog,
@@ -594,7 +595,7 @@ const AdminCheckpointTiming: React.FC = () => {
 
                     return (
                         <TimingEntrySection key={distance}>
-                            <h3>{distance} км</h3>
+                            <h3>{getDistanceLabel(distance)} км</h3>
                             {!appliesToDistance ? (
                                 <AdminStatusText>Пунктът не е част от тази дистанция.</AdminStatusText>
                             ) : (

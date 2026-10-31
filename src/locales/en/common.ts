@@ -8,7 +8,7 @@ const common = {
         close: 'Close',
     },
     eventDate: {
-        day: '27',
+        day: '26',
         month: 'September',
     },
     nav: {

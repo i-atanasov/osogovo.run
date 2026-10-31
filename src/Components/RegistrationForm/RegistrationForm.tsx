@@ -12,7 +12,7 @@ import { useTranslation } from 'react-i18next';
 import RaceCountdown from '../RaceCountdown/RaceCountdown';
 import TierProgress, { ParticipationTier } from './TierProgress';
 
-type Distance = 14 | 26;
+type Distance = 14 | 27;
 
 export interface FormValues {
     email: string;
@@ -47,7 +47,7 @@ const RegistrationForm = () => {
     const [currentCount, setCurrentCount] = React.useState<number>(0);
     const [registrationOpeningTime, setRegistrationOpeningTime] = React.useState<Date | null>(null);
     const [isRegistrationOpeningTimeLoaded, setIsRegistrationOpeningTimeLoaded] = React.useState<boolean>(false);
-    const [distance, setDistance] = React.useState<Distance>(Number(searchParams.get('product')) as Distance || 26);
+    const [distance, setDistance] = React.useState<Distance>(Number(searchParams.get('product')) as Distance || 27);
     const isTestMode = (searchParams.get('test') || '').toLowerCase().trim() === 'true';
     const uniqueCode = searchParams.get('uniqueCode') || '';
     const observePointCode = searchParams.get('observePoint') || '';

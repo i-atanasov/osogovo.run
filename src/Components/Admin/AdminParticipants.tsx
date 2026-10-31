@@ -414,7 +414,7 @@ const AdminParticipants: React.FC = () => {
                     <select value={distanceFilter} onChange={(event) => setDistanceFilter(event.target.value)}>
                         <option value="">Всички</option>
                         <option value="14">14 км</option>
-                        <option value="26">26 км</option>
+                        <option value="26">27 км</option>
                     </select>
                 </label>
                 <label>
@@ -603,7 +603,7 @@ const AdminParticipants: React.FC = () => {
                                         }}
                                     >
                                         <option value="14">14 км</option>
-                                        <option value="26">26 км</option>
+                                        <option value="26">27 км</option>
                                     </select>
                                     {distanceChange?.email === participant.email && (
                                         <>
@@ -702,7 +702,7 @@ const AdminParticipants: React.FC = () => {
                         style={{ maxHeight: 'calc(100vh - 112px)', overflowY: 'auto' }}
                     >
                         <h2>Регистрация на място</h2>
-                        <label>Дистанция<select value={registrationForm.distance} onChange={(event) => updateRegistrationField('distance', event.target.value as '14' | '26')}><option value="14">14 км</option><option value="26">26 км</option></select></label>
+                        <label>Дистанция<select value={registrationForm.distance} onChange={(event) => updateRegistrationField('distance', event.target.value as '14' | '26')}><option value="14">14 км</option><option value="26">27 км</option></select></label>
                         <label>Имейл<input required type="email" value={registrationForm.email} onChange={(event) => updateRegistrationField('email', event.target.value)} /></label>
                         <label>Имена<input required value={registrationForm.name} onChange={(event) => updateRegistrationField('name', event.target.value)} /></label>
                         <label>Пол<select required value={registrationForm.gender} onChange={(event) => updateRegistrationField('gender', event.target.value as 'male' | 'female')}><option value="">Избери</option><option value="female">Жена</option><option value="male">Мъж</option></select></label>

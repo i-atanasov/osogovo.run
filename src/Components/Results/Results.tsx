@@ -4,6 +4,7 @@ import { useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { HomeContainer } from "../Home/styles";
 import { HeaderComponent } from "../Header/Header";
+import { getDistanceLabel } from "../../utils/distance";
 import { ParticipantsWrapper, TableCellLink, TableRow } from "../Participants/styles";
 import { getParticipantPath } from "../Participants/utils";
 import { colors } from "../../config/constants";
@@ -273,7 +274,7 @@ export const Results: React.FC = () => {
 
                 return (
                     <React.Fragment key={`${titleKey}-${distance}`}>
-                        <h2>{t("results:sections.distanceTitle", { title: t(`results:sections.${titleKey}`), distance })}</h2>
+                        <h2>{t("results:sections.distanceTitle", { title: t(`results:sections.${titleKey}`), distance: getDistanceLabel(distance) })}</h2>
                         {renderTablesByCheckpoint(distance, `${titleKey}-${distance}`, predicate)}
                     </React.Fragment>
                 );
@@ -326,7 +327,7 @@ export const Results: React.FC = () => {
                                                 <td>{result.name}</td>
                                                 <td>{result.did_not_finish ? t("results:table.dnf") : isDns(result) ? "DNS" : result.bib ?? "-"}</td>
                                                 <td>{result.team || "-"}</td>
-                                                <td>{result.distance} км</td>
+                                                <td>{getDistanceLabel(result.distance)} км</td>
                                             </TableRow>
                                         ))}
                                     </tbody>

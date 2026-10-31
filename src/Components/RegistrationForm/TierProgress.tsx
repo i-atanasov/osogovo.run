@@ -6,14 +6,14 @@ export interface ParticipationTier {
     upTo: number;
     label: string;
     labelBulgarian: string;
-    fees: Record<14 | 26, number>;
+    fees: Record<14 | 27, number>;
     tshirt: number;
 }
 
 interface TierProgressProps {
     tiers: ParticipationTier[];
     currentCount: number;
-    distance: 14 | 26;
+    distance: 14 | 27;
 }
 
 const TierProgress: React.FC<TierProgressProps> = ({ tiers, currentCount, distance }) => {

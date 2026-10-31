@@ -53,7 +53,7 @@ const registration = {
         discountCode: 'Discount code',
         discountCodePlaceholder: 'Enter a discount code',
         distance14: 'Osogovo Hut - 14 km',
-        distance26: 'Ruen Peak - 26 km',
+        distance26: 'Ruen Peak - 27 km',
     },
     terms: 'By submitting this registration, I declare that I agree with the rules and terms of each race and will follow them. I participate voluntarily and at my own risk, releasing the organizers from liability.',
     tShirt: {

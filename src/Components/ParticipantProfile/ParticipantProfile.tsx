@@ -7,6 +7,7 @@ import { HeaderComponent } from "../Header/Header";
 import { ParticipantsWrapper, TableRow } from "../Participants/styles";
 import { formatParticipantName } from "../Participants/utils";
 import { ResultTableWrapper } from "./styles";
+import { getDistanceLabel } from "../../utils/distance";
 
 type Participation = {
     year: number;
@@ -121,7 +122,7 @@ export const ParticipantProfile: React.FC = () => {
                 return (
                     <section>
                         <ResultTableWrapper>
-                            <h3>{participation.year} / {participation.distance} км</h3>
+                            <h3>{participation.year} / {getDistanceLabel(participation.distance)} км</h3>
                             <table style={{ width: '100%', borderCollapse: 'collapse', tableLayout: 'fixed', textAlign: 'left' }}>
                                 <colgroup>
                                     <col style={{ width: '15%' }} />

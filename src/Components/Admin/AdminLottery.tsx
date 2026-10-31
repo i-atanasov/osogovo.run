@@ -127,7 +127,7 @@ const AdminLottery: React.FC = () => {
                     >
                         <option value="all">Всички</option>
                         <option value="14">14 км</option>
-                        <option value="26">26 км</option>
+                        <option value="26">27 км</option>
                     </select>
                 </label>
             </AdminFilters>

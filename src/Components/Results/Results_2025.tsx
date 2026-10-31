@@ -4,6 +4,7 @@ import { useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { HomeContainer } from "../Home/styles";
 import { HeaderComponent } from "../Header/Header";
+import { getDistanceLabel } from "../../utils/distance";
 import { ParticipantsWrapper, TableCellLink, TableRow } from "../Participants/styles";
 import { getParticipantPath } from "../Participants/utils";
 
@@ -132,27 +133,27 @@ export const Results2025: React.FC = () => {
                     <>
                         <h2>{t('results:sections.overall', { distance: 14 })}</h2>
                         {renderTable(undefined, "14")}
-                        <h2>{t('results:sections.overall', { distance: 26 })}</h2>
+                        <h2>{t('results:sections.overall', { distance: getDistanceLabel(26) })}</h2>
                         {renderTable(undefined, "26")}
                         <h2>{t('results:sections.women', { distance: 14 })}</h2>
                         {renderTable('Ж', "14")}
-                        <h2>{t('results:sections.women', { distance: 26 })}</h2>
+                        <h2>{t('results:sections.women', { distance: getDistanceLabel(26) })}</h2>
                         {renderTable('Ж', "26")}
                         <h2>{t('results:sections.women40', { distance: 14 })}</h2>
                         {renderTable('Ж40', "14")}
-                        <h2>{t('results:sections.women40', { distance: 26 })}</h2>
+                        <h2>{t('results:sections.women40', { distance: getDistanceLabel(26) })}</h2>
                         {renderTable('Ж40', "26")}
                         <h2>{t('results:sections.men40', { distance: 14 })}</h2>
                         {renderTable('М40', "14")}
-                        <h2>{t('results:sections.men40', { distance: 26 })}</h2>
+                        <h2>{t('results:sections.men40', { distance: getDistanceLabel(26) })}</h2>
                         {renderTable('М40', "26")}
                         <h2>{t('results:sections.men20', { distance: 14 })}</h2>
                         {renderTable('М20', "14")}
-                        <h2>{t('results:sections.men20', { distance: 26 })}</h2>
+                        <h2>{t('results:sections.men20', { distance: getDistanceLabel(26) })}</h2>
                         {renderTable('М20', "26")}
                         <h2>{t('results:sections.women20', { distance: 14 })}</h2>
                         {renderTable('Ж20', "14")}
-                        <h2>{t('results:sections.women20', { distance: 26 })}</h2>
+                        <h2>{t('results:sections.women20', { distance: getDistanceLabel(26) })}</h2>
                         {renderTable('Ж20', "26")}
                     </>
                 )}

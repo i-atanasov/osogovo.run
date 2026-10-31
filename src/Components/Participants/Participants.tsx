@@ -5,6 +5,7 @@ import { HomeContainer } from "../Home/styles";
 import { HeaderComponent } from "../Header/Header";
 import { Paid, ParticipantsWrapper, TableCellLink, TableRow } from "./styles";
 import { formatParticipantName, getParticipantPath } from "./utils";
+import { getDistanceLabel } from "../../utils/distance";
 
 type Participant = {
     id: string;
@@ -89,7 +90,7 @@ export const Participants: React.FC = () => {
                             <TableRow key={participantPath} highlighted={false} >
                                 <td><TableCellLink to={participantPath}>{position}. { formatParticipantName(participant.name) }</TableCellLink></td>
                                 <td><TableCellLink to={participantPath}>{ category }</TableCellLink></td>
-                                <td><TableCellLink to={participantPath}>{ participant.distance }</TableCellLink></td>
+                                <td><TableCellLink to={participantPath}>{ getDistanceLabel(participant.distance) }</TableCellLink></td>
                                 <td>
                                     <TableCellLink
                                         to={participantPath}
@@ -151,7 +152,7 @@ export const Participants: React.FC = () => {
                 <h1>Списък с участници - категория Жени до 20 / 26 км</h1>
                 {renderTable('Ж20', "26")} */}
                 <p>{t('participants:counts.distance', {
-                    distance: 26,
+                    distance: 27,
                     count: participants.filter(p => p.distance === "26").length,
                     label: participants.filter(p => p.distance === "26").length === 1 ? t('participants:counts.participant') : t('participants:counts.participants'),
                 })}</p>

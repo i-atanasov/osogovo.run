@@ -22,12 +22,12 @@ export const CourseField: React.FC = () => {
                         {products.map((product, index) => (
                             <tr key={index}>
                                 <th>{t('home:course.distanceLabel', { distance: product.distance })}</th>
-                                {/* <td><span>{product.price} eur</span> до  септември</td> */}
                                 {product.price && (
-                                    <td><span>{product.price} eur</span> {t('home:course.earlyFee')}</td>
-                                )}
-                                {product.price && (
-                                    <td><span>{product.price + 5} eur</span> {t('home:course.lateFee')}</td>
+                                    <>
+                                        <td><span>{product.price} eur</span> {t('home:course.earlyFee')}</td>
+                                        <td><span>{product.price + 5} eur</span> {t('home:course.regularFee')}</td>
+                                        <td><span>{product.price + 10} eur</span> {t('home:course.lateFee')}</td>
+                                    </>
                                 )}
                             </tr>
                         ))}

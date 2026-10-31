@@ -2,6 +2,7 @@ import React from "react";
 import axios from "axios";
 import { createPortal } from "react-dom";
 import { useNavigate } from "react-router-dom";
+import { getDistanceLabel } from "../../utils/distance";
 import {
     AdminBibButton,
     AdminDialog,
@@ -513,7 +514,7 @@ const AdminTiming: React.FC = () => {
                                                 <span className="participant-phone">-</span>
                                             )}
                                             <TimingParticipantMeta>
-                                                <span>{participant.distance} км</span>
+                                                <span>{getDistanceLabel(participant.distance)} км</span>
                                             </TimingParticipantMeta>
                                             <time className="participant-result">{formatResultTime(participant.passed_at as string)}</time>
                                         </TimingParticipantButton>
@@ -534,7 +535,7 @@ const AdminTiming: React.FC = () => {
                         return (
                             <TimingDistanceColumn key={`without-result-${distance}`}>
                                 <TimingGroup color={distance === "26" ? "black" : "orange"}>
-                                    <TimingGroupTitle>{distance} км без отчетен резултат</TimingGroupTitle>
+                                    <TimingGroupTitle>{getDistanceLabel(distance)} км без отчетен резултат</TimingGroupTitle>
                                     {distanceParticipantsWithoutResults.length === 0 && (
                                         <AdminStatusText>Няма участници.</AdminStatusText>
                                     )}
@@ -556,7 +557,7 @@ const AdminTiming: React.FC = () => {
                                                 <span className="participant-phone">-</span>
                                             )}
                                             <TimingParticipantMeta>
-                                                <span>{participant.distance} км</span>
+                                                <span>{getDistanceLabel(participant.distance)} км</span>
                                             </TimingParticipantMeta>
                                             <time className="participant-result">-</time>
                                         </TimingParticipantButton>
