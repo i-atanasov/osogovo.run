@@ -92,7 +92,7 @@ export const Results: React.FC = () => {
         ), null);
     };
 
-    const getAge = (result: Result) => Number(year) - Number(result.birth);
+    const getAge = (result: Result) => Number(year) - Number(String(result.birth).slice(0, 4));
     const raceElapsedMilliseconds = raceStartAt ? now - new Date(raceStartAt).getTime() : -1;
     const raceIsActive = raceElapsedMilliseconds >= 0 && raceElapsedMilliseconds < RACE_DURATION_MILLISECONDS;
     const formatRaceElapsed = (elapsedMilliseconds: number) => {

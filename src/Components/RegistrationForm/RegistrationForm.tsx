@@ -6,9 +6,11 @@ import { createValidateForm } from './validation';
 import { HeaderComponent } from '../Header/Header';
 import Button from '../Button/Button';
 import axios from 'axios';
+import { getData } from 'country-list';
 import { euConversionRate, products, tShirtImages } from '../../config/constants';
 import { useTranslation } from 'react-i18next';
 import RaceCountdown from '../RaceCountdown/RaceCountdown';
+import TierProgress, { ParticipationTier } from './TierProgress';
 
 type Distance = 14 | 26;
 
@@ -19,7 +21,9 @@ export interface FormValues {
     gender: string;
     termsAndConditions: boolean;
     birth: string;
+    country: string;
     team?: string;
+    itraId?: string;
     phoneNumber: string;
     withTShirt: boolean;
     tShirtSize: '' | 'XS' | 'S' | 'M' | 'L' | 'XL';
@@ -29,7 +33,7 @@ export interface FormValues {
 
 const RegistrationForm = () => {
     React.useEffect(() => { window.scrollTo(0, 0); }, []);
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const [searchParams] = useSearchParams();
     const [serverError, setServerError] = React.useState<string | null>(null);
     const [discountPercent, setDiscountPercent] = React.useState<number>(0);
@@ -38,6 +42,9 @@ const RegistrationForm = () => {
     const [discountLimitUses, setDiscountLimitUses] = React.useState<number | null>(null);
     const [spacesLeft, setSpacesLeft] = React.useState<number | null>(null);
     const [isRegistrationFull, setIsRegistrationFull] = React.useState<boolean>(false);
+    const [tierPricing, setTierPricing] = React.useState<{ fees: Record<Distance, number>; tshirt: number } | null>(null);
+    const [tiers, setTiers] = React.useState<ParticipationTier[]>([]);
+    const [currentCount, setCurrentCount] = React.useState<number>(0);
     const [registrationOpeningTime, setRegistrationOpeningTime] = React.useState<Date | null>(null);
     const [isRegistrationOpeningTimeLoaded, setIsRegistrationOpeningTimeLoaded] = React.useState<boolean>(false);
     const [distance, setDistance] = React.useState<Distance>(Number(searchParams.get('product')) as Distance || 26);
@@ -48,14 +55,14 @@ const RegistrationForm = () => {
     const selectedProduct = products.find(product => product.distance === distance);
     const price = isTestMode
         ? (selectedProduct?.testProductPrice || selectedProduct?.price || 0)
-        : (selectedProduct?.price || 0);
+        : (tierPricing?.fees[distance] ?? selectedProduct?.price ?? 0);
     const isRegistrationOpeningTimeInFuture = registrationOpeningTime !== null
         && registrationOpeningTime.getTime() > Date.now();
     const formattedRegistrationOpeningDate = registrationOpeningTime
         ? `${String(registrationOpeningTime.getDate()).padStart(2, '0')}.${String(registrationOpeningTime.getMonth() + 1).padStart(2, '0')}.${registrationOpeningTime.getFullYear()}`
         : '';
 
-    const tShirtPrice = selectedProduct?.tShirtPrice || 0;
+    const tShirtPrice = tierPricing ? tierPricing.tshirt : (selectedProduct?.tShirtPrice || 0);
     const initialValues: FormValues = {
         email: emailParam,
         name: '',
@@ -63,7 +70,9 @@ const RegistrationForm = () => {
         gender: '',
         termsAndConditions: false,
         birth: '',
+        country: 'BG',
         team: '',
+        itraId: '',
         withTShirt: false,
         tShirtSize: '',
         phoneNumber: '',
@@ -72,6 +81,12 @@ const RegistrationForm = () => {
     };
     const apiUrl = process.env.REACT_APP_REGISTRATION_API_URL;
     const validateRegistrationForm = React.useMemo(() => createValidateForm(t), [t]);
+    const countries = React.useMemo(() => {
+        const displayNames = new Intl.DisplayNames([i18n.resolvedLanguage ?? i18n.language], { type: 'region' });
+        return getData()
+            .map(({ code, name }) => ({ code, name: displayNames.of(code) ?? name }))
+            .sort((first, second) => first.name.localeCompare(second.name, i18n.language));
+    }, [i18n.language, i18n.resolvedLanguage]);
     const fallbackTShirtImage = 'https://pvmolqp98bhv9my7.public.blob.vercel-storage.com/product-box-image.png';
     const resetServerError = () => {
         setServerError(null);
@@ -136,6 +151,9 @@ const RegistrationForm = () => {
                 const response = await axios.get(`${apiUrl}/get-participants-count`);
                 setSpacesLeft(Number(response.data?.spacesLeft ?? 0));
                 setIsRegistrationFull(response.data?.isFull === true);
+                setTierPricing(response.data?.pricing ?? null);
+                setTiers(Array.isArray(response.data?.tiers) ? response.data.tiers : []);
+                setCurrentCount(Number(response.data?.currentCount ?? 0));
             } catch (error) {
                 console.error('Failed to fetch participants availability:', error);
             }
@@ -156,7 +174,7 @@ const RegistrationForm = () => {
         const fetchRegistrationOpeningTime = async () => {
             try {
                 const response = await axios.get(`${apiUrl}/registration-open-date`);
-                const dateValue = response.data?.registrationOpenDate;
+                const dateValue = process.env.REACT_APP_REGISTRATION_OPEN_DATE ?? response.data?.registrationOpenDate;
                 if (typeof dateValue !== 'string') return;
 
                 const openingTime = new Date(
@@ -317,6 +335,9 @@ const RegistrationForm = () => {
                             : t('registration:notices.spacesLeft', { count: spacesLeft })}
                     </div>
                 )}
+                {!isTestMode && tiers.length > 0 && (
+                    <TierProgress tiers={tiers} currentCount={currentCount} distance={distance} />
+                )}
                 <a href="/register/payment">{t('registration:links.payment')}</a><br /><br />
                 <a href="/participants">{t('registration:links.participants')}</a><br /><br />
                 <a href="/results?year=2026">{t('registration:links.results2026')}</a><br /><br />
@@ -412,16 +433,18 @@ const RegistrationForm = () => {
                                     </Field>
                                     {errors.gender && touched.gender && <div className="error">{errors.gender}</div>}
                                     <label htmlFor="birth">{t('registration:fields.birth')}</label>
-                                    <Field className='year-option' as="select" id="birth" name="birth" required placeholder={t('registration:fields.birth')} >
-                                        <option value="" hidden></option>
-                                        {Array.from({ length: 60 }, (_, i) => {
-                                            const year = new Date().getFullYear() - i - 15; // 15 is the minimum age
-                                            return <option key={year} value={year}>{year}</option>;
-                                        })}
-                                    </Field>
+                                    <Field id="birth" name="birth" type="date" required />
                                     {errors.birth && touched.birth && <div className="error">{errors.birth}</div>}
+                                    <label htmlFor="country">{t('registration:fields.country')}</label>
+                                    <Field as="select" id="country" name="country" required>
+                                        {countries.map(({ code, name }) => (
+                                            <option key={code} value={code}>{name}</option>
+                                        ))}
+                                    </Field>
                                     <label htmlFor="team">{t('registration:fields.team')} <span>{t('registration:fields.optional')}</span></label>
                                     <Field id="team" name="team" placeholder={t('registration:fields.team')} />
+                                    <label htmlFor="itraId">{t('registration:fields.itraId')} <span>{t('registration:fields.optional')}</span></label>
+                                    <Field id="itraId" name="itraId" maxLength={50} />
                                     <label htmlFor="discountCode">{t('registration:fields.discountCode')} <span>{t('registration:fields.optional')}</span></label>
                                     <Field
                                         id="discountCode"
@@ -462,7 +485,7 @@ const RegistrationForm = () => {
                                         <div className="error">{errors.termsAndConditions}</div>
                                     )}
                                 </FormSection>
-                                <FormSection>
+                                {/* <FormSection>
                                     <label>
                                         {t(tShirtPrice === 0 ? 'registration:tShirt.unavailableLabel' : 'registration:tShirt.label')}
                                     </label>
@@ -520,7 +543,7 @@ const RegistrationForm = () => {
                                         </>
                                     )}
                                     <Price>{t('registration:payment.currentTotal', { amount: total })}</Price>
-                                </FormSection>
+                                </FormSection> */}
                             </FormFields>
                             {serverError && (
                                 <div className="server error" dangerouslySetInnerHTML={{ __html: serverError }} />

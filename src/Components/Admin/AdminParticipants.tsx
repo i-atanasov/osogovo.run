@@ -24,7 +24,7 @@ type AdminParticipant = {
     name: string;
     distance: string;
     gender: string;
-    birth: number;
+    birth: string | number;
     team?: string | null;
     phone_number?: string | null;
     with_t_shirt: boolean;
@@ -67,8 +67,8 @@ type AdminRegistrationForm = {
 
 const apiUrl = process.env.REACT_APP_REGISTRATION_API_URL;
 
-const getAgeCategory = (birth: number): 'sub20' | '20-40' | 'over40' => {
-    const age = new Date().getFullYear() - birth;
+const getAgeCategory = (birth: string | number): 'sub20' | '20-40' | 'over40' => {
+    const age = new Date().getFullYear() - Number(String(birth).slice(0, 4));
     if (age < 21) return 'sub20';
     if (age > 39) return 'over40';
     return '20-40';
@@ -370,7 +370,7 @@ const AdminParticipants: React.FC = () => {
             setRegistrationError(null);
             const response = await axios.post<AdminParticipant>(`${apiUrl}/admin/participants/register`, {
                 ...registrationForm,
-                birth: Number(registrationForm.birth),
+                birth: registrationForm.birth,
                 paid: true,
             }, { withCredentials: true });
             setParticipants((current) => [response.data, ...current.filter((participant) => participant.email !== response.data.email)]);
@@ -706,7 +706,7 @@ const AdminParticipants: React.FC = () => {
                         <label>Имейл<input required type="email" value={registrationForm.email} onChange={(event) => updateRegistrationField('email', event.target.value)} /></label>
                         <label>Имена<input required value={registrationForm.name} onChange={(event) => updateRegistrationField('name', event.target.value)} /></label>
                         <label>Пол<select required value={registrationForm.gender} onChange={(event) => updateRegistrationField('gender', event.target.value as 'male' | 'female')}><option value="">Избери</option><option value="female">Жена</option><option value="male">Мъж</option></select></label>
-                        <label>Година на раждане<input required type="number" value={registrationForm.birth} onChange={(event) => updateRegistrationField('birth', event.target.value)} /></label>
+                        <label>Дата на раждане<input required type="date" value={registrationForm.birth} onChange={(event) => updateRegistrationField('birth', event.target.value)} /></label>
                         <label>Телефон<input value={registrationForm.phoneNumber} onChange={(event) => updateRegistrationField('phoneNumber', event.target.value)} /></label>
                         <label>Отбор<input value={registrationForm.team} onChange={(event) => updateRegistrationField('team', event.target.value)} /></label>
                         <label><input required type="checkbox" checked={registrationForm.termsAndConditions} onChange={(event) => updateRegistrationField('termsAndConditions', event.target.checked)} /> Съгласие с условията</label>

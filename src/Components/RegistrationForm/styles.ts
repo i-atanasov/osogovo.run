@@ -370,3 +370,110 @@ export const TShirtSizeButton = styled.button<{ selected?: boolean }>`
         border-color: ${colors.RuenOrange};
     }
 `
+
+export const TierProgressWrapper = styled.div`
+    color: ${colors.OsogovoBlack};
+    margin-bottom: 24px;
+
+    h4 {
+        margin: 0 0 36px;
+    }
+`
+
+export const TierBar = styled.div`
+    position: relative;
+    height: 20px;
+    background: #eee;
+`
+
+export const TierSegment = styled.div<{ $active: boolean }>`
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    background: ${props => props.$active ? 'rgba(239, 82, 35, 0.25)' : '#e3e3e3'};
+    border: ${props => props.$active ? `2px solid ${colors.RuenOrange}` : '1px solid #cfcfcf'};
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+
+    span {
+        position: relative;
+        z-index: 1;
+        font-size: 11px;
+        font-weight: ${props => props.$active ? 700 : 400};
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        padding: 0 4px;
+    }
+`
+
+export const TierFill = styled.div`
+    position: absolute;
+    top: 4px;
+    bottom: 4px;
+    left: 0;
+    border-radius: 6px;
+    background: ${colors.RuenOrange};
+`
+
+export const TierBreakpoint = styled.div`
+    position: absolute;
+    top: -6px;
+    bottom: -6px;
+    width: 2px;
+    margin-left: -1px;
+    background: ${colors.OsogovoBlack};
+
+    span {
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 12px;
+        white-space: nowrap;
+    }
+`
+
+export const TierCurrentMarker = styled.div`
+    position: absolute;
+    top: -8px;
+    bottom: -8px;
+    width: 3px;
+    margin-left: -1.5px;
+    background: ${colors.RuenOrange};
+
+    span {
+        position: absolute;
+        bottom: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        margin-bottom: 4px;
+        padding: 2px 6px;
+        border-radius: 4px;
+        background: ${colors.RuenOrange};
+        color: #fff;
+        font-size: 12px;
+        white-space: nowrap;
+    }
+`
+
+export const TierLegend = styled.div`
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 10px;
+    margin-top: 28px;
+`
+
+export const TierLegendItem = styled.div<{ $active: boolean }>`
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: ${props => props.$active ? `2px solid ${colors.RuenOrange}` : '1px solid #cfcfcf'};
+    opacity: ${props => props.$active ? 1 : 0.7};
+    font-size: 14px;
+`
